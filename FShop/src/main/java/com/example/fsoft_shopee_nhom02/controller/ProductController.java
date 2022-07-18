@@ -9,6 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.transform.Result;
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -40,5 +44,18 @@ public class ProductController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    // Lay products co phan trang
+    @GetMapping("")
+    public List<ProductEntity> getAllProducts(@RequestParam Map<String, String> requestParams) {
+        String page = requestParams.get("page");
+        String limit = requestParams.get("limit");
 
+        return productService.getAllProducts(page, limit);
+    }
+
+    // Dem so products co trong Database
+    @GetMapping("/all-items")
+    public int countProducts() {
+        return (int) productRepository.count();
+    }
 }

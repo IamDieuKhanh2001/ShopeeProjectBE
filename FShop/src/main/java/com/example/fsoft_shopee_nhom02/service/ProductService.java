@@ -5,7 +5,12 @@ import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
 import com.example.fsoft_shopee_nhom02.model.ProductEntity;
 import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import javax.xml.transform.Result;
+import java.util.List;
 
 @Service
 public class ProductService {
@@ -28,6 +33,21 @@ public class ProductService {
         productRepository.save(updateProduct);
 
         return updateProduct;
+    }
+
+    public List<ProductEntity> getAllProducts(String page, String limit) {
+        page = (page == null) ? "1"  : page;
+        limit = (limit == null) ? "12" : limit;
+
+        Pageable pageable = PageRequest.of((Integer.valueOf(page) - 1), Integer.valueOf(limit));
+
+        List<ProductEntity> products = productRepository.findAll(pageable).getContent();
+
+        if(products.isEmpty()) {
+            throw new ResourceNotFoundException("Empty!");
+        }
+
+        return products;
     }
 
 }
