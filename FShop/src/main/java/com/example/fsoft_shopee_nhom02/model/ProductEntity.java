@@ -25,19 +25,19 @@ public class ProductEntity {
     // Tạo quan hệ với CartEntity
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "cartId", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "cartId", referencedColumnName = "id")
     private CartEntity cartEntity;
 
     // Tạo quan hệ với OrderEntity
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "orderId", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "orderId", referencedColumnName = "id")
     private OrderEntity orderEntity;
 
     // Tạo quan hệ với SubCategoryEntity
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "subCategoryId", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "subCategoryId", referencedColumnName = "id")
     private SubCategoryEntity subCategoryEntity;
 
     // Tạo quan hệ với TypeEntity
