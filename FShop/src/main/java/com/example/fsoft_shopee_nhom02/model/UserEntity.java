@@ -35,12 +35,20 @@ public class UserEntity {
     }
 
     // Tạo quan hệ với RoleEntity
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "users_roles", //Tên bảng trung gian
             joinColumns = @JoinColumn(name = "userID"), //Khóa chính để liên kết với bảng Users
             inverseJoinColumns = @JoinColumn(name = "roleId")) //Khóa chính để liên kết với bảng Roles
     @JsonManagedReference
     private Set<RoleEntity> roleEntitySet; //Liên kết với mapedBy ở RoleEntity
+
+    public Set<RoleEntity> getRoleEntitySet() {
+        return roleEntitySet;
+    }
+
+    public void setRoleEntitySet(Set<RoleEntity> roleEntitySet) {
+        this.roleEntitySet = roleEntitySet;
+    }
 
     // Tạo quan hệ với CartEntity
     @OneToOne(cascade = CascadeType.ALL)

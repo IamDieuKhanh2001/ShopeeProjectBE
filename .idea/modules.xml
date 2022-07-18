@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/FSoft.iml" filepath="$PROJECT_DIR$/.idea/FSoft.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FShop/FSoft_Shopee_Nhom02.iml" filepath="$PROJECT_DIR$/FShop/FSoft_Shopee_Nhom02.iml" />
     </modules>
   </component>
 </project>

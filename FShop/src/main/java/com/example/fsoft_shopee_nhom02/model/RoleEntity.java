@@ -19,6 +19,14 @@ public class RoleEntity {
     @JsonManagedReference
     private Set<UserEntity> userEntitySet;
 
+    public Set<UserEntity> getUserEntitySet() {
+        return userEntitySet;
+    }
+
+    public void setUserEntitySet(Set<UserEntity> userEntitySet) {
+        this.userEntitySet = userEntitySet;
+    }
+
     // Constructor, Getter, Setter
     public RoleEntity() {
     }
