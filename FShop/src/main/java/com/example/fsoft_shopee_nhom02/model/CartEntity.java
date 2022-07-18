@@ -10,7 +10,7 @@ import java.util.List;
 @Table(name = "carts")
 public class CartEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     // Tạo quan hệ với UserEntity

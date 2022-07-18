@@ -10,9 +10,9 @@ import java.util.Map;
 
 @Entity
 @Table(name = "comments")
-public class CommentEntity {
+public class CommentEntity extends BaseClassEntity{
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String comment;
     private String image;

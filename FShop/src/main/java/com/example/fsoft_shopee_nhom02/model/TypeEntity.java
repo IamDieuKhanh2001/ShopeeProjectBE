@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(name = "types")
 public class TypeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String type;
     private Long quantity;

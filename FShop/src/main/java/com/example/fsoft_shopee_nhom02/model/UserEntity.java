@@ -3,7 +3,7 @@ package com.example.fsoft_shopee_nhom02.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -12,14 +12,14 @@ import java.util.Set;
 @Table(name = "users")
 public class UserEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String username;
     private String password;
     private String phone;
     private String email;
-    private Date dob;
+    private Timestamp dob;
     private String gender;
     private String avatar;
     // Tạo quan hệ với AddressEntity
@@ -53,7 +53,7 @@ public class UserEntity {
     public UserEntity() {
     }
 
-    public UserEntity(Long id, String name, String username, String password, String phone, String email, Date dob, String gender, String avatar) {
+    public UserEntity(Long id, String name, String username, String password, String phone, String email, Timestamp dob, String gender, String avatar) {
         this.id = id;
         this.name = name;
         this.username = username;
@@ -113,11 +113,11 @@ public class UserEntity {
         this.email = email;
     }
 
-    public Date getDob() {
+    public Timestamp getDob() {
         return dob;
     }
 
-    public void setDob(Date dob) {
+    public void setDob(Timestamp dob) {
         this.dob = dob;
     }
 
