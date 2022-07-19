@@ -5,6 +5,7 @@ import com.example.fsoft_shopee_nhom02.auth.JwtUtil;
 import com.example.fsoft_shopee_nhom02.dto.AuthenticationRequest;
 import com.example.fsoft_shopee_nhom02.dto.AuthenticationResponse;
 import com.example.fsoft_shopee_nhom02.dto.UserDTO;
+import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,8 +57,11 @@ public class AuthenticationController {
                         (Set<GrantedAuthority>) userDetails.getAuthorities()));
     }
     //Test api sẽ xóa sau
-    @GetMapping("/hello")
-    public String hello() {
+    @PostMapping("/test")
+    public String test(@RequestBody UserDTO user) {
+        System.out.println(user.getUsername());
+        System.out.println(user.getAddressList().get(0).getAddress());
+        System.out.println(user.getAddressList().get(1).getAddress());
         String sReturn = "<h1>Hello</h1>";
         return sReturn;
     }

@@ -1,12 +1,17 @@
 package com.example.fsoft_shopee_nhom02.auth;
 
+import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.dto.UserDTO;
+import com.example.fsoft_shopee_nhom02.mapper.AddressMapper;
 import com.example.fsoft_shopee_nhom02.mapper.UserMapper;
+import com.example.fsoft_shopee_nhom02.model.AddressEntity;
+import com.example.fsoft_shopee_nhom02.model.CartEntity;
 import com.example.fsoft_shopee_nhom02.model.RoleEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.RoleRepository;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -52,6 +57,16 @@ public class ApplicationUserService implements UserDetailsService {
         UserEntity newUser = UserMapper.toEntity(userDTO); //Parse DTO sang Entity
         newUser.setPassword(passwordEncoder.encode(newUser.getPassword())); //Bcrypt password tk
         newUser.setRoleEntitySet(roleUserSet);
+
+        List<AddressDTO>  addressDtoList = userDTO.getAddressList(); //Xử lí lưu address
+        List<AddressEntity> addressEntityList = new ArrayList<>();
+        addressDtoList.forEach(item -> {
+            AddressEntity addressEntity = new AddressEntity(item.getAddress(), newUser);
+            addressEntityList.add(addressEntity);
+        });
+        newUser.setAddressEntityList(addressEntityList);
+
+        newUser.setCartEntity(new CartEntity()); //tạo 1 cart cho user
         userRepository.save(newUser);
         return true;
     }
