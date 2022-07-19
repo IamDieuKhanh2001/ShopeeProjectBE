@@ -63,4 +63,8 @@ public class TypeEntity {
     public void setPrice(Long price) {
         this.price = price;
     }
+
+    public void setProductEntity(ProductEntity productEntity) {
+        this.productEntity = productEntity;
+    }
 }

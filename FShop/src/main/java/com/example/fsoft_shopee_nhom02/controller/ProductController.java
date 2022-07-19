@@ -5,8 +5,10 @@ import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.ProductMapper;
 import com.example.fsoft_shopee_nhom02.model.ProductEntity;
 import com.example.fsoft_shopee_nhom02.model.SubCategoryEntity;
+import com.example.fsoft_shopee_nhom02.model.TypeEntity;
 import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
 import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
+import com.example.fsoft_shopee_nhom02.repository.TypeRepository;
 import com.example.fsoft_shopee_nhom02.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,7 +30,8 @@ public class ProductController {
     @Autowired
     SubCategoryRepository subCategoryRepository;
 
-    ProductMapper productMapper;
+    @Autowired
+    TypeRepository typeRepository;
 
     @PostMapping("/admin")
     public ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
@@ -66,5 +69,26 @@ public class ProductController {
     @GetMapping("/all-items")
     public int countProducts() {
         return (int) productRepository.count();
+    }
+
+    @GetMapping("/{id}")
+    public ProductDTO getProductDetail(@PathVariable long id) {
+        return productService.getDetail(id);
+    }
+
+    // Lay types cua san pham tuong ung
+    @GetMapping("/{id}/types")
+    public List<TypeEntity> getProductTypes(@PathVariable long id) {
+        return typeRepository.findAllByProductEntityId(id);
+    }
+
+    @PostMapping("/{id}/types")
+    public TypeEntity createProductTypes(@PathVariable long id, @RequestBody TypeEntity typeEntity) {
+        ProductEntity productEntity = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot found " + id));
+
+        typeEntity.setProductEntity(productEntity);
+
+        return typeRepository.save(typeEntity);
     }
 }

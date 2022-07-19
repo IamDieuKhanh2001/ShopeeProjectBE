@@ -1,5 +1,9 @@
 package com.example.fsoft_shopee_nhom02.dto;
 
+import com.example.fsoft_shopee_nhom02.model.TypeEntity;
+
+import java.util.List;
+
 public class ProductDTO {
     private long id;
     private String name;
@@ -16,7 +20,8 @@ public class ProductDTO {
     public ProductDTO() {
     }
 
-    public ProductDTO(long id, String name, String description, String detail, String imageProduct, String image1, String image2, String image3, String image4, Long sale) {
+    public ProductDTO(long id, String name, String description, String detail, String imageProduct,
+                      String image1, String image2, String image3, String image4, Long sale) {
         this.id = id;
         this.name = name;
         this.description = description;

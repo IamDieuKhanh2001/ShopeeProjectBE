@@ -153,4 +153,11 @@ public class ProductEntity {
         return subCategoryEntity.getId();
     }
 
+    public List<TypeEntity> getTypeEntities() {
+        return typeEntities;
+    }
+
+    public void setTypeEntities(List<TypeEntity> typeEntities) {
+        this.typeEntities = typeEntities;
+    }
 }

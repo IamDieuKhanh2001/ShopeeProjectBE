@@ -6,8 +6,10 @@ import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.ProductMapper;
 import com.example.fsoft_shopee_nhom02.model.ProductEntity;
 import com.example.fsoft_shopee_nhom02.model.SubCategoryEntity;
+import com.example.fsoft_shopee_nhom02.model.TypeEntity;
 import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
 import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
+import com.example.fsoft_shopee_nhom02.repository.TypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,8 +22,12 @@ import java.util.List;
 public class ProductService {
     @Autowired
     ProductRepository productRepository;
+
     @Autowired
     SubCategoryRepository subCategoryRepository;
+
+    @Autowired
+    TypeRepository typeRepository;
 
     public ProductDTO save(ProductDTO productDTO) {
         ProductEntity product;
@@ -39,7 +45,7 @@ public class ProductService {
         SubCategoryEntity subCategoryEntity = subCategoryRepository.findById(productDTO.getSubCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cannot found " + productDTO.getSubCategoryId()));
         product.setSubCategoryEntity(subCategoryEntity);
-        productRepository.save(product);
+
 
         return ProductMapper.toProductDTO(product);
     }
@@ -65,4 +71,12 @@ public class ProductService {
         return productDTOS;
     }
 
+    public ProductDTO getDetail(long id) {
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot found " + id));
+
+        ProductDTO productDTO = ProductMapper.toProductDTO(product);
+
+        return productDTO;
+    }
 }
