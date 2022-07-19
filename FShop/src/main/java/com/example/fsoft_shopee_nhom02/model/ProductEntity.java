@@ -22,17 +22,14 @@ public class ProductEntity {
     private String image3;
     private String image4;
     private Long sale;
-    // Tạo quan hệ với CartEntity
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "cartId", nullable = false, referencedColumnName = "id")
-    private CartEntity cartEntity;
+    // Tạo quan hệ với CartProductEntity
+    @OneToMany(mappedBy = "productEntity", cascade = CascadeType.ALL)
+    private List<CartProductEntity> cartProductEntities =new ArrayList<>();
 
-    // Tạo quan hệ với OrderEntity
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "orderId", nullable = false, referencedColumnName = "id")
-    private OrderEntity orderEntity;
+
+    // Tạo quan hệ với OrderDetailsEntity
+    @OneToMany(mappedBy = "productEntity", cascade = CascadeType.ALL)
+    private List<OrderDetailsEntity> orderDetailsEntities =new ArrayList<>();
 
     // Tạo quan hệ với SubCategoryEntity
     @ManyToOne(fetch = FetchType.LAZY)

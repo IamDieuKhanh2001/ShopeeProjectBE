@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "carts")
@@ -15,12 +16,13 @@ public class CartEntity {
 
     // Tạo quan hệ với UserEntity
     @OneToOne(mappedBy = "cartEntity")
-    @JsonManagedReference
     private UserEntity userEntity;
 
-    // Tạo quan hệ với ProductEntity
+
+    // Tạo quan hệ với CartProductEntity
     @OneToMany(mappedBy = "cartEntity", cascade = CascadeType.ALL)
-    private List<ProductEntity> productEntities =new ArrayList<>();
+    private List<CartProductEntity> cartProductEntities =new ArrayList<>();
+
 
     // Constructor, Getter, Setter
     public CartEntity() {

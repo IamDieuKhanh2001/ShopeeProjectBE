@@ -16,20 +16,21 @@ public class OrderEntity extends BaseClassEntity{
     private String status;
     private String userName;
     private String address;
+    private String phone;
     private String note;
     private String payment;
     private Long shippingFee;
     private Long totalPrice;
 
-    // Tạo quan hệ với ProductEntity
+    // Tạo quan hệ với OrderDetailsEntity
     @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL)
-    private List<ProductEntity> productEntities =new ArrayList<>();
+    private List<OrderDetailsEntity> orderDetailsEntities =new ArrayList<>();
 
     // Constructor, Getter, Setter
     public OrderEntity() {
     }
 
-    public OrderEntity(Long id, String status, String userName, String address, String note, String payment, Long shippingFee, Long totalPrice) {
+    public OrderEntity(Long id, String status, String userName, String address, String note, String payment, Long shippingFee, Long totalPrice, String phone) {
         this.id = id;
         this.status = status;
         this.userName = userName;
@@ -38,6 +39,15 @@ public class OrderEntity extends BaseClassEntity{
         this.payment = payment;
         this.shippingFee = shippingFee;
         this.totalPrice = totalPrice;
+        this.phone = phone;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public Long getId() {

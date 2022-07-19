@@ -1,5 +1,6 @@
 package com.example.fsoft_shopee_nhom02.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -45,7 +46,6 @@ public class UserEntity {
     // Tạo quan hệ với CartEntity
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cartId", referencedColumnName = "id")
-    @JsonManagedReference
     private CartEntity cartEntity; // Tương ứng với mappedBy ở CartEntity
 
 
