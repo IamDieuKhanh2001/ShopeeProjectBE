@@ -140,4 +140,17 @@ public class ProductEntity {
     public void setSale(Long sale) {
         this.sale = sale;
     }
+
+    public SubCategoryEntity getSubCategoryEntity() {
+        return subCategoryEntity;
+    }
+
+    public void setSubCategoryEntity(SubCategoryEntity subCategoryEntity) {
+        this.subCategoryEntity = subCategoryEntity;
+    }
+
+    public long getSubCategoryId() {
+        return subCategoryEntity.getId();
+    }
+
 }

@@ -1,53 +1,68 @@
 
 package com.example.fsoft_shopee_nhom02.service;
 
+import com.example.fsoft_shopee_nhom02.dto.ProductDTO;
 import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
+import com.example.fsoft_shopee_nhom02.mapper.ProductMapper;
 import com.example.fsoft_shopee_nhom02.model.ProductEntity;
+import com.example.fsoft_shopee_nhom02.model.SubCategoryEntity;
 import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
+import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import javax.xml.transform.Result;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class ProductService {
     @Autowired
     ProductRepository productRepository;
+    @Autowired
+    SubCategoryRepository subCategoryRepository;
 
-    public ProductEntity updateById(long id, ProductEntity product) {
-        ProductEntity updateProduct = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cannot found " + id));
-        updateProduct.setName(product.getName());
-        updateProduct.setDescription(product.getDescription());
-        updateProduct.setDetail(product.getDetail());
-        updateProduct.setImageProduct(product.getImageProduct());
-        updateProduct.setImage1(product.getImage1());
-        updateProduct.setImage2(product.getImage2());
-        updateProduct.setImage3(product.getImage3());
-        updateProduct.setImage4(product.getImage4());
-        updateProduct.setSale(product.getSale());
+    public ProductDTO save(ProductDTO productDTO) {
+        ProductEntity product;
 
-        productRepository.save(updateProduct);
+        if(productDTO.getId() != 0) {
+            // UPDATE
+            product = productRepository.findById(productDTO.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Cannot found " + productDTO.getId()));
+            ProductMapper.toProductEntity(product, productDTO);
+        }
+        else {
+            // CREATE
+            product = ProductMapper.toProductEntity(productDTO);
+        }
+        SubCategoryEntity subCategoryEntity = subCategoryRepository.findById(productDTO.getSubCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot found " + productDTO.getSubCategoryId()));
+        product.setSubCategoryEntity(subCategoryEntity);
+        productRepository.save(product);
 
-        return updateProduct;
+        return ProductMapper.toProductDTO(product);
     }
 
-    public List<ProductEntity> getAllProducts(String page, String limit) {
+    public List<ProductDTO> getAllProducts(String page, String limit) {
         page = (page == null) ? "1"  : page;
         limit = (limit == null) ? "12" : limit;
+
+        List<ProductDTO> productDTOS = new ArrayList<>();
 
         Pageable pageable = PageRequest.of((Integer.valueOf(page) - 1), Integer.valueOf(limit));
 
         List<ProductEntity> products = productRepository.findAll(pageable).getContent();
 
+        for (ProductEntity product : products) {
+            productDTOS.add(ProductMapper.toProductDTO(product));
+        }
+
         if(products.isEmpty()) {
             throw new ResourceNotFoundException("Empty!");
         }
 
-        return products;
+        return productDTOS;
     }
 
 }
