@@ -1,5 +1,6 @@
 package com.example.fsoft_shopee_nhom02.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.catalina.User;
 
@@ -18,6 +19,14 @@ public class RoleEntity {
     @ManyToMany(mappedBy = "roleEntitySet")
     @JsonManagedReference
     private Set<UserEntity> userEntitySet;
+
+    public Set<UserEntity> getUserEntitySet() {
+        return userEntitySet;
+    }
+
+    public void setUserEntitySet(Set<UserEntity> userEntitySet) {
+        this.userEntitySet = userEntitySet;
+    }
 
     // Constructor, Getter, Setter
     public RoleEntity() {

@@ -58,4 +58,12 @@ public class CategoryEntity {
     public void setImage(String image) {
         this.image = image;
     }
+
+    public ShopEntity getShopEntity() {
+        return shopEntity;
+    }
+
+    public void setShopEntity(ShopEntity shopEntity) {
+        this.shopEntity = shopEntity;
+    }
 }

@@ -37,6 +37,11 @@ public class AddressEntity {
         this.address = address;
     }
 
+    public AddressEntity(String address, UserEntity userEntity) {
+        this.address = address;
+        this.userEntity = userEntity;
+    }
+
     public Long getId() {
         return id;
     }
@@ -51,5 +56,14 @@ public class AddressEntity {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    @Override
+    public String toString() {
+        return "AddressEntity{" +
+                "id=" + id +
+                ", address='" + address + '\'' +
+                ", userEntity=" + userEntity +
+                '}';
     }
 }
