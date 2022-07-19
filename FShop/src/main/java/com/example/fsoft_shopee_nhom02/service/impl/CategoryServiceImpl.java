@@ -9,6 +9,7 @@ import com.example.fsoft_shopee_nhom02.repository.CategoryRepository;
 import com.example.fsoft_shopee_nhom02.repository.ShopRepository;
 import com.example.fsoft_shopee_nhom02.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO save(CategoryDTO categoryDTO) {
         ShopEntity shopEntity = shopRepository.findById(categoryDTO.getShopId()).orElseThrow(()
-                -> new NotFoundException("Shop not exist"));
+                -> new NotFoundException("Not found shop with id = "+categoryDTO.getShopId()));
         CategoryEntity category = CategoryMapper.toEntity(categoryDTO);
         category.setShopEntity(shopEntity);
         category = categoryRepository.save(category);
@@ -37,10 +38,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO update(CategoryDTO categoryDTO) {
         ShopEntity shopEntity = shopRepository.findById(categoryDTO.getShopId()).orElseThrow(()
-                -> new NotFoundException("Shop not exist"));
+                -> new NotFoundException("Not found shop with id = "+categoryDTO.getShopId()));
 
         CategoryEntity category = categoryRepository.findById(categoryDTO.getId()).orElseThrow(()
-                -> new NotFoundException("Category not exist"));
+                -> new NotFoundException("Not found category with id = "+categoryDTO.getId()));
 
         category.setName(categoryDTO.getName());
         category.setImage(categoryDTO.getImage());
@@ -64,8 +65,25 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO getCategoryById(long id) {
         CategoryEntity category = categoryRepository.findById(id).orElseThrow(()->
-                new NotFoundException("Category not exist"));
+                new NotFoundException("Not found category with id = "+id));
         return CategoryMapper.toCategoryDto(category);
+    }
+
+    @Override
+    public List<CategoryDTO> getCategoryByShopId(long shopId) {
+        List<CategoryDTO> categoryDTOS = new ArrayList<>();
+        List<CategoryEntity> categories = categoryRepository.findByShopId(shopId);
+
+        for (CategoryEntity category : categories){
+            categoryDTOS.add(CategoryMapper.toCategoryDto(category));
+        }
+
+        return categoryDTOS;
+    }
+
+    @Override
+    public long countCategoryByShopId(long shopId) {
+        return categoryRepository.getCountByShopId(shopId);
     }
 
     @Override

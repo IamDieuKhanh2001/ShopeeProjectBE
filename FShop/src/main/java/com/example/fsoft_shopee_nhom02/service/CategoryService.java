@@ -11,5 +11,7 @@ public interface CategoryService {
     CategoryDTO update(CategoryDTO categoryDTO);
     List<CategoryDTO> getAllCategory();
     CategoryDTO getCategoryById(long id);
+    List<CategoryDTO> getCategoryByShopId(long shopId);
+    long countCategoryByShopId(long shopId);
     void delete(long id);
 }

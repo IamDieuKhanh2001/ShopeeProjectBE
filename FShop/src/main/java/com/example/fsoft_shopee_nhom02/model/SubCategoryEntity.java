@@ -58,4 +58,12 @@ public class SubCategoryEntity {
     public void setImage(String image) {
         this.image = image;
     }
+
+    public CategoryEntity getCategoryEntity() {
+        return categoryEntity;
+    }
+
+    public void setCategoryEntity(CategoryEntity categoryEntity) {
+        this.categoryEntity = categoryEntity;
+    }
 }
