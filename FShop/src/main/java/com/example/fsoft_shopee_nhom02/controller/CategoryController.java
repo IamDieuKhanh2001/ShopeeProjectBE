@@ -13,12 +13,12 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @PostMapping("/category")
+    @PostMapping("/category/admin")
     public ResponseEntity<?> createNewCategory(@RequestBody CategoryDTO model){
         return ResponseEntity.ok(categoryService.save(model));
     }
 
-    @GetMapping("/category")
+    @GetMapping("/category/get-all")
     public ResponseEntity<?> getAllCategory(){
         return ResponseEntity.ok(categoryService.getAllCategory());
     }
@@ -28,14 +28,24 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
-    @PutMapping("/category/{id}")
+    @GetMapping("/category")
+    public ResponseEntity<?> getCategoryByShopId(@RequestParam long shopId){
+        return ResponseEntity.ok(categoryService.getCategoryByShopId(shopId));
+    }
+
+    @GetMapping("/category/count")
+    public ResponseEntity<?> countByShopId(@RequestParam long shopId){
+        return ResponseEntity.ok(categoryService.countCategoryByShopId(shopId));
+    }
+
+    @PutMapping("/category/admin/{id}")
     public ResponseEntity<?> updateCategory(@PathVariable long id, @RequestBody CategoryDTO model){
         model.setId(id);
         return ResponseEntity.ok(categoryService.update(model));
     }
 
-    @DeleteMapping("/category/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable long id){
+    @DeleteMapping("/category/admin/{id}")
+    public ResponseEntity<?> deleteCategory(@PathVariable long id){
         categoryService.delete(id);
         return ResponseEntity.ok("Success");
     }
