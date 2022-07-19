@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface TypeRepository extends JpaRepository<TypeEntity,Long> {
     List<TypeEntity> findAllByProductEntityId(long productId);
+    void deleteAllByProductEntityId(long productId);
 }
