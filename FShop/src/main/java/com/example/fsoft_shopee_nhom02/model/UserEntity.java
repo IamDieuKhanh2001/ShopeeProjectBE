@@ -36,7 +36,7 @@ public class UserEntity {
     }
 
     // Tạo quan hệ với RoleEntity
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", //Tên bảng trung gian
             joinColumns = @JoinColumn(name = "userID"), //Khóa chính để liên kết với bảng Users
             inverseJoinColumns = @JoinColumn(name = "roleId")) //Khóa chính để liên kết với bảng Roles
@@ -48,6 +48,13 @@ public class UserEntity {
     @JoinColumn(name = "cartId", referencedColumnName = "id")
     private CartEntity cartEntity; // Tương ứng với mappedBy ở CartEntity
 
+    public CartEntity getCartEntity() {
+        return cartEntity;
+    }
+
+    public void setCartEntity(CartEntity cartEntity) {
+        this.cartEntity = cartEntity;
+    }
 
     // Constructor, Getter, Setter
     public UserEntity() {
@@ -135,5 +142,13 @@ public class UserEntity {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public Set<RoleEntity> getRoleEntitySet() {
+        return roleEntitySet;
+    }
+
+    public void setRoleEntitySet(Set<RoleEntity> roleEntitySet) {
+        this.roleEntitySet = roleEntitySet;
     }
 }
