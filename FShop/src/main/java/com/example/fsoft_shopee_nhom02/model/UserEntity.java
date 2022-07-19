@@ -1,5 +1,6 @@
 package com.example.fsoft_shopee_nhom02.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -56,6 +57,13 @@ public class UserEntity {
     @JsonManagedReference
     private CartEntity cartEntity; // Tương ứng với mappedBy ở CartEntity
 
+    public CartEntity getCartEntity() {
+        return cartEntity;
+    }
+
+    public void setCartEntity(CartEntity cartEntity) {
+        this.cartEntity = cartEntity;
+    }
 
     // Constructor, Getter, Setter
     public UserEntity() {
@@ -143,5 +151,20 @@ public class UserEntity {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", dob=" + dob +
+                ", gender='" + gender + '\'' +
+                ", avatar='" + avatar + '\'' +
+                '}';
     }
 }

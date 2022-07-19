@@ -28,7 +28,6 @@ public class ShopMapper {
         shop.setDescription(shopDTO.getDescription());
         shop.setStatus(shopDTO.getStatus());
         shop.setTotalProduct(shopDTO.getTotalProduct());
-
         return shop;
     }
 }

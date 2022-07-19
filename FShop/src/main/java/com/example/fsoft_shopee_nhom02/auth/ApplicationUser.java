@@ -29,17 +29,12 @@ public class ApplicationUser implements UserDetails {
         roleEntityList.forEach(item -> {
             role.add(new SimpleGrantedAuthority(item.getRoleName()));
         });
-
-//        for (RoleEntity item : roleEntityList) {
-//            role.add(new SimpleGrantedAuthority(item.getRoleName()));
-//        }
         this.authorities = role;
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         System.out.println("SET author: " + authorities);
         return authorities;
-//        return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.example.fsoft_shopee_nhom02.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.catalina.User;
 
