@@ -46,6 +46,8 @@ public class ProductService {
                 .orElseThrow(() -> new ResourceNotFoundException("Cannot found " + productDTO.getSubCategoryId()));
         product.setSubCategoryEntity(subCategoryEntity);
 
+        productRepository.save(product);
+
 
         return ProductMapper.toProductDTO(product);
     }
