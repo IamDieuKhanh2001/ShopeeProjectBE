@@ -1,5 +1,6 @@
 package com.example.fsoft_shopee_nhom02.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.apache.catalina.User;
@@ -17,7 +18,7 @@ public class RoleEntity {
 
     //Tạo quan hệ với UserEntity
     @ManyToMany(mappedBy = "roleEntitySet")
-    @JsonManagedReference
+    @JsonBackReference
     private Set<UserEntity> userEntitySet;
 
     public Set<UserEntity> getUserEntitySet() {

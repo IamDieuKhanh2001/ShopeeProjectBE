@@ -11,15 +11,17 @@ import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.RoleRepository;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.*;
 
 @Service
+@Transactional
 public class ApplicationUserService implements UserDetailsService {
 
     @Autowired
@@ -40,7 +42,7 @@ public class ApplicationUserService implements UserDetailsService {
         return user.map(ApplicationUser::new).get();
     }
 
-    public Boolean save(UserDTO userDTO) {
+    public UserEntity save(UserDTO userDTO) {
         Optional<UserEntity> DAOUserOptional = userRepository.findByUsername(userDTO.getUsername());
         if(DAOUserOptional.isPresent()){
             throw new IllegalStateException("Username have been used! try another username"); //Username đã dc sd
@@ -67,7 +69,7 @@ public class ApplicationUserService implements UserDetailsService {
         newUser.setAddressEntityList(addressEntityList);
 
         newUser.setCartEntity(new CartEntity()); //tạo 1 cart cho user
-        userRepository.save(newUser);
-        return true;
+
+        return userRepository.save(newUser);
     }
 }

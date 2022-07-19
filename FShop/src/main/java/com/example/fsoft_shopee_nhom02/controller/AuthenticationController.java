@@ -33,7 +33,7 @@ public class AuthenticationController {
     private JwtUtil jwtTokenUtil;
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity<String> saveUser(@RequestBody UserDTO user) throws Exception {
+    public ResponseEntity<?> saveUser(@RequestBody UserDTO user) throws Exception {
         applicationUserService.save(user);
         return new ResponseEntity<>(user.getUsername() + " Have been register successful!", HttpStatus. CREATED);
     }
@@ -75,6 +75,14 @@ public class AuthenticationController {
     //Test api sẽ xóa sau
     @GetMapping("/user")
     public String user() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+
+        if (principal instanceof ApplicationUser) {
+            username = ((ApplicationUser)principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
         String sReturn = "<h1>Welcome User</h1> <h1>Login user:  </h1>";
         return sReturn;
     }

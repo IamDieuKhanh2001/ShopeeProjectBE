@@ -25,6 +25,7 @@ public class UserEntity {
     private String avatar;
     // Tạo quan hệ với AddressEntity
     @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<AddressEntity> addressEntityList =new ArrayList<>();
 
     public List<AddressEntity> getAddressEntityList() {
@@ -36,7 +37,7 @@ public class UserEntity {
     }
 
     // Tạo quan hệ với RoleEntity
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles", //Tên bảng trung gian
             joinColumns = @JoinColumn(name = "userID"), //Khóa chính để liên kết với bảng Users
             inverseJoinColumns = @JoinColumn(name = "roleId")) //Khóa chính để liên kết với bảng Roles
