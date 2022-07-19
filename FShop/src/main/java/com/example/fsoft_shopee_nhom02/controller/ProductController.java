@@ -30,20 +30,20 @@ public class ProductController {
 
     ProductMapper productMapper;
 
-    @PostMapping("")
+    @PostMapping("/admin")
     public ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
         return productService.save(productDTO);
     }
 
     // Sua cac truong cua bang Product
-    @PutMapping("/{id}")
+    @PutMapping("/admin/{id}")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable long id, @RequestBody ProductDTO product) {
         product.setId(id);
         return ResponseEntity.ok(productService.save(product));
     }
 
     // Xoa 1 product trong bang Product (Chua xet bang Type)
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<ProductEntity> deleteProduct(@PathVariable long id) {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not found " + id));
