@@ -10,6 +10,8 @@ public interface SubCategoryService {
     SubCategoryDTO save (SubCategoryDTO subCategoryDTO);
     List<SubCategoryDTO> getAllSubCategory ();
     SubCategoryDTO getSubCategoryById(long id);
+    List<SubCategoryDTO> getSubCategoryByCategoryId(long categoryId);
+    long countSubCategoryByCategoryId(long categoryId);
     SubCategoryDTO update (SubCategoryDTO subCategoryDTO);
     void delete (long id);
 }

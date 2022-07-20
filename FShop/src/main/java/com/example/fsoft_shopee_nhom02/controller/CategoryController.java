@@ -35,6 +35,9 @@ public class CategoryController {
 
     @GetMapping("/category/count")
     public ResponseEntity<?> countByShopId(@RequestParam long shopId){
+        if(categoryService.countCategoryByShopId(shopId) == 0L){
+            return ResponseEntity.ok("Empty!!");
+        }
         return ResponseEntity.ok(categoryService.countCategoryByShopId(shopId));
     }
 

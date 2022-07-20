@@ -72,18 +72,22 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryDTO> getCategoryByShopId(long shopId) {
         List<CategoryDTO> categoryDTOS = new ArrayList<>();
-        List<CategoryEntity> categories = categoryRepository.findByShopId(shopId);
+        List<CategoryEntity> categories = categoryRepository.findAllByShopEntityId(shopId);
 
         for (CategoryEntity category : categories){
             categoryDTOS.add(CategoryMapper.toCategoryDto(category));
         }
-
+        if(categoryDTOS.isEmpty()){
+            throw new NotFoundException("Empty!!");
+        }
         return categoryDTOS;
     }
 
     @Override
     public long countCategoryByShopId(long shopId) {
-        return categoryRepository.getCountByShopId(shopId);
+        shopRepository.findById(shopId).orElseThrow(() ->
+                new NotFoundException("Not found shop with id = "+shopId));
+        return categoryRepository.countByShopEntityId(shopId);
     }
 
     @Override
