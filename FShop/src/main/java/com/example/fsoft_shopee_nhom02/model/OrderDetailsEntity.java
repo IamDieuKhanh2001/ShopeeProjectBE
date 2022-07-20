@@ -13,7 +13,7 @@ public class OrderDetailsEntity {
     private Long id;
     private Long unitPrice;
     private Long quantity;
-
+    private String type;
     //  Tạo quan hệ với bảng Order
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -31,10 +31,19 @@ public class OrderDetailsEntity {
     public OrderDetailsEntity() {
     }
 
-    public OrderDetailsEntity(Long id, Long unitPrice, Long quantity) {
+    public OrderDetailsEntity(Long id, Long unitPrice, Long quantity, String type) {
         this.id = id;
         this.unitPrice = unitPrice;
         this.quantity = quantity;
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Long getId() {

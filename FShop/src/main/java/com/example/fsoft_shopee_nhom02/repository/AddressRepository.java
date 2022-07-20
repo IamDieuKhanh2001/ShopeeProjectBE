@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface AddressRepository extends JpaRepository<AddressEntity,Long> {
-    List<AddressEntity> findByUserEntityId(Long userId);
+    List<AddressEntity> findAddressEntitiesByUserEntityUsername(String username);
 }

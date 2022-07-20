@@ -11,8 +11,6 @@ import java.util.List;
 @Repository
 @EnableJpaRepositories
 public interface CategoryRepository extends JpaRepository<CategoryEntity,Long> {
-    @Query(value = "SELECT COUNT(*) FROM categories WHERE shop_id = :shopId",nativeQuery = true)
-    long getCountByShopId(long shopId);
-    @Query(value = "SELECT * FROM categories WHERE shop_id = :shopId",nativeQuery = true)
-    List<CategoryEntity> findByShopId(long shopId);
+    long countByShopEntityId(long shopId);
+    List<CategoryEntity> findAllByShopEntityId(long shopId);
 }
