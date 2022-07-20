@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -25,5 +26,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderEntity> getAllByUserId(long UserId) {
         return orderRepository.findAllByUserEntitiesId(UserId);
+    }
+
+    @Override
+    public Optional<OrderEntity> findOrderById(Long OrderId) {
+        return orderRepository.findById(OrderId);
     }
 }
