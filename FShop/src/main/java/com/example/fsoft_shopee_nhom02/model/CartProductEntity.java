@@ -36,6 +36,7 @@ public class CartProductEntity {
         this.quantity = quantity;
     }
 
+
     public String getType() {
         return type;
     }
