@@ -38,6 +38,7 @@ public class OrderController {
     @GetMapping("/detail/{id}")
     public Object getOrderDetailByOrderId(@PathVariable String id) {
         return orderDetailService.getOrderDetailByOrderId(Long.parseLong(id));
+//        return orderDetailService.findAllByOrderEntityId(Long.parseLong(id));
     }
 
     @GetMapping("/getone/{id}")

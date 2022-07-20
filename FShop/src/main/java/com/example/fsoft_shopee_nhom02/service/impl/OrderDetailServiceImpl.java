@@ -6,6 +6,7 @@ import com.example.fsoft_shopee_nhom02.service.OrderDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,5 +27,10 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     @Override
     public Object getOrderDetailByOrderId(Long OrderId) {
         return orderDetailRepository.findByOrderId(OrderId);
+    }
+
+    @Override
+    public ArrayList<OrderDetailsEntity> findAllByOrderEntityId(Long OrderDetailId) {
+        return orderDetailRepository.findAllByOrderEntityId(OrderDetailId);
     }
 }
