@@ -2,6 +2,7 @@ package com.example.fsoft_shopee_nhom02.repository;
 
 import com.example.fsoft_shopee_nhom02.model.SubCategoryEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +12,8 @@ import java.util.List;
 @EnableJpaRepositories
 public interface SubCategoryRepository extends JpaRepository<SubCategoryEntity,Long> {
     List<SubCategoryEntity> findAllByCategoryEntityId(long categoryId);
+    @Query(value = "SELECT s.* FROM subcategories s, categories c WHERE s.category_id = c.id " +
+            "AND c.shop_id = :shopId", nativeQuery = true)
+    List<SubCategoryEntity> findAllByShopEntityId(long shopId);
     long countByCategoryEntityId(long categoryId);
 }
