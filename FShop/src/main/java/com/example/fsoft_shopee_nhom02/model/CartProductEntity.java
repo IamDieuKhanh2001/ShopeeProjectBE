@@ -12,6 +12,7 @@ public class CartProductEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long quantity;
+    private String type;
 
     //  Tạo quan hệ với bảng Cart
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,8 +31,18 @@ public class CartProductEntity {
     public CartProductEntity() {
     }
 
-    public CartProductEntity(Long quantity) {
+    public CartProductEntity(Long quantity, String type) {
+        this.type = type;
         this.quantity = quantity;
+    }
+
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Long getQuantity() {
