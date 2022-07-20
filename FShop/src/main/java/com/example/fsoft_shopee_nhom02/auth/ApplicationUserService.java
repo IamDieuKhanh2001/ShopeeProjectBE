@@ -11,6 +11,7 @@ import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.RoleRepository;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -42,13 +43,18 @@ public class ApplicationUserService implements UserDetailsService {
         return user.map(ApplicationUser::new).get();
     }
 
-    public UserEntity save(UserDTO userDTO) {
-        Optional<UserEntity> DAOUserOptional = userRepository.findByUsername(userDTO.getUsername());
-        if(DAOUserOptional.isPresent()){
-            throw new IllegalStateException("Username have been used! try another username"); //Username đã dc sd
+    public Boolean save(UserDTO userDTO) {
+        Optional<UserEntity> DAOUsernameOptional = userRepository.findByUsername(userDTO.getUsername());
+        if(DAOUsernameOptional.isPresent()){
+            throw new IllegalStateException("Username have been used! Please try another username"); //Username đã dc sd
+        }
+
+        Optional<UserEntity> DAOUserEmailOptional = userRepository.findByEmail(userDTO.getEmail());
+        if(DAOUserEmailOptional.isPresent()){
+            throw new IllegalStateException("Email have been registered for another account! Please try another Email"); //Username đã dc sd
         }
         if(userDTO.getPassword() == null || userDTO.getPassword().length() <= 6) {
-            throw new IllegalStateException("Password must be longer than 6 character and can't be null");
+            throw new IllegalStateException("Password must be longer than 7 character and can't be null");
         }
 
         //Nếu không trùng username, encode pwd và lưu vào db user
@@ -70,6 +76,7 @@ public class ApplicationUserService implements UserDetailsService {
 
         newUser.setCartEntity(new CartEntity()); //tạo 1 cart cho user
 
-        return userRepository.save(newUser);
+        userRepository.save(newUser);
+        return true;
     }
 }
