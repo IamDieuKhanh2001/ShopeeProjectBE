@@ -28,13 +28,23 @@ public class OrderController {
         return orderDetailService.getAll();
     }
 
-    @GetMapping("{id}")
-    public Object getOrderByUserId(@PathVariable String id) {
-        return "cc";
+    @GetMapping("/{id}")
+    public Object getAllOrderByUserId(@PathVariable String id) {
+        return orderService.getAllByUserId(Long.parseLong(id));
     }
 
     @GetMapping("/Detail/{id}")
     public Object getOrderDetailByOrderId(@PathVariable String id) {
-        return "cc";
+        return orderDetailService.getOrderDetailByOrderId(Long.parseLong(id));
+    }
+
+    @PostMapping("/CreateOrder")
+    public Object CreateOrder(){
+        return "created order";
+    }
+
+    @GetMapping("/Delete")
+    public Object DeleteOrder(){
+        return "deleted order";
     }
 }
