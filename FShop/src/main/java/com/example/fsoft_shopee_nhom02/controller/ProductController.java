@@ -84,6 +84,8 @@ public class ProductController {
         return typeRepository.findAllByProductEntityId(id);
     }
 
+
+
     @PostMapping("/{id}/type")
     public TypeEntity createProductTypes(@PathVariable long id, @RequestBody TypeEntity typeEntity) {
         ProductEntity productEntity = productRepository.findById(id)
