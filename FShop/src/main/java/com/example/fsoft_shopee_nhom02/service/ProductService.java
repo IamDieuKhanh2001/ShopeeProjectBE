@@ -10,12 +10,15 @@ import com.example.fsoft_shopee_nhom02.model.TypeEntity;
 import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
 import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
 import com.example.fsoft_shopee_nhom02.repository.TypeRepository;
+import org.hibernate.type.YesNoType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -80,5 +83,26 @@ public class ProductService {
         ProductDTO productDTO = ProductMapper.toProductDTO(product);
 
         return productDTO;
+    }
+
+    public List<?> updateAllTypes(long id, List<TypeEntity> typesList) {
+        ProductEntity productEntity = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot found product " + id));
+
+        List<TypeEntity> updatedTypesList = typeRepository.findAllByProductEntityId(id);
+
+//        List<Object> res = new ArrayList<>();
+
+        for (TypeEntity updatedType : updatedTypesList) {
+            TypeEntity type = typesList.get(updatedTypesList.indexOf(updatedType));
+            updatedType.setPrice(type.getPrice());
+            updatedType.setType(type.getType());
+            updatedType.setQuantity(type.getQuantity());
+            updatedType.setProductEntity(productEntity);
+        }
+
+        typeRepository.saveAll(updatedTypesList);
+
+        return updatedTypesList;
     }
 }

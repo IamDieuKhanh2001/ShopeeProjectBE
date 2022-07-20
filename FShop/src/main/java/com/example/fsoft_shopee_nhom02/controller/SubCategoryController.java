@@ -27,6 +27,19 @@ public class SubCategoryController {
         return ResponseEntity.ok(subCategoryService.getSubCategoryById(id));
     }
 
+    @GetMapping("/subcategory")
+    public ResponseEntity<?> getSubCategoryByCategoryId(@RequestParam long categoryId){
+        return ResponseEntity.ok(subCategoryService.getSubCategoryByCategoryId(categoryId));
+    }
+
+    @GetMapping("/subcategory/count")
+    public ResponseEntity<?> countSubCategoryByCategoryId(@RequestParam long categoryId){
+        if(subCategoryService.countSubCategoryByCategoryId(categoryId) == 0L){
+            return ResponseEntity.ok("Empty!!");
+        }
+        return ResponseEntity.ok(subCategoryService.countSubCategoryByCategoryId(categoryId));
+    }
+
     @PutMapping("/subcategory/admin/{id}")
     public ResponseEntity<?> updateSubCategory(@PathVariable long id, @RequestBody SubCategoryDTO model){
         model.setId(id);
