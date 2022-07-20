@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/Order")
+@RequestMapping("/order")
 @CrossOrigin
 public class OrderController {
     private final OrderDetailService orderDetailService;
@@ -20,12 +20,12 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @GetMapping("/All")
+    @GetMapping("/all")
     public Object getAllOrder() {
         return orderService.getAll();
     }
 
-    @GetMapping("/Detail")
+    @GetMapping("/detail")
     public Object getAllOrderDetail() {
         return orderDetailService.getAll();
     }
@@ -35,17 +35,17 @@ public class OrderController {
         return orderService.getAllByUserId(Long.parseLong(id));
     }
 
-    @GetMapping("/Detail/{id}")
+    @GetMapping("/detail/{id}")
     public Object getOrderDetailByOrderId(@PathVariable String id) {
         return orderDetailService.getOrderDetailByOrderId(Long.parseLong(id));
     }
 
-    @GetMapping("/GetOne/{id}")
+    @GetMapping("/getone/{id}")
     public Object getOneOrderById(@PathVariable String id) {
         return orderService.findOrderById(Long.parseLong(id));
     }
 
-    @PostMapping("/CreateOrder")
+    @PostMapping("/createorder")
     public Object CreateOrder(@RequestBody Object req) {
         if(req.getClass()== ArrayList.class){
             System.out.println("Array of Hash Map => Multi Order Product");
@@ -55,7 +55,7 @@ public class OrderController {
         return "created order";
     }
 
-    @GetMapping("/Delete")
+    @GetMapping("/delete")
     public Object DeleteOrder() {
         return "deleted order";
     }
