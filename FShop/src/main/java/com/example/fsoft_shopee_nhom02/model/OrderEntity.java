@@ -1,5 +1,6 @@
 package com.example.fsoft_shopee_nhom02.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -21,6 +22,14 @@ public class OrderEntity extends BaseClassEntity{
     private String payment;
     private Long shippingFee;
     private Long totalPrice;
+
+    //Tạo quan hệ với UserEntity (n:1)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "userId", nullable = false, referencedColumnName = "id")
+    @JsonBackReference
+    //category_id là trường khóa phụ ta tạo ra ở bảng SubCategory để referenced đến trường id của bảng Category
+    private UserEntity userEntities; //Liên hệ với MapBy ở Category
 
     // Tạo quan hệ với OrderDetailsEntity
     @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL)

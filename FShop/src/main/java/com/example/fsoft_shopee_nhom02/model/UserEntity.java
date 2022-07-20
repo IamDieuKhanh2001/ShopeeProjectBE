@@ -36,6 +36,11 @@ public class UserEntity {
         this.addressEntityList = addressEntityList;
     }
 
+    // Tạo quan hệ với OrderEntity (1:n)
+    @OneToMany(mappedBy = "userEntities", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<OrderEntity> orderEntities =new ArrayList<>();
+
     // Tạo quan hệ với RoleEntity
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles", //Tên bảng trung gian
