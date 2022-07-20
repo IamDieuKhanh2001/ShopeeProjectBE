@@ -5,6 +5,7 @@ import com.example.fsoft_shopee_nhom02.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -49,11 +50,10 @@ public class OrderController {
 
     @PostMapping("/CreateOrder")
     public Object CreateOrder(@RequestBody Object req) {
-        System.out.println(req.getClass());
-        if(req.getClass()== LinkedHashMap.class){
-            System.out.println("Hash Map");
+        if(req.getClass()== ArrayList.class){
+            System.out.println("Array of Hash Map => Multi Order Product");
         }else {
-            System.out.println("Array of Hash Map");
+            System.out.println("Hash Map => One Product Order");
         }
         return "created order";
     }
