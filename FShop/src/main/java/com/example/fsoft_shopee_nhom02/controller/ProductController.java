@@ -1,13 +1,8 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
 import com.example.fsoft_shopee_nhom02.dto.ProductDTO;
-import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
-import com.example.fsoft_shopee_nhom02.mapper.ProductMapper;
 import com.example.fsoft_shopee_nhom02.model.ProductEntity;
 import com.example.fsoft_shopee_nhom02.model.TypeEntity;
-import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
-import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
-import com.example.fsoft_shopee_nhom02.repository.TypeRepository;
 import com.example.fsoft_shopee_nhom02.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,16 +16,7 @@ import java.util.Map;
 @RequestMapping("/products")
 public class ProductController {
     @Autowired
-    ProductRepository productRepository;
-
-    @Autowired
     ProductService productService;
-
-    @Autowired
-    SubCategoryRepository subCategoryRepository;
-
-    @Autowired
-    TypeRepository typeRepository;
 
     @PostMapping("/admin")
     public ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
@@ -47,12 +33,7 @@ public class ProductController {
     // Xoa 1 product trong bang Product (Chua xet bang Type)
     @DeleteMapping("/admin/{id}")
     public ResponseEntity<ProductEntity> deleteProduct(@PathVariable long id) {
-        ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Not found " + id));
-
-        productRepository.delete(product);
-
-        typeRepository.deleteAllByProductEntityId(id);
+        productService.deleteProduct(id);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
@@ -69,7 +50,7 @@ public class ProductController {
     // Dem so products co trong Database
     @GetMapping("/all-items")
     public int countProducts() {
-        return (int) productRepository.count();
+        return productService.count();
     }
 
     @GetMapping("/{id}")
@@ -80,24 +61,25 @@ public class ProductController {
     // Lay types cua san pham tuong ung
     @GetMapping("/{id}/types")
     public List<TypeEntity> getProductTypes(@PathVariable long id) {
-        return typeRepository.findAllByProductEntityId(id);
+        return productService.getTypes(id);
     }
 
     @PostMapping("/{id}/types")
     public List<TypeEntity> createProductTypes(@PathVariable long id, @RequestBody List<TypeEntity> types) {
-        ProductEntity productEntity = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cannot found " + id));
-
-        for(TypeEntity type : types) {
-            type.setProductEntity(productEntity);
-            typeRepository.save(type);
-        }
-
-        return types;
+        return productService.createTypes(id, types);
     }
 
     @PutMapping("/{id}/types")
     public List<?> updateProductTypes(@PathVariable long id, @RequestBody List<TypeEntity> types) {
         return productService.updateAllTypes(id, types);
+    }
+
+    @GetMapping("/search")
+    public String searchProduct(@RequestParam Map<String, String> requestParams) {
+        String page = requestParams.get("page");
+        String limit = requestParams.get("limit");
+        String keyword = requestParams.get("keyword");
+
+        return keyword;
     }
 }

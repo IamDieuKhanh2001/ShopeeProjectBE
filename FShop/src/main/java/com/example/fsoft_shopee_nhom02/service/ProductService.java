@@ -85,6 +85,35 @@ public class ProductService {
         return productDTO;
     }
 
+    public void deleteProduct(long id) {
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Not found " + id));
+
+        productRepository.delete(product);
+
+        typeRepository.deleteAllByProductEntityId(id);
+    }
+
+    public int count() {
+        return (int) productRepository.count();
+    }
+
+    public List<TypeEntity> getTypes(long id) {
+        return typeRepository.findAllByProductEntityId(id);
+    }
+
+    public List<TypeEntity> createTypes(long id, List<TypeEntity> types) {
+        ProductEntity productEntity = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot found " + id));
+
+        for(TypeEntity type : types) {
+            type.setProductEntity(productEntity);
+            typeRepository.save(type);
+        }
+
+        return types;
+    }
+
     public List<?> updateAllTypes(long id, List<TypeEntity> typesList) {
         ProductEntity productEntity = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cannot found product " + id));
