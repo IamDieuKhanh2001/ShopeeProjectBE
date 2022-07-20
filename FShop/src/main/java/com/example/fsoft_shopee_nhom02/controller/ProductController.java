@@ -4,7 +4,6 @@ import com.example.fsoft_shopee_nhom02.dto.ProductDTO;
 import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.ProductMapper;
 import com.example.fsoft_shopee_nhom02.model.ProductEntity;
-import com.example.fsoft_shopee_nhom02.model.SubCategoryEntity;
 import com.example.fsoft_shopee_nhom02.model.TypeEntity;
 import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
 import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
@@ -84,13 +83,21 @@ public class ProductController {
         return typeRepository.findAllByProductEntityId(id);
     }
 
-    @PostMapping("/{id}/type")
-    public TypeEntity createProductTypes(@PathVariable long id, @RequestBody TypeEntity typeEntity) {
+    @PostMapping("/{id}/types")
+    public List<TypeEntity> createProductTypes(@PathVariable long id, @RequestBody List<TypeEntity> types) {
         ProductEntity productEntity = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cannot found " + id));
 
-        typeEntity.setProductEntity(productEntity);
+        for(TypeEntity type : types) {
+            type.setProductEntity(productEntity);
+            typeRepository.save(type);
+        }
 
-        return typeRepository.save(typeEntity);
+        return types;
+    }
+
+    @PutMapping("/{id}/types")
+    public List<?> updateProductTypes(@PathVariable long id, @RequestBody List<TypeEntity> types) {
+        return productService.updateAllTypes(id, types);
     }
 }
