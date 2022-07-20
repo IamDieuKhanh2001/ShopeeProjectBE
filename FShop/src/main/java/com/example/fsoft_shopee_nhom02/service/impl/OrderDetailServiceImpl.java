@@ -22,4 +22,9 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     public List<OrderDetailsEntity> getAll() {
         return orderDetailRepository.findAll();
     }
+
+    @Override
+    public Object getOrderDetailByOrderId(Long OrderId) {
+        return orderDetailRepository.findByOrderId(OrderId);
+    }
 }
