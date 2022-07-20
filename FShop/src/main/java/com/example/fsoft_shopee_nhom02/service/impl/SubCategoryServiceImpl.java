@@ -55,6 +55,28 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
     @Override
+    public List<SubCategoryDTO> getSubCategoryByCategoryId(long categoryId) {
+        List<SubCategoryDTO> subCategoryDTOS = new ArrayList<>();
+        List<SubCategoryEntity> subCategories = subCategoryRepository.findAllByCategoryEntityId(categoryId);
+        for(SubCategoryEntity subCategory : subCategories){
+            subCategoryDTOS.add(SubCategoryMapper.toSubCategoryDto(subCategory));
+        }
+
+        if(subCategoryDTOS.isEmpty()){
+            throw new NotFoundException("Empty!!");
+        }
+
+        return subCategoryDTOS;
+    }
+
+    @Override
+    public long countSubCategoryByCategoryId(long categoryId) {
+        categoryRepository.findById(categoryId).orElseThrow(() ->
+                new NotFoundException("Not found category with id = "+categoryId));
+        return subCategoryRepository.countByCategoryEntityId(categoryId);
+    }
+
+    @Override
     public SubCategoryDTO update(SubCategoryDTO subCategoryDTO) {
         CategoryEntity category = categoryRepository.findById(subCategoryDTO.getCategoryId())
                 .orElseThrow(() -> new NotFoundException("Not found category with id = "
