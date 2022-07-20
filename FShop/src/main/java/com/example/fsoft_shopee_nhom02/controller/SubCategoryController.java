@@ -27,9 +27,14 @@ public class SubCategoryController {
         return ResponseEntity.ok(subCategoryService.getSubCategoryById(id));
     }
 
-    @GetMapping("/subcategory")
+    @GetMapping("/subcategory/get")
     public ResponseEntity<?> getSubCategoryByCategoryId(@RequestParam long categoryId){
         return ResponseEntity.ok(subCategoryService.getSubCategoryByCategoryId(categoryId));
+    }
+
+    @GetMapping("/subcategory")
+    public ResponseEntity<?> getSubCategoryByShopId(@RequestParam long shopId){
+        return ResponseEntity.ok(subCategoryService.getSubCategoryByShopId(shopId));
     }
 
     @GetMapping("/subcategory/count")
