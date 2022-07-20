@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface OrderDetailService {
     List<OrderDetailsEntity> getAll();
+
+    Object getOrderDetailByOrderId(Long OrderId);
 }
