@@ -80,6 +80,7 @@ public class CategoryServiceImpl implements CategoryService {
         if(categoryDTOS.isEmpty()){
             throw new NotFoundException("Empty!!");
         }
+
         return categoryDTOS;
     }
 
