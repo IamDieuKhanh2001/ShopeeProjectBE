@@ -38,13 +38,18 @@ public class OrderController {
         return orderDetailService.getOrderDetailByOrderId(Long.parseLong(id));
     }
 
+    @GetMapping("/GetOne/{id}")
+    public Object getOneOrderById(@PathVariable String id) {
+        return orderService.findOrderById(Long.parseLong(id));
+    }
+
     @PostMapping("/CreateOrder")
-    public Object CreateOrder(){
+    public Object CreateOrder() {
         return "created order";
     }
 
     @GetMapping("/Delete")
-    public Object DeleteOrder(){
+    public Object DeleteOrder() {
         return "deleted order";
     }
 }
