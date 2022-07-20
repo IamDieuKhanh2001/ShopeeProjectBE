@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import static com.example.fsoft_shopee_nhom02.security.ApplicationUserRole.*;
 @Configuration
 @EnableWebSecurity
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -44,8 +45,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "/login", "/register", "/products/**/**", "/products/*", "/products",
                          "/products/admin/*", "/test").permitAll()
-                .antMatchers("/user").hasAnyRole("ADMIN", "USER")
-                .antMatchers("/admin").hasRole("ADMIN")
+                .antMatchers("/user").hasAnyRole(ADMIN.name(), USER.name())
+                .antMatchers("/admin").hasRole(ADMIN.name())
                 .anyRequest()
                 .authenticated()
                 .and()
