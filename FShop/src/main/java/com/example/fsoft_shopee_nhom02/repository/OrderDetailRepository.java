@@ -5,7 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 
 @Repository
 public interface OrderDetailRepository extends JpaRepository<OrderDetailsEntity, Long> {
@@ -28,4 +29,6 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetailsEntity,
             "                     left join orderdetails od on o.id = od.order_id\n" +
             "            where od.order_id=:OrderId", nativeQuery = true)
     Object findByOrderId(@Param("OrderId") Long OrderId);
+
+    ArrayList<OrderDetailsEntity> findAllByOrderEntityId(Long OrderDetailId);
 }
