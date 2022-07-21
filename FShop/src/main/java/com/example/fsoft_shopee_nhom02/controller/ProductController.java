@@ -1,6 +1,7 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
 import com.example.fsoft_shopee_nhom02.dto.ProductDTO;
+import com.example.fsoft_shopee_nhom02.dto.ProductSearchResult;
 import com.example.fsoft_shopee_nhom02.model.ProductEntity;
 import com.example.fsoft_shopee_nhom02.model.TypeEntity;
 import com.example.fsoft_shopee_nhom02.service.ProductService;
@@ -75,11 +76,11 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public String searchProduct(@RequestParam Map<String, String> requestParams) {
+    public ProductSearchResult searchProduct(@RequestParam Map<String, String> requestParams) {
         String page = requestParams.get("page");
         String limit = requestParams.get("limit");
         String keyword = requestParams.get("keyword");
 
-        return keyword;
+        return productService.search(page, limit, keyword);
     }
 }
