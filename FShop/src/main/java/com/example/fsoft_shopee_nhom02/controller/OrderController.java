@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/order")
@@ -68,8 +69,15 @@ public class OrderController {
         return "created order at " + GlobalVariable.datetimeFormat.format(new Date());
     }
 
-    @GetMapping("/delete")
-    public Object DeleteOrder() {
+    @PostMapping("/update_order")
+    public Object UpdateOrder(@RequestBody Map<String, String> req) {
+        System.out.println(req);
+        return "updated order";
+    }
+
+    @PostMapping("/delete")
+    public Object DeleteOrder(@RequestBody Map<String, String> req) {
+        System.out.println(req);
         return "deleted order";
     }
 }
