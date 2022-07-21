@@ -1,11 +1,13 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
+import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
 import com.example.fsoft_shopee_nhom02.service.OrderDetailService;
 import com.example.fsoft_shopee_nhom02.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/order")
@@ -41,19 +43,29 @@ public class OrderController {
 //        return orderDetailService.findAllByOrderEntityId(Long.parseLong(id));
     }
 
-    @GetMapping("/getone/{id}")
+    @GetMapping("/get_order/{id}")
     public Object getOneOrderById(@PathVariable String id) {
         return orderService.findOrderById(Long.parseLong(id));
     }
 
-    @PostMapping("/createorder")
+    @PostMapping("/create_order")
     public Object CreateOrder(@RequestBody Object req) {
-        if(req.getClass()== ArrayList.class){
+        // create order detail Entities
+        if (req.getClass() == ArrayList.class) {
             System.out.println("Array of Hash Map => Multi Order Product");
-        }else {
+        } else {
             System.out.println("Hash Map => One Product Order");
         }
-        return "created order";
+
+        // calculate for order Entity
+
+        // create order Entity
+
+        // insert order to DB
+
+        // insert order detail to DB
+
+        return "created order at " + GlobalVariable.datetimeFormat.format(new Date());
     }
 
     @GetMapping("/delete")
