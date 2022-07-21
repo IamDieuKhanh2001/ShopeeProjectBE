@@ -11,6 +11,7 @@ public interface SubCategoryService {
     List<SubCategoryDTO> getAllSubCategory ();
     SubCategoryDTO getSubCategoryById(long id);
     List<SubCategoryDTO> getSubCategoryByCategoryId(long categoryId);
+    List<SubCategoryDTO> getSubCategoryByShopId(long shopId);
     long countSubCategoryByCategoryId(long categoryId);
     SubCategoryDTO update (SubCategoryDTO subCategoryDTO);
     void delete (long id);

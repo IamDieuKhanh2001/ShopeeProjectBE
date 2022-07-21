@@ -38,7 +38,7 @@ public class ProductService {
         if(productDTO.getId() != 0) {
             // UPDATE
             product = productRepository.findById(productDTO.getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Cannot found " + productDTO.getId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Cannot found product id " + productDTO.getId()));
             ProductMapper.toProductEntity(product, productDTO);
         }
         else {
@@ -46,7 +46,7 @@ public class ProductService {
             product = ProductMapper.toProductEntity(productDTO);
         }
         SubCategoryEntity subCategoryEntity = subCategoryRepository.findById(productDTO.getSubCategoryId())
-                .orElseThrow(() -> new ResourceNotFoundException("Cannot found " + productDTO.getSubCategoryId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot found category id " + productDTO.getSubCategoryId()));
         product.setSubCategoryEntity(subCategoryEntity);
 
         productRepository.save(product);
@@ -70,7 +70,7 @@ public class ProductService {
         }
 
         if(products.isEmpty()) {
-            throw new ResourceNotFoundException("Empty!");
+            throw new ResourceNotFoundException("Empty data!");
         }
 
         return productDTOS;
@@ -78,16 +78,45 @@ public class ProductService {
 
     public ProductDTO getDetail(long id) {
         ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cannot found " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot found product id " + id));
 
         ProductDTO productDTO = ProductMapper.toProductDTO(product);
 
         return productDTO;
     }
 
+    public void deleteProduct(long id) {
+        ProductEntity product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot found product id " + id));
+
+        productRepository.delete(product);
+
+        typeRepository.deleteAllByProductEntityId(id);
+    }
+
+    public int count() {
+        return (int) productRepository.count();
+    }
+
+    public List<TypeEntity> getTypes(long id) {
+        return typeRepository.findAllByProductEntityId(id);
+    }
+
+    public List<TypeEntity> createTypes(long id, List<TypeEntity> types) {
+        ProductEntity productEntity = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot found product id " + id));
+
+        for(TypeEntity type : types) {
+            type.setProductEntity(productEntity);
+            typeRepository.save(type);
+        }
+
+        return types;
+    }
+
     public List<?> updateAllTypes(long id, List<TypeEntity> typesList) {
         ProductEntity productEntity = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cannot found product " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot found product id " + id));
 
         List<TypeEntity> updatedTypesList = typeRepository.findAllByProductEntityId(id);
 

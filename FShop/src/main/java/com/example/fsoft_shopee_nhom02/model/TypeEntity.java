@@ -64,7 +64,6 @@ public class TypeEntity {
         this.price = price;
     }
 
-
     public void setProductEntity(ProductEntity productEntity) {
         this.productEntity = productEntity;
     }
