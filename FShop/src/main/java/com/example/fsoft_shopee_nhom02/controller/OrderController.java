@@ -75,9 +75,8 @@ public class OrderController {
         return "updated order";
     }
 
-    @PostMapping("/delete")
-    public Object DeleteOrder(@RequestBody Map<String, String> req) {
-        System.out.println(req);
+    @PostMapping("/cancel_order/{id}")
+    public Object DeleteOrder(@PathVariable String id) {
         return "deleted order";
     }
 }
