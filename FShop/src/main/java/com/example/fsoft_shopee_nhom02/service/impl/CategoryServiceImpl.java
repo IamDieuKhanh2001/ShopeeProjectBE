@@ -95,4 +95,17 @@ public class CategoryServiceImpl implements CategoryService {
     public void delete(long id) {
         categoryRepository.deleteById(id);
     }
+
+    @Override
+    public List<CategoryDTO> getRandomCategory(Integer limit) {
+        limit = (limit == null) ? 6 : limit;
+        List<CategoryDTO> categoryDTOS = new ArrayList<>();
+        List<CategoryEntity> categories = categoryRepository.findRandomByTop(limit);
+
+        for(CategoryEntity category : categories){
+            categoryDTOS.add(CategoryMapper.toCategoryDto(category));
+        }
+
+        return categoryDTOS;
+    }
 }

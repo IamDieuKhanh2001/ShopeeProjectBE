@@ -13,4 +13,6 @@ import java.util.List;
 public interface CategoryRepository extends JpaRepository<CategoryEntity,Long> {
     long countByShopEntityId(long shopId);
     List<CategoryEntity> findAllByShopEntityId(long shopId);
+    @Query(value = "SELECT * FROM categories ORDER BY rand() limit ?",nativeQuery = true)
+    List<CategoryEntity> findRandomByTop(Integer limit);
 }

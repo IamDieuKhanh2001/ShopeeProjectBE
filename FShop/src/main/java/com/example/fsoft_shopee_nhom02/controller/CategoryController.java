@@ -41,6 +41,11 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.countCategoryByShopId(shopId));
     }
 
+    @GetMapping("/category/random")
+    public ResponseEntity<?> getRandomCategory(@RequestParam(required = false, defaultValue = "") Integer categoryNumber){
+        return ResponseEntity.ok(categoryService.getRandomCategory(categoryNumber));
+    }
+
     @PutMapping("/category/admin/{id}")
     public ResponseEntity<?> updateCategory(@PathVariable long id, @RequestBody CategoryDTO model){
         model.setId(id);
