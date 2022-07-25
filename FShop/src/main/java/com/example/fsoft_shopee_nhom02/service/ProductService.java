@@ -2,7 +2,7 @@
 package com.example.fsoft_shopee_nhom02.service;
 
 import com.example.fsoft_shopee_nhom02.dto.ProductDTO;
-import com.example.fsoft_shopee_nhom02.dto.ProductSearchResult;
+import com.example.fsoft_shopee_nhom02.dto.ProductOutputResult;
 import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.ProductMapper;
 import com.example.fsoft_shopee_nhom02.model.ProductEntity;
@@ -53,34 +53,48 @@ public class ProductService {
         return ProductMapper.toProductDTO(product);
     }
 
-    public List<ProductDTO> getAllProducts(String page, String limit) {
+    // Ham xu ly viec chuyen tu product sang DTO khi co truong Price
+    public void dtoHandler(ProductEntity product, List<ProductDTO> productDTOS) {
+        ProductDTO productDTO = ProductMapper.toProductDTO(product);
+        List<Long> priceList = typeRepository.findFirstPrice(product.getId());
+        long price = priceList.isEmpty() ? 0 : priceList.get(0);
+        productDTO.setPrice(price);
+        productDTOS.add(productDTO);
+    }
+
+    public ProductOutputResult getAllProducts(String page, String limit) {
+        ProductOutputResult result = new ProductOutputResult();
+
         page = (page == null) ? "1"  : page;
         limit = (limit == null) ? "12" : limit;
 
         List<ProductDTO> productDTOS = new ArrayList<>();
 
-        Pageable pageable = PageRequest.of((Integer.valueOf(page) - 1), Integer.valueOf(limit));
+        Pageable pageable = PageRequest.of((Integer.parseInt(page) - 1), Integer.parseInt(limit));
 
         List<ProductEntity> products = productRepository.findAll(pageable).getContent();
 
         for (ProductEntity product : products) {
-            productDTOS.add(ProductMapper.toProductDTO(product));
+            dtoHandler(product, productDTOS);
         }
 
         if(products.isEmpty()) {
             throw new ResourceNotFoundException("Empty data!");
         }
 
-        return productDTOS;
+        long productsNumber = productRepository.count();
+
+        result.setProductsList(productDTOS);
+        result.setProductsNumber(productsNumber);
+
+        return result;
     }
 
     public ProductDTO getDetail(long id) {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cannot found product id " + id));
 
-        ProductDTO productDTO = ProductMapper.toProductDTO(product);
-
-        return productDTO;
+        return ProductMapper.toProductDTO(product);
     }
 
     public void deleteProduct(long id) {
@@ -90,10 +104,6 @@ public class ProductService {
         productRepository.delete(product);
 
         typeRepository.deleteAllByProductEntityId(id);
-    }
-
-    public int count() {
-        return (int) productRepository.count();
     }
 
     public List<TypeEntity> getTypes(long id) {
@@ -140,30 +150,74 @@ public class ProductService {
           va list san pham.
 
      */
-    public ProductSearchResult search(String page, String limit, String keyword) {
-        ProductSearchResult result = new ProductSearchResult();
+    public ProductOutputResult search(String page, String limit, String keyword, String minPrice, String maxPrice) {
+        ProductOutputResult result = new ProductOutputResult();
+        long defaultMaxPrice = typeRepository.findMaxPrice() + 1;
 
         page = (page == null) ? "1"  : page;
         limit = (limit == null) ? "12" : limit;
+        minPrice = (minPrice == null) ? "-1" : minPrice;
+        maxPrice = (maxPrice == null) ? String.valueOf(defaultMaxPrice) : maxPrice;
 
-        Pageable pageable = PageRequest.of((Integer.valueOf(page) -1), Integer.valueOf(limit));
-        List<ProductEntity> productEntities = productRepository.findAllBySearchQuery(keyword, pageable);
-
+        List<ProductEntity> productEntities;
         List<ProductDTO> productDTOS = new ArrayList<>();
 
-        if(productEntities.isEmpty()) {
-            throw new ResourceNotFoundException("No result!");
+        // Search by Price range
+        if(Long.parseLong(minPrice) < Long.parseLong(maxPrice) && Long.parseLong(minPrice) >= 0
+            || Long.parseLong(maxPrice) <= defaultMaxPrice - 1) {
+
+            productEntities = (keyword == null) ? productRepository.findAll()
+                : productRepository.findAllBySearchQuery(keyword);
+            List<ProductDTO> priceFilterDTOS = new ArrayList<>();
+
+            for (ProductEntity product : productEntities) {
+                dtoHandler(product, productDTOS);
+            }
+
+            // Push the Product DTO that has valid price range to a new list
+            for(ProductDTO productDTO : productDTOS) {
+                if (productDTO.getPrice() > Long.parseLong(minPrice) - 1 &&
+                        productDTO.getPrice() < Long.parseLong(maxPrice) + 1) {
+
+                    priceFilterDTOS.add(productDTO);
+                }
+            }
+
+            int totalPage = (int) Math.ceil((double) priceFilterDTOS.size() / Integer.parseInt(limit));
+
+            if(priceFilterDTOS.isEmpty() || totalPage < Integer.parseInt(page)) {
+                throw new ResourceNotFoundException("No result!");
+            }
+
+            int startIndex = (Integer.parseInt(page) - 1) * Integer.parseInt(limit);
+            int endIndex = (Integer.parseInt(limit) < priceFilterDTOS.size())
+                        ? Integer.parseInt(page) * Integer.parseInt(limit) : Integer.parseInt(page) * priceFilterDTOS.size();
+
+            if(endIndex > priceFilterDTOS.size() - 1) {
+                endIndex = priceFilterDTOS.size();
+            }
+
+            result.setProductsNumber(priceFilterDTOS.size());
+            result.setProductsList(priceFilterDTOS.subList(startIndex, endIndex));
         }
+        // Default search
+        else {
+            Pageable pageable = PageRequest.of((Integer.parseInt(page) - 1), Integer.parseInt(limit));
+            productEntities = (keyword == null) ? productRepository.findAll(pageable).getContent()
+                   : productRepository.findAllBySearchQuery(keyword, pageable);
+            long productsNumber = (keyword == null) ? productRepository.count()
+                    : productRepository.countAllBySearchQuery(keyword);
 
-        for (ProductEntity productEntity : productEntities) {
-            productDTOS.add(ProductMapper.toProductDTO(productEntity));
+            if(productEntities.isEmpty()) {
+                throw new ResourceNotFoundException("No result!");
+            }
+
+            for (ProductEntity product : productEntities) {
+                dtoHandler(product, productDTOS);
+            }
+            result.setProductsNumber(productsNumber);
+            result.setProductsList(productDTOS);
         }
-
-        long productsNumber = productRepository.countAllBySearchQuery(keyword);
-
-        result.setProductsNumber(productsNumber);
-        result.setProductsList(productDTOS);
-        result.setKeyWord(keyword);
 
         return result;
     }

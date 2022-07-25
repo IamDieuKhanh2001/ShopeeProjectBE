@@ -11,9 +11,13 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
-    @Query(value = "SELECT pro from ProductEntity pro where pro.name LIKE %?1%")
+    @Query(value = "SELECT pro FROM ProductEntity pro WHERE pro.name LIKE %?1%")
     List<ProductEntity> findAllBySearchQuery(String query, Pageable pageable);
 
-    @Query(value = "SELECT count(pro) from ProductEntity pro where pro.name LIKE %?1%")
+    @Query(value = "SELECT pro FROM ProductEntity pro WHERE pro.name LIKE %?1%")
+    List<ProductEntity> findAllBySearchQuery(String query);
+
+    @Query(value = "SELECT count(pro) FROM ProductEntity pro WHERE pro.name LIKE %?1%")
     long countAllBySearchQuery(String query);
+
 }

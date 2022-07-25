@@ -1,7 +1,7 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
 import com.example.fsoft_shopee_nhom02.dto.ProductDTO;
-import com.example.fsoft_shopee_nhom02.dto.ProductSearchResult;
+import com.example.fsoft_shopee_nhom02.dto.ProductOutputResult;
 import com.example.fsoft_shopee_nhom02.model.ProductEntity;
 import com.example.fsoft_shopee_nhom02.model.TypeEntity;
 import com.example.fsoft_shopee_nhom02.service.ProductService;
@@ -41,17 +41,11 @@ public class ProductController {
 
     // Lay products co phan trang
     @GetMapping("")
-    public List<ProductDTO> getAllProducts(@RequestParam Map<String, String> requestParams) {
+    public ProductOutputResult getAllProducts(@RequestParam Map<String, String> requestParams) {
         String page = requestParams.get("page");
         String limit = requestParams.get("limit");
 
         return productService.getAllProducts(page, limit);
-    }
-
-    // Dem so products co trong Database
-    @GetMapping("/all-items")
-    public int countProducts() {
-        return productService.count();
     }
 
     @GetMapping("/{id}")
@@ -76,11 +70,13 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public ProductSearchResult searchProduct(@RequestParam Map<String, String> requestParams) {
+    public ProductOutputResult searchProduct(@RequestParam Map<String, String> requestParams) {
         String page = requestParams.get("page");
         String limit = requestParams.get("limit");
         String keyword = requestParams.get("keyword");
+        String minPrice = requestParams.get("min-price");
+        String maxPrice = requestParams.get("max-price");
 
-        return productService.search(page, limit, keyword);
+        return productService.search(page, limit, keyword, minPrice, maxPrice);
     }
 }

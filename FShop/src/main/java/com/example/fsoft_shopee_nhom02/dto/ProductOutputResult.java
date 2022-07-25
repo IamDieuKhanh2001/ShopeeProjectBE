@@ -2,26 +2,16 @@ package com.example.fsoft_shopee_nhom02.dto;
 
 import java.util.List;
 
-public class ProductSearchResult {
-    private String keyWord;
+public class ProductOutputResult {
     private long productsNumber;
     private List<ProductDTO> productsList;
 
-    public ProductSearchResult() {
+    public ProductOutputResult() {
     }
 
-    public ProductSearchResult(String keyWord, int productsNumber, List<ProductDTO> productsList) {
-        this.keyWord = keyWord;
+    public ProductOutputResult(long productsNumber, List<ProductDTO> productsList) {
         this.productsNumber = productsNumber;
         this.productsList = productsList;
-    }
-
-    public String getKeyWord() {
-        return keyWord;
-    }
-
-    public void setKeyWord(String keyWord) {
-        this.keyWord = keyWord;
     }
 
     public long getProductsNumber() {
