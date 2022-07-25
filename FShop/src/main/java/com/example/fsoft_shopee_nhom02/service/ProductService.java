@@ -183,12 +183,14 @@ public class ProductService {
                 }
             }
 
+            // Pagination code below after filter the price range
             int totalPage = (int) Math.ceil((double) priceFilterDTOS.size() / Integer.parseInt(limit));
 
             if(priceFilterDTOS.isEmpty() || totalPage < Integer.parseInt(page)) {
                 throw new ResourceNotFoundException("No result!");
             }
 
+            // Start index and end index
             int startIndex = (Integer.parseInt(page) - 1) * Integer.parseInt(limit);
             int endIndex = (Integer.parseInt(limit) < priceFilterDTOS.size())
                         ? Integer.parseInt(page) * Integer.parseInt(limit) : Integer.parseInt(page) * priceFilterDTOS.size();
@@ -200,7 +202,7 @@ public class ProductService {
             result.setProductsNumber(priceFilterDTOS.size());
             result.setProductsList(priceFilterDTOS.subList(startIndex, endIndex));
         }
-        // Default search
+        // Default search if price range equal to null or not valid min max
         else {
             Pageable pageable = PageRequest.of((Integer.parseInt(page) - 1), Integer.parseInt(limit));
             productEntities = (keyword == null) ? productRepository.findAll(pageable).getContent()
