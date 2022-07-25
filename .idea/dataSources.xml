@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:mysql://localhost:3306/shopee</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="heroku_b21de1ad68ea7f6@us-cdbr-east-06.cleardb.net" uuid="7e945803-bd6b-4b16-9146-b466ef9e4d37">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://us-cdbr-east-06.cleardb.net:3306/heroku_b21de1ad68ea7f6</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

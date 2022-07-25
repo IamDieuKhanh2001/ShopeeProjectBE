@@ -44,11 +44,13 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/", "/login", "/register", "/products/**/**", "/products/*", "/products",
-                         "/products/admin/*", "/test","/users/*","/order/**", "/address/**").permitAll()
-                .antMatchers("/user").hasAnyRole(ADMIN.name(), USER.name())
-                .antMatchers("/admin").hasRole(ADMIN.name())
+                         "/products/admin/*", "/test","/order/**", "/address/**",
+                         "/recoveryPassword/**").permitAll() //Các API không cần đăng nhập
+                .antMatchers("/user", "/users/**").hasAnyRole(ADMIN.name(), USER.name()) //Các API cần đăng nhập bằng tk admin, user
+                .antMatchers("/admin").hasRole(ADMIN.name()) //Các API cần đăng nhập bằng tk admin
+                .antMatchers().hasRole(USER.name()) //Các API cần đăng nhập bằng tk user
                 .anyRequest()
-                .authenticated()
+                .authenticated() //Các API còn lại cần phải đăng nhập
                 .and()
                 .exceptionHandling().and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

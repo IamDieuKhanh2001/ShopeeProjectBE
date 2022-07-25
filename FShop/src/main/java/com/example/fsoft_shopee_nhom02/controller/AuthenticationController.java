@@ -5,8 +5,9 @@ import com.example.fsoft_shopee_nhom02.auth.ApplicationUserService;
 import com.example.fsoft_shopee_nhom02.auth.JwtUtil;
 import com.example.fsoft_shopee_nhom02.dto.AuthenticationRequest;
 import com.example.fsoft_shopee_nhom02.dto.AuthenticationResponse;
+import com.example.fsoft_shopee_nhom02.dto.SuccessResponseDTO;
 import com.example.fsoft_shopee_nhom02.dto.UserDTO;
-import com.example.fsoft_shopee_nhom02.model.UserEntity;
+import com.example.fsoft_shopee_nhom02.service.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import java.util.*;
 
 @RestController
@@ -32,10 +34,12 @@ public class AuthenticationController {
     @Autowired
     private JwtUtil jwtTokenUtil;
 
+
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity<?> saveUser(@RequestBody UserDTO user) throws Exception {
+    public SuccessResponseDTO saveUser(@RequestBody UserDTO user) {
         applicationUserService.save(user);
-        return new ResponseEntity<>(user.getUsername() + " Have been register successful!", HttpStatus. CREATED);
+        return new SuccessResponseDTO(HttpStatus.CREATED,
+                "Tạo tài khoản user " + user.getUsername() + " thành công");
     }
 
     @PostMapping("/login")
@@ -56,6 +60,8 @@ public class AuthenticationController {
                         authenticationRequest.getUsername(),
                         (Set<GrantedAuthority>) userDetails.getAuthorities()));
     }
+
+
     //Test api sẽ xóa sau
     @GetMapping("/test")
     public String test() {
