@@ -8,6 +8,7 @@ import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
 import com.example.fsoft_shopee_nhom02.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -18,6 +19,9 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<UserEntity> getAllUser() {
@@ -85,5 +89,16 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("User with this email not found!!");
         }
         return userEntityList;
+    }
+
+    @Override
+    public UserEntity changeUserPasswordByEmail(String newPassword, String email) {
+        System.out.println(newPassword);
+        UserEntity userChangePassword = userRepository.findByEmail(email)
+                .map(user -> {
+                    user.setPassword(passwordEncoder.encode(newPassword));
+                    return userRepository.save(user);
+                }).orElseThrow(() -> new ResourceNotFoundException("Cannot found user with email = " + email));
+        return userChangePassword;
     }
 }

@@ -2,19 +2,18 @@ package com.example.fsoft_shopee_nhom02.controller;
 
 import com.example.fsoft_shopee_nhom02.config.EmailTemplate;
 import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
+import com.example.fsoft_shopee_nhom02.dto.OtpSendMailResponseDTO;
 import com.example.fsoft_shopee_nhom02.dto.RecoveryPasswordDTO;
-import com.example.fsoft_shopee_nhom02.model.AddressEntity;
+import com.example.fsoft_shopee_nhom02.dto.SuccessResponseDTO;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.service.EmailSenderService;
 import com.example.fsoft_shopee_nhom02.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import java.util.Map;
-import java.util.Random;
 
 @RestController
 @RequestMapping("/recoveryPassword")
@@ -27,7 +26,7 @@ public class PasswordRecoveryController {
     UserService userService;
 
     @GetMapping(path = "/getOtp")
-    public RecoveryPasswordDTO recoveryByEmail(@RequestParam Map<String, String> requestParams) {
+    public OtpSendMailResponseDTO sendOtpRecoveryCodeToUserEmail(@RequestParam Map<String, String> requestParams) {
         if(requestParams.get("email") == null) {
             throw new IllegalStateException("change password by address for user fail! need ?email= param");
         }
@@ -40,25 +39,25 @@ public class PasswordRecoveryController {
             throw new IllegalStateException("gmail gửi thất bại");
         }
 
-        return new RecoveryPasswordDTO("Valid", otpCode);
+        return new OtpSendMailResponseDTO("Valid", otpCode);
     }
 
     public void sendRecoveryEmail(String addressGmail, String username, String otpCode) throws MessagingException {
         emailSenderService.sendAsHTML(
                 addressGmail,
-                "Yêu cầu thay đổi mật khẩu cho " + username,
+                "Bạn đã Yêu cầu khôi phục mật khẩu cho " + username,
                 EmailTemplate.TemplateRecoveryPassword(username, otpCode)
         );
     }
-//"Bạn đã yêu cầu thay đổi mật khẩu cho tài khoản " + username + " \n " +
-//            "Mã OTP của bạn là: " + otpCode + " \n " +
-//            "Cám ơn bạn đã sử dụng dịch vụ"
-//    public String generateOtpCode() {
-//        // from 000000 to 999999
-//        Random otpCodeGenerator = new Random();
-//        int otpNumber = otpCodeGenerator.nextInt(999999);
-//
-//        // this will convert any number sequence into 6 character.
-//        return String.format("%06d", otpNumber);
-//    }
+
+    @PutMapping(path = "/recovery")
+    public SuccessResponseDTO recoveryPassword(@RequestBody RecoveryPasswordDTO userChangePassword, @RequestParam Map<String, String> requestParams) {
+        if(requestParams.get("email") == null) {
+            throw new IllegalStateException("change password by address for user fail! need ?email= param");
+        }
+        System.out.println(userChangePassword.getPassword());
+        String userEmail = (requestParams.get("email"));
+        userService.changeUserPasswordByEmail(userChangePassword.getPassword(), userEmail);
+        return new SuccessResponseDTO(HttpStatus.OK, "Đã thay đổi mật khẩu thành công");
+    }
 }

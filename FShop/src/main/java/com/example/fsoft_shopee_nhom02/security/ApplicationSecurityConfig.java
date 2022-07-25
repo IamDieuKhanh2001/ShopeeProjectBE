@@ -45,7 +45,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "/login", "/register", "/products/**/**", "/products/*", "/products",
                          "/products/admin/*", "/test","/order/**", "/address/**",
-                         "/recoveryPassword/**").permitAll() //Các API không cần đăng nhập
+                         "/recoveryPassword/**", "/recovery").permitAll() //Các API không cần đăng nhập
                 .antMatchers("/user", "/users/**").hasAnyRole(ADMIN.name(), USER.name()) //Các API cần đăng nhập bằng tk admin, user
                 .antMatchers("/admin").hasRole(ADMIN.name()) //Các API cần đăng nhập bằng tk admin
                 .antMatchers().hasRole(USER.name()) //Các API cần đăng nhập bằng tk user

@@ -16,4 +16,5 @@ public interface UserService {
     long countAllUser();
     UserEntity changeProfile(UserDTO user, String username);
     List<UserEntity> getUsersByEmail(String email);
+    UserEntity changeUserPasswordByEmail(String newPassword, String email);
 }
