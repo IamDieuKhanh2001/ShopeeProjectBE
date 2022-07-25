@@ -14,6 +14,8 @@ public class AddressEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String address;
+    private String name;
+    private String phoneNumber;
 
     //  Tạo quan hệ với bảng User
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,6 +35,29 @@ public class AddressEntity {
 
     // Constructor, Getter, Setter
     public AddressEntity() {
+    }
+
+    public AddressEntity(Long id, String address, String name, String phoneNumber) {
+        this.id = id;
+        this.address = address;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public AddressEntity(Long id, String address) {
