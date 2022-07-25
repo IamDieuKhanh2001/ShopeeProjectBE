@@ -2,6 +2,7 @@
 package com.example.fsoft_shopee_nhom02.service;
 
 import com.example.fsoft_shopee_nhom02.dto.ProductDTO;
+import com.example.fsoft_shopee_nhom02.dto.ProductSearchResult;
 import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.ProductMapper;
 import com.example.fsoft_shopee_nhom02.model.ProductEntity;
@@ -10,15 +11,12 @@ import com.example.fsoft_shopee_nhom02.model.TypeEntity;
 import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
 import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
 import com.example.fsoft_shopee_nhom02.repository.TypeRepository;
-import org.hibernate.type.YesNoType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -133,5 +131,40 @@ public class ProductService {
         typeRepository.saveAll(updatedTypesList);
 
         return updatedTypesList;
+    }
+    /*
+        Search truyen 3 params: page, limit, keyword
+        - Page, limit de phan trang.
+        - keyword la tu khoa nhap vao de tim san pham.
+        - Json respond se bao gom tu khoa vua nhap, so san pham tim duoc
+          va list san pham.
+
+     */
+    public ProductSearchResult search(String page, String limit, String keyword) {
+        ProductSearchResult result = new ProductSearchResult();
+
+        page = (page == null) ? "1"  : page;
+        limit = (limit == null) ? "12" : limit;
+
+        Pageable pageable = PageRequest.of((Integer.valueOf(page) -1), Integer.valueOf(limit));
+        List<ProductEntity> productEntities = productRepository.findAllBySearchQuery(keyword, pageable);
+
+        List<ProductDTO> productDTOS = new ArrayList<>();
+
+        if(productEntities.isEmpty()) {
+            throw new ResourceNotFoundException("No result!");
+        }
+
+        for (ProductEntity productEntity : productEntities) {
+            productDTOS.add(ProductMapper.toProductDTO(productEntity));
+        }
+
+        long productsNumber = productRepository.countAllBySearchQuery(keyword);
+
+        result.setProductsNumber(productsNumber);
+        result.setProductsList(productDTOS);
+        result.setKeyWord(keyword);
+
+        return result;
     }
 }
