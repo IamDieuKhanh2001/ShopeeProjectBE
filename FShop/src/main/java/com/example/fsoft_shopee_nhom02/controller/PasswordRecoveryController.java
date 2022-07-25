@@ -50,7 +50,6 @@ public class PasswordRecoveryController {
     }
 
     public String generateOtpCode() {
-        // It will generate 6 digit random Number.
         // from 000000 to 999999
         Random otpCodeGenerator = new Random();
         int otpNumber = otpCodeGenerator.nextInt(999999);
