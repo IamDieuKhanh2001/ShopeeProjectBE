@@ -1,5 +1,7 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
+import com.example.fsoft_shopee_nhom02.config.EmailTemplate;
+import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
 import com.example.fsoft_shopee_nhom02.dto.RecoveryPasswordDTO;
 import com.example.fsoft_shopee_nhom02.model.AddressEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
@@ -31,7 +33,7 @@ public class PasswordRecoveryController {
         }
         String emailRecovery = (requestParams.get("email"));
         UserEntity user = userService.getUsersByEmail(emailRecovery).get(0); //Kiem tra user voi email khoi phuc
-        String otpCode = generateOtpCode();
+        String otpCode = GlobalVariable.GetOTP();
         try {
             sendRecoveryEmail(emailRecovery, user.getUsername(), otpCode);
         } catch (MessagingException e) {
@@ -42,19 +44,21 @@ public class PasswordRecoveryController {
     }
 
     public void sendRecoveryEmail(String addressGmail, String username, String otpCode) throws MessagingException {
-        emailSenderService.sendSimpleEmail(addressGmail,
+        emailSenderService.sendAsHTML(
+                addressGmail,
                 "Yêu cầu thay đổi mật khẩu cho " + username,
-                "Bạn đã yêu cầu thay đổi mật khẩu cho tài khoản " + username + " \n " +
-                        "Mã OTP của bạn là: " + otpCode + " \n " +
-                        "Cám ơn bạn đã sử dụng dịch vụ" );
+                EmailTemplate.TemplateRecoveryPassword(username, otpCode)
+        );
     }
-
-    public String generateOtpCode() {
-        // from 000000 to 999999
-        Random otpCodeGenerator = new Random();
-        int otpNumber = otpCodeGenerator.nextInt(999999);
-
-        // this will convert any number sequence into 6 character.
-        return String.format("%06d", otpNumber);
-    }
+//"Bạn đã yêu cầu thay đổi mật khẩu cho tài khoản " + username + " \n " +
+//            "Mã OTP của bạn là: " + otpCode + " \n " +
+//            "Cám ơn bạn đã sử dụng dịch vụ"
+//    public String generateOtpCode() {
+//        // from 000000 to 999999
+//        Random otpCodeGenerator = new Random();
+//        int otpNumber = otpCodeGenerator.nextInt(999999);
+//
+//        // this will convert any number sequence into 6 character.
+//        return String.format("%06d", otpNumber);
+//    }
 }
