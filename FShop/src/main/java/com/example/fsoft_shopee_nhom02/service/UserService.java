@@ -14,5 +14,7 @@ public interface UserService {
     UserEntity updateUser(UserDTO newUser, Long id);
     void deleteUser(Long id);
     long countAllUser();
-
+    UserEntity changeProfile(UserDTO user, String username);
+    List<UserEntity> getUsersByEmail(String email);
+    UserEntity changeUserPasswordByEmail(String newPassword, String email);
 }

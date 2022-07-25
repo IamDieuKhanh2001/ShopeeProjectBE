@@ -26,7 +26,6 @@ public class OrderDetailsEntity {
     @JoinColumn(name = "productId", nullable = false, referencedColumnName = "id")
     private ProductEntity productEntity;
 
-
     // Constructor, Getter, Setter
     public OrderDetailsEntity() {
     }
@@ -68,5 +67,23 @@ public class OrderDetailsEntity {
 
     public void setQuantity(Long quantity) {
         this.quantity = quantity;
+    }
+
+    public void setProductEntityID(long id) {
+        this.productEntity = new ProductEntity();
+        this.productEntity.setId(id);
+    }
+
+    public Long getProductEntityID(long id) {
+        return this.productEntity.getId();
+    }
+
+    public void setOrderEntityID(long id) {
+        this.orderEntity = new OrderEntity();
+        this.orderEntity.setId(id);
+    }
+
+    public Long getOrderEntityID(long id) {
+        return this.orderEntity.getId();
     }
 }

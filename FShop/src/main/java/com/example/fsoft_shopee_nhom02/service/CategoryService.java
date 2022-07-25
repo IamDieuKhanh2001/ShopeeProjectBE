@@ -14,4 +14,6 @@ public interface CategoryService {
     List<CategoryDTO> getCategoryByShopId(long shopId);
     long countCategoryByShopId(long shopId);
     void delete(long id);
+    List<CategoryDTO> getRandomCategory(Integer limit);
+
 }

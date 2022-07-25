@@ -12,10 +12,38 @@ public class UserDTO {
     private String name;
     private String gender;
     private String email;
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Timestamp dob;
     private List<AddressDTO> addressList;
     private String avatar;
+
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", phone='" + phone + '\'' +
+                ", name='" + name + '\'' +
+                ", gender='" + gender + '\'' +
+                ", email='" + email + '\'' +
+                ", dob=" + dob +
+                ", addressList=" + addressList +
+                ", avatar='" + avatar + '\'' +
+                '}';
+    }
+
+    public UserDTO(String name, String gender, Timestamp dob) {
+        this.name = name;
+        this.gender = gender;
+        this.dob = dob;
+    }
+
+    public UserDTO(String username, String password, String phone, String email) {
+        this.username = username;
+        this.password = password;
+        this.phone = phone;
+        this.email = email;
+    }
 
     public UserDTO(String username, String password, String phone, String name, String gender, String email, Timestamp dob, List<AddressDTO> addressList, String avatar) {
         this.username = username;

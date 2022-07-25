@@ -21,6 +21,7 @@ target/
 ./target
 *.xml
 *.properties
+.idea/dataSources.xml
 
 ### NetBeans ###
 /nbproject/private/

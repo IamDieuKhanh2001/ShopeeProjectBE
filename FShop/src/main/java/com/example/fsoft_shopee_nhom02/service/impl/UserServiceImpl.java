@@ -3,18 +3,25 @@ package com.example.fsoft_shopee_nhom02.service.impl;
 import com.example.fsoft_shopee_nhom02.dto.UserDTO;
 import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
 import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
+import com.example.fsoft_shopee_nhom02.model.AddressEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
 import com.example.fsoft_shopee_nhom02.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<UserEntity> getAllUser() {
@@ -58,5 +65,40 @@ public class UserServiceImpl implements UserService {
     @Override
     public long countAllUser() {
         return userRepository.count();
+    }
+
+    @Override
+    public UserEntity changeProfile(UserDTO userChange, String username) {
+        UserEntity changeProfileUser = userRepository.findByUsername(username)
+                .map(user -> {
+                    user.setDob(userChange.getDob());
+                    user.setGender(userChange.getGender());
+                    user.setName(userChange.getName());
+                    return userRepository.save(user);
+                }).orElseThrow(() -> new ResourceNotFoundException("Cannot found user with username = " + username));
+        return changeProfileUser;
+    }
+
+    @Override
+    public List<UserEntity> getUsersByEmail(String email) {
+        Optional<UserEntity> userEntityOptional = userRepository.findByEmail(email);
+        List<UserEntity> userEntityList = new ArrayList<>();
+        if (userEntityOptional.isPresent()) {
+            userEntityList.add(userEntityOptional.get());
+        } else {
+            throw new IllegalStateException("User with this email not found!!");
+        }
+        return userEntityList;
+    }
+
+    @Override
+    public UserEntity changeUserPasswordByEmail(String newPassword, String email) {
+        System.out.println(newPassword);
+        UserEntity userChangePassword = userRepository.findByEmail(email)
+                .map(user -> {
+                    user.setPassword(passwordEncoder.encode(newPassword));
+                    return userRepository.save(user);
+                }).orElseThrow(() -> new ResourceNotFoundException("Cannot found user with email = " + email));
+        return userChangePassword;
     }
 }
