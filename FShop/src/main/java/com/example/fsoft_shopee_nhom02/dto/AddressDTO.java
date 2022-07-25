@@ -3,26 +3,16 @@ package com.example.fsoft_shopee_nhom02.dto;
 public class AddressDTO {
 
     private String address;
-    private String username;
+    private String name;
+    private String phone;
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public AddressDTO(String address, String username) {
+    public AddressDTO(String address, String name, String phone) {
         this.address = address;
-        this.username = username;
+        this.name = name;
+        this.phone = phone;
     }
 
     public AddressDTO() {
-    }
-
-    public AddressDTO(String address) {
-        this.address = address;
     }
 
     public String getAddress() {
@@ -31,5 +21,21 @@ public class AddressDTO {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

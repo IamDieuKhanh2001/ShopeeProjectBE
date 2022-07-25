@@ -1,5 +1,8 @@
 package com.example.fsoft_shopee_nhom02.config;
 
+import com.example.fsoft_shopee_nhom02.auth.ApplicationUser;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

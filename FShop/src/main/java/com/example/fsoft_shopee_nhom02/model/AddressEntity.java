@@ -37,11 +37,11 @@ public class AddressEntity {
     public AddressEntity() {
     }
 
-    public AddressEntity(Long id, String address, String name, String phoneNumber) {
-        this.id = id;
+    public AddressEntity(String address, String name, String phoneNumber, UserEntity userEntity) {
         this.address = address;
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.userEntity = userEntity;
     }
 
     public String getName() {
@@ -60,10 +60,6 @@ public class AddressEntity {
         this.phoneNumber = phoneNumber;
     }
 
-    public AddressEntity(Long id, String address) {
-        this.id = id;
-        this.address = address;
-    }
 
     public AddressEntity(String address, UserEntity userEntity) {
         this.address = address;

@@ -48,7 +48,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                          "/recoveryPassword/**", "/recovery").permitAll() //Các API không cần đăng nhập
                 .antMatchers("/user", "/users/**").hasAnyRole(ADMIN.name(), USER.name()) //Các API cần đăng nhập bằng tk admin, user
                 .antMatchers("/admin").hasRole(ADMIN.name()) //Các API cần đăng nhập bằng tk admin
-                .antMatchers().hasRole(USER.name()) //Các API cần đăng nhập bằng tk user
+                .antMatchers("/address/**").hasRole(USER.name()) //Các API cần đăng nhập bằng tk user
                 .anyRequest()
                 .authenticated() //Các API còn lại cần phải đăng nhập
                 .and()

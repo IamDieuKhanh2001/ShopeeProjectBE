@@ -25,12 +25,16 @@ public class AddressService {
         return userAddressEntityList;
     }
 
-    public boolean saveUserAddress(AddressDTO addressDTO) {
-        Optional<UserEntity> userEntityOptional = userRepository.findByUsername(addressDTO.getUsername());
+    public boolean saveUserAddress(AddressDTO addressDTO, String username) {
+        Optional<UserEntity> userEntityOptional = userRepository.findByUsername(username);
         if(!userEntityOptional.isPresent()) {
-            throw new IllegalStateException("Username not found!!");
+            throw new IllegalStateException("Username " + username + " not found");
         }
-        AddressEntity newUserAddress = new AddressEntity(addressDTO.getAddress(), userEntityOptional.get());
+        AddressEntity newUserAddress = new AddressEntity(
+                addressDTO.getAddress(),
+                addressDTO.getName(),
+                addressDTO.getPhone(),
+                userEntityOptional.get());
         addressRepository.save(newUserAddress);
         return true;
     }
@@ -44,13 +48,15 @@ public class AddressService {
         return true;
     }
 
-    public boolean updateAddress(Long addressId, String addressContent) {
+    public boolean updateAddress(Long addressId, AddressDTO addressDTO) {
         Optional<AddressEntity> addressEntityOptional = addressRepository.findById(addressId);
         if(!addressEntityOptional.isPresent()) {
             return false;
         }
         AddressEntity addressEntity = addressEntityOptional.get();
-        addressEntity.setAddress(addressContent);
+        addressEntity.setAddress(addressDTO.getAddress());
+        addressEntity.setName(addressDTO.getName());
+        addressEntity.setPhoneNumber(addressDTO.getPhone());
         try {
             addressRepository.save(addressEntity);
         } catch (Exception ex) {

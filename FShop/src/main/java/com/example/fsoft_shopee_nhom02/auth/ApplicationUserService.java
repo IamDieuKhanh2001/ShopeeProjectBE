@@ -10,6 +10,7 @@ import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.RoleRepository;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -39,6 +40,17 @@ public class ApplicationUserService implements UserDetailsService {
         user.orElseThrow(() -> new UsernameNotFoundException("Not found: " + username));
 
         return user.map(ApplicationUser::new).get();
+    }
+    public static String GetUsernameLoggedIn() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+
+        if (principal instanceof ApplicationUser) {
+            username = ((ApplicationUser)principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+        return username;
     }
 
     public Boolean save(UserDTO userDTO) {
