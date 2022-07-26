@@ -1,9 +1,11 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
 import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
+import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.model.OrderDetailsEntity;
 import com.example.fsoft_shopee_nhom02.model.OrderEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
+import com.example.fsoft_shopee_nhom02.service.AddressService;
 import com.example.fsoft_shopee_nhom02.service.OrderDetailService;
 import com.example.fsoft_shopee_nhom02.service.OrderService;
 import com.example.fsoft_shopee_nhom02.service.UserService;
@@ -20,12 +22,14 @@ public class OrderController {
     private final OrderDetailService orderDetailService;
     private final OrderService orderService;
     private final UserService userService;
+    private final AddressService addressService;
 
     @Autowired
-    public OrderController(OrderDetailService orderDetailService, OrderService orderService, UserService userService) {
+    public OrderController(OrderDetailService orderDetailService, OrderService orderService, UserService userService, AddressService addressService) {
         this.orderDetailService = orderDetailService;
         this.orderService = orderService;
         this.userService = userService;
+        this.addressService = addressService;
     }
 
     @GetMapping("/all")
@@ -46,7 +50,6 @@ public class OrderController {
     @GetMapping("/detail/{id}")
     public Object getOrderDetailByOrderId(@PathVariable String id) {
         return orderDetailService.getOrderDetailByOrderId(Long.parseLong(id));
-//        return orderDetailService.findAllByOrderEntityId(Long.parseLong(id));
     }
 
     @GetMapping("/get_order/{id}")
@@ -70,7 +73,7 @@ public class OrderController {
         UserEntity user = userService.findByIdUser(Long.parseLong(orderInformation.get("user_id")));
 
         // calculate for order Entity
-        Timestamp created_date = new Timestamp(GlobalVariable.getCurrentDate().getTime());
+        Timestamp created_date = GlobalVariable.getCurrentDate();
         String status = "Waiting for confirm";
         long total_cost = 0;
 
@@ -99,6 +102,9 @@ public class OrderController {
             orderEntity.setAddress(orderInformation.get("address"));
             orderEntity.setPhone(orderInformation.get("phone"));
             orderEntity.setUserName(orderInformation.get("user_name"));
+
+            // add new address for later usage
+            addressService.saveUserAddress(new AddressDTO(orderInformation.get("address"), orderInformation.get("user_name"), orderInformation.get("phone")), user.getUsername());
         }
 
         orderEntity.setNote(orderInformation.get("note"));
@@ -127,11 +133,13 @@ public class OrderController {
     @PostMapping("/update_order/{id}")
     public Object UpdateOrder(@RequestBody Map<String, String> req, @PathVariable String id) {
         System.out.println(req);
+        System.out.println(id);
         return "updated order";
     }
 
     @PostMapping("/cancel_order/{id}")
     public Object DeleteOrder(@PathVariable String id) {
+        System.out.println(id);
         return "deleted order";
     }
 }
