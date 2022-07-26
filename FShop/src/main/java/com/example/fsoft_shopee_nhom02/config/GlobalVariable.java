@@ -18,7 +18,6 @@ public class GlobalVariable {
     }
 
     public static String GetOTP() {
-        Random r = new Random();
-        return String.format("%06d", r.nextInt(999999));
+        return String.format("%06d", new Random().nextInt(999999));
     }
 }

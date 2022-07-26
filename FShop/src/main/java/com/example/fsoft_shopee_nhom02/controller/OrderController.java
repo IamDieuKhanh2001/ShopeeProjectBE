@@ -64,15 +64,17 @@ public class OrderController {
         List<OrderDetailsEntity> orderDetailsEntityList = new ArrayList<>();
 
         // analyze orderInformation
-        String created_date = GlobalVariable.datetimeFormat.format(new Date());
         UserEntity user = userService.findByIdUser(Long.parseLong(orderInformation.get("user_id")));
         String note=orderInformation.get("note");
         String payment=orderInformation.get("payment");
         long shipping_fee=Long.parseLong(orderInformation.get("shipping_fee"));
+
+        // calculate for order Entity
+        String created_date = GlobalVariable.datetimeFormat.format(new Date());
         String status = "Waiting for confirm";
         long total_cost = 0;
 
-        // analyze order Productdata
+        // analyze order Product data
         for (Map<String, String> i : orderDetailsEntityList_req) {
             OrderDetailsEntity orderDetailsEntity = new OrderDetailsEntity();
             orderDetailsEntity.setQuantity(Long.parseLong(i.get("quantity")));
@@ -87,7 +89,8 @@ public class OrderController {
 
         System.out.println(orderInformation);
 
-        // calculate for order Entity
+        // map value for orderEntity
+//        orderEntity.setCreatedDate();
 
         // insert order to DB
 
