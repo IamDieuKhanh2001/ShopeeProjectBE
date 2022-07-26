@@ -32,4 +32,9 @@ public class OrderServiceImpl implements OrderService {
     public Optional<OrderEntity> findOrderById(Long OrderId) {
         return orderRepository.findById(OrderId);
     }
+
+    @Override
+    public void addNewOrder(OrderEntity orderEntity) {
+        orderRepository.save(orderEntity);
+    }
 }

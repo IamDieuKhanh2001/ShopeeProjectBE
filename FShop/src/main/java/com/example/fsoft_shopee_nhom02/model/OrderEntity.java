@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders")
-public class OrderEntity extends BaseClassEntity{
+public class OrderEntity extends BaseClassEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,7 +33,7 @@ public class OrderEntity extends BaseClassEntity{
 
     // Tạo quan hệ với OrderDetailsEntity
     @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL)
-    private List<OrderDetailsEntity> orderDetailsEntities =new ArrayList<>();
+    private List<OrderDetailsEntity> orderDetailsEntities = new ArrayList<>();
 
     // Constructor, Getter, Setter
     public OrderEntity() {
@@ -121,5 +121,14 @@ public class OrderEntity extends BaseClassEntity{
 
     public void setTotalPrice(Long totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public void setUserId(Long id) {
+        this.userEntities = new UserEntity();
+        this.userEntities.setId(id);
+    }
+
+    public Long getUserId() {
+        return this.userEntities.getId();
     }
 }

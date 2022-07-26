@@ -11,4 +11,6 @@ public interface OrderService {
     List<OrderEntity> getAllByUserId(long UserId);
 
     Optional<OrderEntity> findOrderById(Long OrderId);
+
+    void addNewOrder(OrderEntity orderEntity);
 }

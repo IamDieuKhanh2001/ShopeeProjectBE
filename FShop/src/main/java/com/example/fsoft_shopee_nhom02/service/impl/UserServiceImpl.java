@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserEntity findByIdUser(Long id) {
         UserEntity foundUser =userRepository.findById(id)
-                .orElseThrow(()->new NotFoundException("Not found shop with id = "+id));
+                .orElseThrow(()->new NotFoundException("Not found user with id = "+id));
         return foundUser;
     }
 
