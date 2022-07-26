@@ -76,7 +76,8 @@ public class ProductController {
         String keyword = requestParams.get("keyword");
         String minPrice = requestParams.get("min-price");
         String maxPrice = requestParams.get("max-price");
+        String subCate = requestParams.get("sub");
 
-        return productService.search(page, limit, keyword, minPrice, maxPrice);
+        return productService.search(page, limit, keyword, minPrice, maxPrice, subCate);
     }
 }

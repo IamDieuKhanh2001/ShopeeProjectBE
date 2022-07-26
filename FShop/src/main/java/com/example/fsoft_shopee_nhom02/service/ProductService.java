@@ -150,7 +150,8 @@ public class ProductService {
           va list san pham.
 
      */
-    public ProductOutputResult search(String page, String limit, String keyword, String minPrice, String maxPrice) {
+    public ProductOutputResult search(String page, String limit, String keyword,
+                                      String minPrice, String maxPrice, String sub) {
         ProductOutputResult result = new ProductOutputResult();
         long defaultMaxPrice = typeRepository.findMaxPrice() + 1;
 
@@ -166,8 +167,23 @@ public class ProductService {
         if(Long.parseLong(minPrice) < Long.parseLong(maxPrice) && Long.parseLong(minPrice) >= 0
             || Long.parseLong(maxPrice) <= defaultMaxPrice - 1) {
 
-            productEntities = (keyword == null) ? productRepository.findAll()
-                : productRepository.findAllBySearchQuery(keyword);
+//            productEntities = (keyword == null) ? productRepository.findAll()
+//                : productRepository.findAllBySearchQuery(keyword);
+            if(keyword == null) {
+                if(sub != null) {
+                    productEntities = productRepository.findAllBySubCategoryEntityId(Long.parseLong(sub));
+                }
+                else
+                    productEntities = productRepository.findAll();
+            }
+            else {
+                if(sub != null) {
+                    productEntities = productRepository.findAllBySearchAndSubCate(keyword, Long.parseLong(sub));
+                }
+                else
+                    productEntities = productRepository.findAllBySearchQuery(keyword);
+            }
+
             List<ProductDTO> priceFilterDTOS = new ArrayList<>();
 
             for (ProductEntity product : productEntities) {
@@ -205,10 +221,34 @@ public class ProductService {
         // Default search if price range equal to null or not valid min max
         else {
             Pageable pageable = PageRequest.of((Integer.parseInt(page) - 1), Integer.parseInt(limit));
-            productEntities = (keyword == null) ? productRepository.findAll(pageable).getContent()
-                   : productRepository.findAllBySearchQuery(keyword, pageable);
-            long productsNumber = (keyword == null) ? productRepository.count()
-                    : productRepository.countAllBySearchQuery(keyword);
+//            productEntities = (keyword == null) ? productRepository.findAll(pageable).getContent()
+//                   : productRepository.findAllBySearchQuery(keyword, pageable);
+//            long productsNumber = (keyword == null) ? productRepository.count()
+//                    : productRepository.countAllBySearchQuery(keyword);
+
+            long productsNumber;
+
+            if(keyword == null) {
+                if(sub != null) {
+                    productEntities = productRepository.findAllBySubCategoryEntityId(Long.parseLong(sub), pageable);
+                    productsNumber = productRepository.countAllBySubCate(Long.parseLong(sub));
+                }
+                else {
+                    productEntities = productRepository.findAll(pageable).getContent();
+                    productsNumber = productRepository.count();
+                }
+            }
+            else {
+                if(sub != null) {
+                    productEntities = productRepository.findAllBySearchAndSubCate(keyword,
+                            Long.parseLong(sub), pageable);
+                    productsNumber = productRepository.countAllBySearchAndSubCate(keyword, Long.parseLong(sub));
+                }
+                else {
+                    productEntities = productRepository.findAllBySearchQuery(keyword, pageable);
+                    productsNumber = productRepository.countAllBySearchQuery(keyword);
+                }
+            }
 
             if(productEntities.isEmpty()) {
                 throw new ResourceNotFoundException("No result!");
