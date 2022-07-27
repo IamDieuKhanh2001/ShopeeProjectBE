@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.*;
 
 @RestController
@@ -58,7 +59,7 @@ public class OrderController {
     }
 
     @PostMapping("/create_order")
-    public Object CreateOrder(@RequestBody List<Object> req) {
+    public Object CreateOrder(@RequestBody List<Object> req) throws ParseException {
         long startTime = System.currentTimeMillis();
 
         // get request data
@@ -73,7 +74,7 @@ public class OrderController {
         UserEntity user = userService.findByIdUser(Long.parseLong(orderInformation.get("user_id")));
 
         // calculate for order Entity
-        Timestamp created_date = GlobalVariable.getCurrentDate();
+        Timestamp created_date = GlobalVariable.getCurrentDateTime();
         String status = "Waiting for confirm";
         long total_cost = 0;
 
@@ -118,10 +119,10 @@ public class OrderController {
         orderService.addNewOrder(orderEntity);
 
         // insert order detail to DB
+        long newOrderEntityID = orderEntity.getId();
         for (OrderDetailsEntity i : orderDetailsEntityList) {
-            i.setOrderEntityID(orderEntity.getId());
+            i.setOrderEntityID(newOrderEntityID);
         }
-
         orderDetailService.addNewOrderDetails(orderDetailsEntityList);
 
         long endTime = System.currentTimeMillis();
