@@ -8,6 +8,7 @@ import com.example.fsoft_shopee_nhom02.service.OrderDetailService;
 import com.example.fsoft_shopee_nhom02.service.impl.OrderDetailServiceImpl;
 import com.example.fsoft_shopee_nhom02.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,12 +34,12 @@ public class PaymentController {
         for (OrderDetailsEntity orderDetail : orderDetailsEntityList)
         {
             // Lấy ra product với id, type và quantity tương ứng
-
+            TypeEntity type = typeRepository.findProductByType(orderDetail.getId(), orderDetail.getType());
             // Update type ở bảng type với quantity = quantity - orderDetail.quantity
+            type.setQuantity(type.getQuantity() - orderDetail.getQuantity());
         }
         // Set trạng thái order thành "Đặt hàng thành công!"
         order.setStatus("Đặt hàng thành công!");
-        return null;
+        return new ResponseEntity<>(order, HttpStatus.OK);
     }
-
 }
