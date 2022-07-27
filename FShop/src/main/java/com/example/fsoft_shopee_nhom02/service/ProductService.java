@@ -379,4 +379,6 @@ public class ProductService {
 
         return res;
     }
+    public ProductEntity getProductsById(long productId) throws Exception {
+        return productRepository.findById(productId).orElseThrow(() ->new Exception("Product is not found"));}
 }
