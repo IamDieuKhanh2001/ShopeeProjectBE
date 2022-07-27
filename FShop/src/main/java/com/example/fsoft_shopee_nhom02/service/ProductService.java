@@ -37,6 +37,8 @@ public class ProductService {
     @Autowired
     CommentRepository commentRepository;
 
+//region--------------------Functions for Product Crud APIs---------------------------
+
     public ProductDTO save(ProductDTO productDTO) {
         ProductEntity product;
 
@@ -131,6 +133,11 @@ public class ProductService {
 
         typeRepository.deleteAllByProductEntityId(id);
     }
+
+//endregion
+
+
+//region-------------------------Functions for Types Crud APIs, Search Function---------------------------
 
     public List<TypeEntity> getTypes(long id) {
         return typeRepository.findAllByProductEntityId(id);
@@ -294,6 +301,11 @@ public class ProductService {
         return result;
     }
 
+//endregion
+
+
+//region--------------------Functions for Comments Crud APIs---------------------------
+
     void commentDTOHandler(CommentEntity comment, CommentDTO commentDTO) {
         CommentMapper.toCommentDTO(comment, commentDTO);
 
@@ -381,7 +393,10 @@ public class ProductService {
         return res;
     }
 
+//endregion
+
     // Loc's Function
     public ProductEntity getProductsById(long productId) throws Exception {
         return productRepository.findById(productId).orElseThrow(() ->new Exception("Product is not found"));}
 }
+
