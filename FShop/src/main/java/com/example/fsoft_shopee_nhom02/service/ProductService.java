@@ -74,11 +74,12 @@ public class ProductService {
         else {
             long totalCmt = commentRepository.countAllByProductEntityId(product.getId());
             // Tinh trung binh va lam tron 1 so sau dau phay
-            float avgRating = (float) sumRating / totalCmt;
+            double avgRating = (double) sumRating / totalCmt;
             double roundAvgRating = (double) Math.round(avgRating * 10.0) / 10.0;
             productDTO.setAvgRating(roundAvgRating);
         }
 
+        // List rong thi cho price = 0 neu khong se lay price tai index 0
         long price = priceList.isEmpty() ? 0 : priceList.get(0);
         productDTO.setPrice(price);
 
@@ -379,6 +380,8 @@ public class ProductService {
 
         return res;
     }
+
+    // Loc's Function
     public ProductEntity getProductsById(long productId) throws Exception {
         return productRepository.findById(productId).orElseThrow(() ->new Exception("Product is not found"));}
 }
