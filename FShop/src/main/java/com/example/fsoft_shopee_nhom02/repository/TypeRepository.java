@@ -19,6 +19,7 @@ public interface TypeRepository extends JpaRepository<TypeEntity,Long> {
 
     @Query(value = "SELECT max(price) FROM types", nativeQuery = true)
     long findMaxPrice();
+
     @Query(value = "select o.id as typeid,\n" +
             "       o.price,\n" +
             "       o.quantity,\n" +
@@ -26,6 +27,6 @@ public interface TypeRepository extends JpaRepository<TypeEntity,Long> {
             "       o.product_id,\n" +
             "            from types o\n" +
             "                     left join products od on o.product_id = od.id\n" +
-            "            where o.product_id=:ProductId and o.type = TypeProduct", nativeQuery = true)
+            "            where o.product_id=:ProductId and o.type =:TypeProduct", nativeQuery = true)
     TypeEntity findProductByType(@Param("ProductId") Long ProductId, @Param("TypeProduct") String TypeProduct);
 }

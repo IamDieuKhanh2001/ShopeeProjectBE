@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,17 +56,33 @@ public class ProductService {
 
         productRepository.save(product);
 
-
         return ProductMapper.toProductDTO(product);
     }
 
     // Ham xu ly viec chuyen tu product sang DTO khi co truong Price
-    public void dtoHandler(ProductEntity product, List<ProductDTO> productDTOS) {
+    ProductDTO dtoHandler(ProductEntity product) {
         ProductDTO productDTO = ProductMapper.toProductDTO(product);
         List<Long> priceList = typeRepository.findFirstPrice(product.getId());
+
+        Long sumRating = commentRepository.sumProductReview(product.getId());
+
+        // If condition de check neu sum = null thi cho danh gia tb = 0
+        if(sumRating == null) {
+            productDTO.setAvgRating(0);
+        }
+        // Tinh trung binh neu khac null
+        else {
+            long totalCmt = commentRepository.countAllByProductEntityId(product.getId());
+            // Tinh trung binh va lam tron 1 so sau dau phay
+            float avgRating = (float) sumRating / totalCmt;
+            double roundAvgRating = (double) Math.round(avgRating * 10.0) / 10.0;
+            productDTO.setAvgRating(roundAvgRating);
+        }
+
         long price = priceList.isEmpty() ? 0 : priceList.get(0);
         productDTO.setPrice(price);
-        productDTOS.add(productDTO);
+
+        return productDTO;
     }
 
     public ListOutputResult getAllProducts(String page, String limit) {
@@ -81,7 +98,9 @@ public class ProductService {
         List<ProductEntity> products = productRepository.findAll(pageable).getContent();
 
         for (ProductEntity product : products) {
-            dtoHandler(product, productDTOS);
+            ProductDTO productDTO = dtoHandler(product);
+
+            productDTOS.add(productDTO);
         }
 
         if(products.isEmpty()) {
@@ -100,7 +119,7 @@ public class ProductService {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cannot found product id " + id));
 
-        return ProductMapper.toProductDTO(product);
+        return dtoHandler(product);
     }
 
     public void deleteProduct(long id) {
@@ -193,7 +212,9 @@ public class ProductService {
             List<ProductDTO> priceFilterDTOS = new ArrayList<>();
 
             for (ProductEntity product : productEntities) {
-                dtoHandler(product, productDTOS);
+                ProductDTO productDTO = dtoHandler(product);
+
+                productDTOS.add(productDTO);
             }
 
             // Push the Product DTO that has valid price range to a new list
@@ -261,13 +282,23 @@ public class ProductService {
             }
 
             for (ProductEntity product : productEntities) {
-                dtoHandler(product, productDTOS);
+                ProductDTO productDTO = dtoHandler(product);
+
+                productDTOS.add(productDTO);
             }
             result.setItemsNumber(productsNumber);
             result.setList(productDTOS);
         }
 
         return result;
+    }
+
+    void commentDTOHandler(CommentEntity comment, CommentDTO commentDTO) {
+        CommentMapper.toCommentDTO(comment, commentDTO);
+
+        UserEntity resUser = userRepository.findFirstById(comment.getUserid());
+        commentDTO.setUsername(resUser.getUsername());
+        commentDTO.setAvatar(resUser.getAvatar());
     }
 
     public CommentDTO createComment(long id, CommentDTO commentDTO) {
@@ -303,11 +334,7 @@ public class ProductService {
         commentRepository.save(comment);
 
         CommentDTO res = new CommentDTO();
-        CommentMapper.toCommentDTO(comment, res);
-
-        UserEntity resUser = userRepository.findFirstById(comment.getUserid());
-        res.setUsername(resUser.getUsername());
-        res.setAvatar(resUser.getAvatar());
+        commentDTOHandler(comment, res);
 
         return res;
     }
@@ -343,12 +370,8 @@ public class ProductService {
         // Trans to DTO
         for(CommentEntity comment : commentEntities) {
             CommentDTO commentDTO = new CommentDTO();
-            CommentMapper.toCommentDTO(comment, commentDTO);
 
-            UserEntity resUser = userRepository.findFirstById(comment.getUserid());
-            commentDTO.setUsername(resUser.getUsername());
-            commentDTO.setAvatar(resUser.getAvatar());
-
+            commentDTOHandler(comment, commentDTO);
             commentDTOS.add(commentDTO);
         }
 
