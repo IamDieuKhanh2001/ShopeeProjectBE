@@ -87,7 +87,6 @@ public class OrderController {
             orderDetailsEntity.setType(i.get("type"));
 
             total_cost += Long.parseLong(i.get("unit_price")) * Long.parseLong(i.get("quantity"));
-
             orderDetailsEntityList.add(orderDetailsEntity);
         }
 
