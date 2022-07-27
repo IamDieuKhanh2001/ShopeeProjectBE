@@ -4,7 +4,7 @@ package com.example.fsoft_shopee_nhom02.service;
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUser;
 import com.example.fsoft_shopee_nhom02.dto.CommentDTO;
 import com.example.fsoft_shopee_nhom02.dto.ProductDTO;
-import com.example.fsoft_shopee_nhom02.dto.ProductOutputResult;
+import com.example.fsoft_shopee_nhom02.dto.ListOutputResult;
 import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.CommentMapper;
 import com.example.fsoft_shopee_nhom02.mapper.ProductMapper;
@@ -13,13 +13,10 @@ import com.example.fsoft_shopee_nhom02.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -71,8 +68,8 @@ public class ProductService {
         productDTOS.add(productDTO);
     }
 
-    public ProductOutputResult getAllProducts(String page, String limit) {
-        ProductOutputResult result = new ProductOutputResult();
+    public ListOutputResult getAllProducts(String page, String limit) {
+        ListOutputResult result = new ListOutputResult();
 
         page = (page == null) ? "1"  : page;
         limit = (limit == null) ? "12" : limit;
@@ -93,8 +90,8 @@ public class ProductService {
 
         long productsNumber = productRepository.count();
 
-        result.setProductsList(productDTOS);
-        result.setProductsNumber(productsNumber);
+        result.setList(productDTOS);
+        result.setItemsNumber(productsNumber);
 
         return result;
     }
@@ -159,9 +156,9 @@ public class ProductService {
           va list san pham.
 
      */
-    public ProductOutputResult search(String page, String limit, String keyword,
-                                      String minPrice, String maxPrice, String sub) {
-        ProductOutputResult result = new ProductOutputResult();
+    public ListOutputResult search(String page, String limit, String keyword,
+                                   String minPrice, String maxPrice, String sub) {
+        ListOutputResult result = new ListOutputResult();
         long defaultMaxPrice = typeRepository.findMaxPrice() + 1;
 
         page = (page == null) ? "1"  : page;
@@ -224,8 +221,8 @@ public class ProductService {
                 endIndex = priceFilterDTOS.size();
             }
 
-            result.setProductsNumber(priceFilterDTOS.size());
-            result.setProductsList(priceFilterDTOS.subList(startIndex, endIndex));
+            result.setItemsNumber(priceFilterDTOS.size());
+            result.setList(priceFilterDTOS.subList(startIndex, endIndex));
         }
         // Default search if price range equal to null or not valid min max
         else {
@@ -266,8 +263,8 @@ public class ProductService {
             for (ProductEntity product : productEntities) {
                 dtoHandler(product, productDTOS);
             }
-            result.setProductsNumber(productsNumber);
-            result.setProductsList(productDTOS);
+            result.setItemsNumber(productsNumber);
+            result.setList(productDTOS);
         }
 
         return result;
@@ -311,6 +308,51 @@ public class ProductService {
         UserEntity resUser = userRepository.findFirstById(comment.getUserid());
         res.setUsername(resUser.getUsername());
         res.setAvatar(resUser.getAvatar());
+
+        return res;
+    }
+
+    public ListOutputResult getAllComments(long id, String page, String limit, String rating) {
+        page = (page == null) ? "1"  : page;
+        limit = (limit == null) ? "12" : limit;
+
+        List<CommentDTO> commentDTOS = new ArrayList<>();
+        List<CommentEntity> commentEntities;
+        ListOutputResult res = new ListOutputResult();
+
+        Pageable pageable = PageRequest.of((Integer.parseInt(page) - 1), Integer.parseInt(limit));
+
+        // if rating param, filter the comment by rating
+        if(rating != null) {
+            if(Long.parseLong(rating) > 5)
+                rating = "5";
+            if(Long.parseLong(rating) < 1)
+                rating = "1";
+
+            commentEntities = commentRepository.
+                    findAllByProductEntityIdAndRating(id, Long.parseLong(rating), pageable);
+
+            res.setItemsNumber(commentRepository.countAllByProductEntityIdAndRating(id, Long.parseLong(rating)));
+        }
+        // Default get comments
+        else {
+            commentEntities = commentRepository.findAllByProductEntityId(id, pageable);
+            res.setItemsNumber(commentRepository.countAllByProductEntityId(id));
+        }
+
+        // Trans to DTO
+        for(CommentEntity comment : commentEntities) {
+            CommentDTO commentDTO = new CommentDTO();
+            CommentMapper.toCommentDTO(comment, commentDTO);
+
+            UserEntity resUser = userRepository.findFirstById(comment.getUserid());
+            commentDTO.setUsername(resUser.getUsername());
+            commentDTO.setAvatar(resUser.getAvatar());
+
+            commentDTOS.add(commentDTO);
+        }
+
+        res.setList(commentDTOS);
 
         return res;
     }

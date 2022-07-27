@@ -2,14 +2,13 @@ package com.example.fsoft_shopee_nhom02.controller;
 
 import com.example.fsoft_shopee_nhom02.dto.CommentDTO;
 import com.example.fsoft_shopee_nhom02.dto.ProductDTO;
-import com.example.fsoft_shopee_nhom02.dto.ProductOutputResult;
+import com.example.fsoft_shopee_nhom02.dto.ListOutputResult;
 import com.example.fsoft_shopee_nhom02.model.ProductEntity;
 import com.example.fsoft_shopee_nhom02.model.TypeEntity;
 import com.example.fsoft_shopee_nhom02.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,7 +42,7 @@ public class ProductController {
 
     // Lay products co phan trang
     @GetMapping("")
-    public ProductOutputResult getAllProducts(@RequestParam Map<String, String> requestParams) {
+    public ListOutputResult getAllProducts(@RequestParam Map<String, String> requestParams) {
         String page = requestParams.get("page");
         String limit = requestParams.get("limit");
 
@@ -72,7 +71,7 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public ProductOutputResult searchProduct(@RequestParam Map<String, String> requestParams) {
+    public ListOutputResult searchProduct(@RequestParam Map<String, String> requestParams) {
         String page = requestParams.get("page");
         String limit = requestParams.get("limit");
         String keyword = requestParams.get("keyword");
@@ -83,8 +82,17 @@ public class ProductController {
         return productService.search(page, limit, keyword, minPrice, maxPrice, subCate);
     }
 
-    @PostMapping("/{id}/comments")
-    CommentDTO postComment(@PathVariable long id, @RequestBody CommentDTO commentDTO) {
-        return productService.createComment(id, commentDTO);
+    @PostMapping("user/{proid}/comments")
+    CommentDTO postComment(@PathVariable long proid, @RequestBody CommentDTO commentDTO) {
+        return productService.createComment(proid, commentDTO);
+    }
+
+    @GetMapping("/{id}/comments")
+    ListOutputResult getComments(@PathVariable long id, @RequestParam Map<String, String> requestParams) {
+        String page = requestParams.get("page");
+        String limit = requestParams.get("limit");
+        String rating = requestParams.get("rating");
+
+        return productService.getAllComments(id, page, limit, rating);
     }
 }

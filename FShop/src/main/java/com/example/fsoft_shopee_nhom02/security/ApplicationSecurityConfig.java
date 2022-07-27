@@ -43,12 +43,12 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/", "/login", "/register", "/products/**/types", "/products/*", "/products",
-                         "/products/admin/*", "/test","/order/**", "/address/**",
+                .antMatchers("/", "/login", "/register", "/products/**/types","/products/**/comments",
+                        "/products/*", "/products", "/products/admin/*", "/test","/order/**", "/address/**",
                          "/recoveryPassword/**", "/recovery").permitAll() //Các API không cần đăng nhập
                 .antMatchers("/user", "/users/**").hasAnyRole(ADMIN.name(), USER.name()) //Các API cần đăng nhập bằng tk admin, user
                 .antMatchers("/admin").hasRole(ADMIN.name()) //Các API cần đăng nhập bằng tk admin
-                .antMatchers("/address/**", "/products/**/comments").hasRole(USER.name()) //Các API cần đăng nhập bằng tk user
+                .antMatchers("/address/**", "/products/user/**/comments").hasRole(USER.name()) //Các API cần đăng nhập bằng tk user
                 .anyRequest()
                 .authenticated() //Các API còn lại cần phải đăng nhập
                 .and()
