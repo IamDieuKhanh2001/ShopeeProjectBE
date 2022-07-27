@@ -1,5 +1,6 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
+import com.example.fsoft_shopee_nhom02.dto.CommentDTO;
 import com.example.fsoft_shopee_nhom02.dto.ProductDTO;
 import com.example.fsoft_shopee_nhom02.dto.ProductOutputResult;
 import com.example.fsoft_shopee_nhom02.model.ProductEntity;
@@ -8,6 +9,7 @@ import com.example.fsoft_shopee_nhom02.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -79,5 +81,10 @@ public class ProductController {
         String subCate = requestParams.get("sub");
 
         return productService.search(page, limit, keyword, minPrice, maxPrice, subCate);
+    }
+
+    @PostMapping("/{id}/comments")
+    CommentDTO postComment(@PathVariable long id, @RequestBody CommentDTO commentDTO) {
+        return productService.createComment(id, commentDTO);
     }
 }

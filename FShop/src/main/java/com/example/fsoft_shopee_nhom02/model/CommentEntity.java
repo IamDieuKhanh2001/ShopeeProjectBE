@@ -16,7 +16,8 @@ public class CommentEntity extends BaseClassEntity{
     private Long id;
     private String comment;
     private String image;
-    private String userid;
+    private Long userid;
+    private long rating;
 
     // Tạo quan hệ với ProductEntity
     @ManyToOne(fetch = FetchType.LAZY)
@@ -28,7 +29,7 @@ public class CommentEntity extends BaseClassEntity{
     public CommentEntity() {
     }
 
-    public CommentEntity(Long id, String comment, String image, String userid) {
+    public CommentEntity(Long id, String comment, String image, Long userid) {
         this.id = id;
         this.comment = comment;
         this.image = image;
@@ -59,11 +60,27 @@ public class CommentEntity extends BaseClassEntity{
         this.image = image;
     }
 
-    public String getUserid() {
+    public Long getUserid() {
         return userid;
     }
 
-    public void setUserid(String userid) {
+    public void setUserid(Long userid) {
         this.userid = userid;
+    }
+
+    public long getRating() {
+        return rating;
+    }
+
+    public void setRating(long rating) {
+        this.rating = rating;
+    }
+
+    public ProductEntity getProductEntity() {
+        return productEntity;
+    }
+
+    public void setProductEntity(ProductEntity productEntity) {
+        this.productEntity = productEntity;
     }
 }

@@ -1,22 +1,25 @@
 
 package com.example.fsoft_shopee_nhom02.service;
 
+import com.example.fsoft_shopee_nhom02.auth.ApplicationUser;
+import com.example.fsoft_shopee_nhom02.dto.CommentDTO;
 import com.example.fsoft_shopee_nhom02.dto.ProductDTO;
 import com.example.fsoft_shopee_nhom02.dto.ProductOutputResult;
 import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
+import com.example.fsoft_shopee_nhom02.mapper.CommentMapper;
 import com.example.fsoft_shopee_nhom02.mapper.ProductMapper;
-import com.example.fsoft_shopee_nhom02.model.ProductEntity;
-import com.example.fsoft_shopee_nhom02.model.SubCategoryEntity;
-import com.example.fsoft_shopee_nhom02.model.TypeEntity;
-import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
-import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
-import com.example.fsoft_shopee_nhom02.repository.TypeRepository;
+import com.example.fsoft_shopee_nhom02.model.*;
+import com.example.fsoft_shopee_nhom02.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -29,6 +32,12 @@ public class ProductService {
 
     @Autowired
     TypeRepository typeRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    CommentRepository commentRepository;
 
     public ProductDTO save(ProductDTO productDTO) {
         ProductEntity product;
@@ -262,5 +271,47 @@ public class ProductService {
         }
 
         return result;
+    }
+
+    public CommentDTO createComment(long id, CommentDTO commentDTO) {
+        CommentEntity comment = new CommentEntity();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+
+        ProductEntity productEntity = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot found product id " + id));
+
+        // Limit the max rating
+        if(commentDTO.getRating() > 5)
+            commentDTO.setRating(5);
+
+        // Limit the min rating
+        if(commentDTO.getRating() < 1)
+            commentDTO.setRating(1);
+
+        comment.setProductEntity(productEntity);
+        CommentMapper.toCommentEntity(commentDTO, comment);
+
+        // GET Login username to get id
+        if (principal instanceof ApplicationUser) {
+            username = ((ApplicationUser)principal).getUsername();
+        }
+        else {
+            username = principal.toString();
+        }
+
+        UserEntity user = userRepository.findFirstByUsername(username);
+        comment.setUserid(user.getId());
+
+        commentRepository.save(comment);
+
+        CommentDTO res = new CommentDTO();
+        CommentMapper.toCommentDTO(comment, res);
+
+        UserEntity resUser = userRepository.findFirstById(comment.getUserid());
+        res.setUsername(resUser.getUsername());
+        res.setAvatar(resUser.getAvatar());
+
+        return res;
     }
 }
