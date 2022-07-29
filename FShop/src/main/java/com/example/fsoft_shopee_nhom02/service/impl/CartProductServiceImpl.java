@@ -66,7 +66,6 @@ public class CartProductServiceImpl implements CartProductService {
     public void delete(long productId, long cartId) {
         cartProductRepository.deleteProduct(productId,cartId);
     }
-
     @Override
     public void updateQtyByCartId(long cartId, int qty, double price) throws Exception {
     }

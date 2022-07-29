@@ -13,7 +13,6 @@ public interface CartProductService {
          void update(CartProductDTO cartProductDTO) ;
 
          void delete(long productId , long cartId);
-
     void updateQtyByCartId(long cartId, int qty, double price) throws Exception;
         List<CartProductEntity> getCartByUserId(long cartId);
         List<CartProductEntity> removeCartByUserId(long cartProductId,long cartId);
