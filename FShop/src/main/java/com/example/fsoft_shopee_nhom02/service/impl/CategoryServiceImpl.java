@@ -86,6 +86,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public long countCategoryByShopId(long shopId) {
+        if(shopId == 0l){
+            return categoryRepository.count();
+        }
         shopRepository.findById(shopId).orElseThrow(() ->
                 new NotFoundException("Not found shop with id = "+shopId));
         return categoryRepository.countByShopEntityId(shopId);
