@@ -11,6 +11,7 @@ import java.util.ArrayList;
 @Repository
 public interface OrderDetailRepository extends JpaRepository<OrderDetailsEntity, Long> {
 
+
     @Query(value = "select o.id as orderid,\n" +
             "       o.address,\n" +
             "       o.created_date,\n" +
