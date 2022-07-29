@@ -6,6 +6,7 @@ import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
 import com.example.fsoft_shopee_nhom02.service.CloudinaryService;
+import com.example.fsoft_shopee_nhom02.service.ProductService;
 import com.example.fsoft_shopee_nhom02.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class UploadImgController {
     private UserRepository userRepository;
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductService productService;
 
     @PostMapping("/users/avatar")
     public ResponseEntity<?> uploadAvatar(@RequestParam("avatar") MultipartFile avatar){
@@ -44,22 +45,55 @@ public class UploadImgController {
 
     @PostMapping("/admin/product-img/{id}")
     public ResponseEntity<?> uploadProductImg(@PathVariable long id,
-                                              @RequestParam("imageProduct") MultipartFile imageProduct)
-//                                              @RequestParam("image1") MultipartFile image1,
-//                                              @RequestParam("image2") MultipartFile image2,
-//                                              @RequestParam("image3") MultipartFile image3,
-//                                              @RequestParam("image4") MultipartFile image4)
-    {
-        ProductEntity product = productRepository.findById(id).get();
+                                              @RequestParam("imageProduct") MultipartFile imageProduct,
+                                              @RequestParam(value = "image1", required = false) MultipartFile image1,
+                                              @RequestParam(value = "image2", required = false) MultipartFile image2,
+                                              @RequestParam(value = "image3", required = false) MultipartFile image3,
+                                              @RequestParam(value = "image4", required = false) MultipartFile image4) {
+        ProductEntity product = productService.getProductById(id);
 
-        String imgPro = cloudinaryService.uploadFile(
+        // ImageProduct url
+        String imgProUrl = cloudinaryService.uploadFile(
                 imageProduct,
                 "ImageProduct",
                 "ShopeeProject" + "/" + "Product" + "/" + product.getId());
 
-        product.setImageProduct(imgPro);
-        productRepository.save(product);
+        String imgOneUrl = cloudinaryService.uploadFile(
+                image1,
+                "Image1",
+                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
 
-        return ResponseEntity.ok("kkk");
+        String imgTwoUrl = cloudinaryService.uploadFile(
+                image2,
+                "Image2",
+                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
+
+        String imgThreeUrl = cloudinaryService.uploadFile(
+                image3,
+                "Image3",
+                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
+
+        String imgFourUrl = cloudinaryService.uploadFile(
+                image4,
+                "Image4",
+                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
+
+        product.setImageProduct(imgProUrl);
+
+        if(imgOneUrl != "-1")
+            product.setImage1(imgOneUrl);
+
+        if(imgTwoUrl != "-1")
+            product.setImage2(imgTwoUrl);
+
+        if(imgThreeUrl != "-1")
+            product.setImage3(imgThreeUrl);
+
+        if(imgFourUrl != "-1")
+            product.setImage4(imgFourUrl);
+
+        productService.saveProduct(product);
+
+        return ResponseEntity.ok("Saved!");
     }
 }

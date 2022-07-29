@@ -39,6 +39,16 @@ public class ProductService {
 
 //region--------------------Functions for Product Crud APIs---------------------------
 
+    // Use for Upload image controller
+    public ProductEntity getProductById(long id) {
+        return productRepository.findById(id).get();
+    }
+
+    // Use for Upload image controller
+    public void saveProduct(ProductEntity product) {
+        productRepository.save(product);
+    }
+
     public ProductDTO save(ProductDTO productDTO) {
         ProductEntity product;
 
