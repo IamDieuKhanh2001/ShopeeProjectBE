@@ -34,11 +34,12 @@ public class CategoryController {
     }
 
     @GetMapping("/category/count")
-    public ResponseEntity<?> countByShopId(@RequestParam long shopId){
-        if(categoryService.countCategoryByShopId(shopId) == 0L){
+    public ResponseEntity<?> countByShopId(@RequestParam(required = false, defaultValue = "0") long shopId){
+        long countProduct = categoryService.countCategoryByShopId(shopId);
+        if(countProduct == 0L){
             return ResponseEntity.ok("Empty!!");
         }
-        return ResponseEntity.ok(categoryService.countCategoryByShopId(shopId));
+        return ResponseEntity.ok(countProduct);
     }
 
     @GetMapping("/category/random")
