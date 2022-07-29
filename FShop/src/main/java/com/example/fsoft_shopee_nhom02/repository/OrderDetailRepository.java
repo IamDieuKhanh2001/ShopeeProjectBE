@@ -24,7 +24,8 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetailsEntity,
             "       o.user_name,\n" +
             "       od.quantity,\n" +
             "       od.unit_price,\n" +
-            "       od.type\n" +
+            "       od.type,\n" +
+            "o.total_price+o.shipping_fee as total_pay" +
             "            from orders o\n" +
             "                     left join orderdetails od on o.id = od.order_id\n" +
             "            where od.order_id=:OrderId", nativeQuery = true)
