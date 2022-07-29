@@ -11,7 +11,7 @@ public class ProductDTO {
     private String detail;
     private double avgRating;
     private String imageProduct;
-    private String image1;
+        private String image1;
     private String image2;
     private String image3;
     private String image4;

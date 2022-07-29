@@ -1,10 +1,13 @@
 package com.example.fsoft_shopee_nhom02.service.impl;
 
 
+import com.example.fsoft_shopee_nhom02.dto.CartProductDTO;
+import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
 import com.example.fsoft_shopee_nhom02.model.CartEntity;
 import com.example.fsoft_shopee_nhom02.model.CartProductEntity;
 import com.example.fsoft_shopee_nhom02.model.ProductEntity;
 import com.example.fsoft_shopee_nhom02.repository.CartProductRepository;
+import com.example.fsoft_shopee_nhom02.repository.CartRepository;
 import com.example.fsoft_shopee_nhom02.service.CartProductService;
 import com.example.fsoft_shopee_nhom02.service.CartService;
 import com.example.fsoft_shopee_nhom02.service.ProductService;
@@ -17,7 +20,10 @@ import java.util.List;
 public class CartProductServiceImpl implements CartProductService {
 
     @Autowired
-    CartProductRepository addCartRepo;
+    CartProductRepository cartProductRepository;
+
+    @Autowired
+    CartRepository cartRepository;
 
     @Autowired
     ProductService proServices;
@@ -28,7 +34,7 @@ public class CartProductServiceImpl implements CartProductService {
     @Override
     public List<CartProductEntity> addCartbyCartIdAndProductId(long productId, long userId, long qty) throws Exception {
         try {
-            if(addCartRepo.getCartByProductIdAnduserId(userId, productId).isPresent()){
+            if(cartProductRepository.getCartByProductIdAnduserId(userId, productId).isPresent()){
                 throw new Exception("Product is already exist.");
             }
             CartProductEntity obj = new CartProductEntity();
@@ -38,7 +44,7 @@ public class CartProductServiceImpl implements CartProductService {
             ProductEntity pro = proServices.getProductsById(productId);
             obj.setProductEntity(pro);
             //TODO price has to check with qty
-            addCartRepo.save(obj);
+            cartProductRepository.save(obj);
             return this.getCartByUserId(userId);
         }catch(Exception e) {
             e.printStackTrace();
@@ -48,8 +54,21 @@ public class CartProductServiceImpl implements CartProductService {
     }
 
     @Override
-    public void updateQtyByCartId(long cartId, int qty, double price) throws Exception {
+    public void update(CartProductDTO cartProductDTO)  {
+         CartProductEntity cartProductEntity = cartProductRepository.findById(cartProductDTO.getId())
+                .orElseThrow(() -> new NotFoundException("No Id Cart"));
 
+         cartProductEntity.setQuantity(cartProductDTO.getQuantity());
+         cartProductEntity = cartProductRepository.save(cartProductEntity);
+    }
+
+    @Override
+    public void delete(long productId, long cartId) {
+        cartProductRepository.deleteProduct(productId,cartId);
+    }
+
+    @Override
+    public void updateQtyByCartId(long cartId, int qty, double price) throws Exception {
     }
 
     @Override
