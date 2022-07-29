@@ -25,27 +25,32 @@ public class CartProductController {
             long cartId = Long.parseLong(addCartRequest.get("cartId"));
             long quantity = Long.parseLong(addCartRequest.get("quantity"));
             List<CartProductEntity> obj = cartProductService.addCartbyCartIdAndProductId(productId, cartId, quantity);
-            return ResponseEntity.ok(obj);
+                return ResponseEntity.ok(obj);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body("Lỗi");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PutMapping("products/{id}")
     public void  updateProductCount(@PathVariable long id,
-                                                @RequestBody CartProductDTO cartProductDTO)
+                                    @RequestBody CartProductDTO cartProductDTO)
     {
         cartProductDTO.setId(id);
         cartProductService.update(cartProductDTO);
     }
 
     @DeleteMapping("")
-    public void  deleteProduct(@RequestParam Long productId, @RequestParam Long cartId)
+    public void  deleteProduct(@RequestParam Long productId,
+                               @RequestParam Long cartId)
     {
         cartProductService.delete(productId, cartId);
     }
 
+    @GetMapping("/{cartId}")
+    public ResponseEntity<?>getCart(@PathVariable Long cartId){
+        return ResponseEntity.ok(cartProductService.getAllCart(cartId));
+    }
     @GetMapping("/test")
 
     public  String test(){
