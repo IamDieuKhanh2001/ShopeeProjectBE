@@ -20,4 +20,5 @@ public interface UserService {
     UserEntity changeProfile(UserDTO user, String username);
     List<UserEntity> getUsersByEmail(String email);
     UserEntity changeUserPasswordByEmail(String newPassword, String email);
+    UserEntity findByUsername(String username);
 }

@@ -1,5 +1,6 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
+import com.example.fsoft_shopee_nhom02.dto.CartProductDTO;
 import com.example.fsoft_shopee_nhom02.model.CartProductEntity;
 import com.example.fsoft_shopee_nhom02.service.impl.CartProductServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class CartProductController {
             String keys[] = {"productId", "cartId", "quantity"};
             long productId = Long.parseLong(addCartRequest.get("productId"));
             long cartId = Long.parseLong(addCartRequest.get("cartId"));
-            long quantity = Long.parseLong(addCartRequest.get("qty"));
+            long quantity = Long.parseLong(addCartRequest.get("quantity"));
             List<CartProductEntity> obj = cartProductService.addCartbyCartIdAndProductId(productId, cartId, quantity);
             return ResponseEntity.ok(obj);
         } catch (Exception e) {
@@ -30,8 +31,24 @@ public class CartProductController {
             return ResponseEntity.badRequest().body("Lỗi");
         }
     }
+
+    @PutMapping("products/{id}")
+    public void  updateProductCount(@PathVariable long id,
+                                                @RequestBody CartProductDTO cartProductDTO)
+    {
+        cartProductDTO.setId(id);
+        cartProductService.update(cartProductDTO);
+    }
+
+    @DeleteMapping("")
+    public void  deleteProduct(@RequestParam Long productId, @RequestParam Long cartId)
+    {
+        cartProductService.delete(productId, cartId);
+    }
+
     @GetMapping("/test")
-    public  String test(@RequestBody HashMap<String, String> addCartRequest){
+
+    public  String test(){
         return "hello";
     }
 }
