@@ -3,9 +3,12 @@ package com.example.fsoft_shopee_nhom02.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.List;
 
 public class UserDTO {
+
+    private long id;
     private String username;
     private String password;
     private String phone;
@@ -14,6 +17,7 @@ public class UserDTO {
     private String email;
     @JsonFormat(pattern="yyyy-MM-dd")
     private Timestamp dob;
+    private int age;
     private List<AddressDTO> addressList;
     private String avatar;
 
@@ -79,6 +83,26 @@ public class UserDTO {
         this.gender = gender;
         this.email = email;
         this.avatar = avatar;
+    }
+
+    public UserDTO(long id, String username, String password, String phone, String name, String gender, String email, Timestamp dob, int age, String avatar) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.phone = phone;
+        this.name = name;
+        this.gender = gender;
+        this.email = email;
+        this.dob = dob;
+        this.avatar = avatar;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public UserDTO(String username) {
@@ -155,5 +179,10 @@ public class UserDTO {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+    public int getAge(){
+        Calendar dobCal = Calendar.getInstance();
+        dobCal.setTimeInMillis(dob.getTime());
+        return Calendar.getInstance().get(Calendar.YEAR) - dobCal.get(Calendar.YEAR) ;
     }
 }

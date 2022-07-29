@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<?> updateProduct(@RequestBody UserDTO newUser, @PathVariable Long id) {
+    ResponseEntity<?> updateUser(@RequestBody UserDTO newUser, @PathVariable Long id) {
         return ResponseEntity.ok(userService.updateUser(newUser, id));
     }
 
@@ -47,7 +47,8 @@ public class UserController {
         if(userService.countAllUser() == 0L){
             return ResponseEntity.ok("Empty!!");
         }
-        return ResponseEntity.ok("Total user: "+userService.countAllUser());
+        return ResponseEntity.ok("Total user: "+userService.countAllUser()+", Men user: "+userService.countMen()+
+                ", Women user: "+userService.countWomen()+", Kid user: "+userService.countKid());
     }
 
     //API cần header: Authorization

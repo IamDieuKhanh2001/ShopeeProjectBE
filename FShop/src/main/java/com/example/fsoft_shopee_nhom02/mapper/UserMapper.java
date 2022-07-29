@@ -20,4 +20,20 @@ public class UserMapper {
         userEntity.setCartEntity(null);
         return userEntity;
     }
+
+    public static UserDTO toUserDTO(UserEntity userEntity){
+        UserDTO userDTO = new UserDTO();
+
+        userDTO.setId(userEntity.getId());
+        userDTO.setUsername(userEntity.getUsername());
+        userDTO.setPassword(userEntity.getPassword());
+        userDTO.setPhone(userEntity.getPhone());
+        userDTO.setName(userEntity.getName());
+        userDTO.setGender(userEntity.getGender());
+        userDTO.setEmail(userEntity.getEmail());
+        userDTO.setDob(userEntity.getDob());
+        userDTO.setAvatar(userEntity.getAvatar());
+
+        return userDTO;
+    }
 }

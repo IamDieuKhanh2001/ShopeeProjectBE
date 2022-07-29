@@ -3,7 +3,7 @@ package com.example.fsoft_shopee_nhom02.service.impl;
 import com.example.fsoft_shopee_nhom02.dto.UserDTO;
 import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
 import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
-import com.example.fsoft_shopee_nhom02.model.AddressEntity;
+import com.example.fsoft_shopee_nhom02.mapper.UserMapper;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
 import com.example.fsoft_shopee_nhom02.service.UserService;
@@ -24,10 +24,15 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public List<UserEntity> getAllUser() {
+    public List<UserDTO> getAllUser() {
+        List<UserDTO> allUserDTO = new ArrayList<>();
         List<UserEntity> allUsers = userRepository.findAll();
         if (allUsers.size()>0) {
-            return allUsers;
+            for (UserEntity user : allUsers){
+                UserDTO userDTO = UserMapper.toUserDTO(user);
+                allUserDTO.add(userDTO);
+            }
+            return allUserDTO;
         }else {
             throw new NotFoundException("Empty!!");
         }
@@ -65,6 +70,44 @@ public class UserServiceImpl implements UserService {
     @Override
     public long countAllUser() {
         return userRepository.count();
+    }
+
+    @Override
+    public long countMen() {
+        List<UserDTO> MenUser = new ArrayList<>();
+        List<UserEntity> userEntity = userRepository.findAll();
+        for (UserEntity user : userEntity){
+            if (user.getGender().equals("Nam")){
+                UserDTO userDTO = UserMapper.toUserDTO(user);
+                MenUser.add(userDTO);
+            }
+        }
+        return MenUser.size();
+    }
+
+    @Override
+    public long countWomen() {
+        List<UserDTO> WomenUser = new ArrayList<>();
+        List<UserEntity> userEntity = userRepository.findAll();
+        for (UserEntity user : userEntity){
+            if (user.getGender().equals("Nữ")){
+                UserDTO userDTO = UserMapper.toUserDTO(user);
+                WomenUser.add(userDTO);
+            }
+        }
+        return WomenUser.size();
+    }
+
+    @Override
+    public long countKid() {
+        List<UserDTO> KidUser = new ArrayList<>();
+        List<UserEntity> userEntity = userRepository.findAll();
+        for (UserEntity user : userEntity){
+            UserDTO userDTO = UserMapper.toUserDTO(user);
+            if (userDTO.getAge() < 18)
+                KidUser.add(userDTO);
+        }
+        return KidUser.size();
     }
 
     @Override

@@ -9,11 +9,14 @@ import java.util.List;
 @Service
 public interface UserService {
 
-    List<UserEntity> getAllUser();
+    List<UserDTO> getAllUser();
     UserEntity findByIdUser(Long id);
     UserEntity updateUser(UserDTO newUser, Long id);
     void deleteUser(Long id);
     long countAllUser();
+    long countMen();
+    long countWomen();
+    long countKid();
     UserEntity changeProfile(UserDTO user, String username);
     List<UserEntity> getUsersByEmail(String email);
     UserEntity changeUserPasswordByEmail(String newPassword, String email);
