@@ -27,9 +27,6 @@ public class UploadImgController {
     private UserService userService;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private ProductService productService;
 
     @PostMapping("/users/avatar")
@@ -47,6 +44,15 @@ public class UploadImgController {
         } else {
             throw new IllegalStateException("Update avatar user: " + username + " that bai");
         }
+    }
+    @DeleteMapping("/users/avatar")
+    public ResponseEntity<?> deleteAva(
+            @RequestParam(value = "avatar", required = false) MultipartFile avatar
+    ){
+
+        return ResponseEntity.ok(
+                cloudinaryService.deleteFile("ShopeeProject" + "/" + "Avatar" + "/" + "3")
+        );
     }
 //    image/png
 //    image/jpeg

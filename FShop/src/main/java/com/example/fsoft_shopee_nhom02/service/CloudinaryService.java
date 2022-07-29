@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -19,6 +20,15 @@ public class CloudinaryService {
     @Autowired
     public CloudinaryService(Cloudinary cloudinary) {
         this.cloudinary = cloudinary;
+    }
+    public Boolean deleteFile(String directory) {
+        Map paramsOption = ObjectUtils.asMap("resource_type", "image", "invalidate" , true);
+        try {
+            cloudinary.uploader().destroy(directory, paramsOption);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     //    Upload thanh cong return duong dan chua hinh anh
