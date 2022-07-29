@@ -58,56 +58,18 @@ public class UploadImgController {
 //    image/jpeg
 
     @PostMapping("/admin/product-img/{id}")
-    public ResponseEntity<?> uploadProductImg(@PathVariable long id,
-                                              @RequestParam("imageProduct") MultipartFile imageProduct,
-                                              @RequestParam(value = "image1", required = false) MultipartFile image1,
-                                              @RequestParam(value = "image2", required = false) MultipartFile image2,
-                                              @RequestParam(value = "image3", required = false) MultipartFile image3,
-                                              @RequestParam(value = "image4", required = false) MultipartFile image4) {
-        ProductEntity product = productService.getProductById(id);
+    public SuccessResponseDTO uploadProductImg(@PathVariable long id,
+                                               @RequestParam("imageProduct") MultipartFile imageProduct,
+                                               @RequestParam(value = "image1", required = false) MultipartFile image1,
+                                               @RequestParam(value = "image2", required = false) MultipartFile image2,
+                                               @RequestParam(value = "image3", required = false) MultipartFile image3,
+                                               @RequestParam(value = "image4", required = false) MultipartFile image4) {
 
-        // ImageProduct url
-        String imgProUrl = cloudinaryService.uploadFile(
-                imageProduct,
-                "ImageProduct",
-                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
+        productService.saveProductImage(id, imageProduct, image1, image2, image3, image4);
 
-        String imgOneUrl = cloudinaryService.uploadFile(
-                image1,
-                "Image1",
-                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
-
-        String imgTwoUrl = cloudinaryService.uploadFile(
-                image2,
-                "Image2",
-                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
-
-        String imgThreeUrl = cloudinaryService.uploadFile(
-                image3,
-                "Image3",
-                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
-
-        String imgFourUrl = cloudinaryService.uploadFile(
-                image4,
-                "Image4",
-                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
-
-        product.setImageProduct(imgProUrl);
-
-        if(imgOneUrl != "-1")
-            product.setImage1(imgOneUrl);
-
-        if(imgTwoUrl != "-1")
-            product.setImage2(imgTwoUrl);
-
-        if(imgThreeUrl != "-1")
-            product.setImage3(imgThreeUrl);
-
-        if(imgFourUrl != "-1")
-            product.setImage4(imgFourUrl);
-
-        productService.saveProduct(product);
-
-        return ResponseEntity.ok("Saved!");
+        return new SuccessResponseDTO(
+                HttpStatus.OK,
+                "Đã upload ảnh của product id: " + id
+        );
     }
 }
