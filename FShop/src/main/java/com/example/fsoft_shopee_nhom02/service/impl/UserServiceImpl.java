@@ -6,11 +6,13 @@ import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.UserMapper;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
+import com.example.fsoft_shopee_nhom02.service.CloudinaryService;
 import com.example.fsoft_shopee_nhom02.service.UserService;
 import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public List<UserDTO> getAllUser() {
@@ -154,5 +159,25 @@ public class UserServiceImpl implements UserService {
         }
 
         return user.get();
+    }
+
+    @Override
+    public Boolean uploadUserAvatar(MultipartFile avatar, String username) {
+        Optional<UserEntity> usersOptional = userRepository.findByUsername(username);
+        if(!usersOptional.isPresent()) {
+            throw new IllegalStateException("Username " + username + " not found");
+        }
+        UserEntity userLogin = usersOptional.get();
+        String url = cloudinaryService.uploadFile(
+                avatar,
+                String.valueOf(userLogin.getId()),
+                "ShopeeProject" + "/" + "Avatar");
+        System.out.println(url);
+        if(url == "-1") {
+            throw new IllegalStateException("khong upload duoc");
+        }
+        userLogin.setAvatar(url);
+        userRepository.save(userLogin);
+        return true;
     }
 }

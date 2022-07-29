@@ -3,6 +3,7 @@ package com.example.fsoft_shopee_nhom02.service;
 import com.example.fsoft_shopee_nhom02.dto.UserDTO;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,4 +22,5 @@ public interface UserService {
     List<UserEntity> getUsersByEmail(String email);
     UserEntity changeUserPasswordByEmail(String newPassword, String email);
     UserEntity findByUsername(String username);
+    Boolean uploadUserAvatar(MultipartFile avatar, String username);
 }

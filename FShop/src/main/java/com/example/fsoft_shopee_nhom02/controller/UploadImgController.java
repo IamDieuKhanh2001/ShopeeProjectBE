@@ -1,6 +1,7 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUserService;
+import com.example.fsoft_shopee_nhom02.dto.SuccessResponseDTO;
 import com.example.fsoft_shopee_nhom02.model.ProductEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
@@ -9,6 +10,7 @@ import com.example.fsoft_shopee_nhom02.service.CloudinaryService;
 import com.example.fsoft_shopee_nhom02.service.ProductService;
 import com.example.fsoft_shopee_nhom02.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,28 +33,20 @@ public class UploadImgController {
     private ProductService productService;
 
     @PostMapping("/users/avatar")
-    public ResponseEntity<?> uploadAvatar(
+    public SuccessResponseDTO uploadAvatar(
             @RequestParam(value = "avatar", required = false) MultipartFile avatar
     ){
-//        if(avatar.getContentType() != "png" || avatar.getContentType() != "jpeg") {
-//            throw new IllegalStateException("file khong hop le");
-//        }
-        String username = ApplicationUserService.GetUsernameLoggedIn();
-        UserEntity userLogin = userService.findByUsername(username);
-        System.out.println(avatar.getSize());
-        System.out.println(avatar.getContentType());
-
-        String url = cloudinaryService.uploadFile(
-                avatar,
-                String.valueOf(userLogin.getId()),
-                "ShopeeProject" + "/" + "Avatar");
-        if(url == "-1") {
-            throw new IllegalStateException("khong upload duoc");
+        if(!avatar.getContentType().equals("image/png") && !avatar.getContentType().equals("image/jpeg")) {
+            throw new IllegalStateException("file khong hop le");
         }
-
-        userLogin.setAvatar(url);
-        userRepository.save(userLogin);
-        return ResponseEntity.ok("ok");
+        String username = ApplicationUserService.GetUsernameLoggedIn();
+        if(userService.uploadUserAvatar(avatar, username)) {
+            return new SuccessResponseDTO(
+                    HttpStatus.OK,
+                    "Update avatar user: " + username + " thanh cong");
+        } else {
+            throw new IllegalStateException("Update avatar user: " + username + " that bai");
+        }
     }
 //    image/png
 //    image/jpeg
