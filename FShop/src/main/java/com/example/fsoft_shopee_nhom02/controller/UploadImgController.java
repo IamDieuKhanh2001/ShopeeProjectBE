@@ -34,7 +34,7 @@ public class UploadImgController {
     public ResponseEntity<?> uploadAvatar(
             @RequestParam(value = "avatar", required = false) MultipartFile avatar
     ){
-//        if(avatar.getContentType() != "image/png" || avatar.getContentType() != "image/jpeg") {
+//        if(avatar.getContentType() != "png" || avatar.getContentType() != "jpeg") {
 //            throw new IllegalStateException("file khong hop le");
 //        }
         String username = ApplicationUserService.GetUsernameLoggedIn();
@@ -46,7 +46,10 @@ public class UploadImgController {
                 avatar,
                 String.valueOf(userLogin.getId()),
                 "ShopeeProject" + "/" + "Avatar");
-        System.out.println(url);
+        if(url == "-1") {
+            throw new IllegalStateException("khong upload duoc");
+        }
+
         userLogin.setAvatar(url);
         userRepository.save(userLogin);
         return ResponseEntity.ok("ok");
