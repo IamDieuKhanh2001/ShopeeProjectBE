@@ -34,9 +34,9 @@ public class UploadImgController {
     public ResponseEntity<?> uploadAvatar(
             @RequestParam(value = "avatar", required = false) MultipartFile avatar
     ){
-        if(avatar.getContentType() != "image/png" || avatar.getContentType() != "image/jpeg") {
-            throw new IllegalStateException("file khong hop le");
-        }
+//        if(avatar.getContentType() != "png" || avatar.getContentType() != "jpeg") {
+//            throw new IllegalStateException("file khong hop le");
+//        }
         String username = ApplicationUserService.GetUsernameLoggedIn();
         UserEntity userLogin = userService.findByUsername(username);
         System.out.println(avatar.getSize());

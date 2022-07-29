@@ -25,7 +25,12 @@ public class CloudinaryService {
 //    Upload khong thanh cong return -1
     public String uploadFile(MultipartFile file, String imgName, String directory) {
         File uploadedFile = null;
+
         try {
+            if(file == null) {
+                return "-1";
+            }
+
             uploadedFile = convertMultiPartToFile(file, imgName);
             String fileDir = directory + "/"
                     + uploadedFile.getName(); //Dir tren cloudinary: Tạo folder id product và file name là id product

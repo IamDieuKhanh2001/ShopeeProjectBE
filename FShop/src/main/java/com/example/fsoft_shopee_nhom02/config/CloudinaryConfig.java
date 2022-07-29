@@ -11,13 +11,6 @@ import java.util.Map;
 @Configuration
 public class CloudinaryConfig {
     @Bean
-    public CommonsMultipartResolver multipartResolver() {
-        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-        resolver.setDefaultEncoding("UTF-8");
-        return resolver;
-    }
-
-    @Bean
     public Cloudinary cloudinary() {
         Cloudinary cloudinary = null;
         Map config = new HashMap();
