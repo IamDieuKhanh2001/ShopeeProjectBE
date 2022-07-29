@@ -7,6 +7,7 @@ import com.example.fsoft_shopee_nhom02.model.AddressEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
 import com.example.fsoft_shopee_nhom02.service.UserService;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -100,5 +101,15 @@ public class UserServiceImpl implements UserService {
                     return userRepository.save(user);
                 }).orElseThrow(() -> new ResourceNotFoundException("Cannot found user with email = " + email));
         return userChangePassword;
+    }
+
+    @Override
+    public UserEntity findByUsername(String username) {
+        Optional<UserEntity> user = userRepository.findByUsername(username);
+        if(!user.isPresent()){
+            throw new IllegalStateException("Khong tim thay username");
+        }
+
+        return user.get();
     }
 }
