@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 @RestController
 @RequestMapping("/order")
@@ -58,7 +60,7 @@ public class OrderController {
     }
 
     @PostMapping("/create_order")
-    public Object CreateOrder(@RequestBody List<Object> req) {
+    public Object CreateOrder(@RequestBody List<Object> req) throws ParseException {
         long startTime = System.currentTimeMillis();
 
         // get request data
@@ -73,22 +75,21 @@ public class OrderController {
         UserEntity user = userService.findByIdUser(Long.parseLong(orderInformation.get("user_id")));
 
         // calculate for order Entity
-        Timestamp created_date = GlobalVariable.getCurrentDate();
+        Timestamp created_date = GlobalVariable.getCurrentDateTime();
         String status = "Waiting for confirm";
-        long total_cost = 0;
+        AtomicLong total_cost = new AtomicLong();
 
         // analyze order Product data
-        for (Map<String, String> i : orderDetailsEntityList_req) {
+        orderDetailsEntityList_req.forEach(i -> {
             OrderDetailsEntity orderDetailsEntity = new OrderDetailsEntity();
             orderDetailsEntity.setQuantity(Long.parseLong(i.get("quantity")));
             orderDetailsEntity.setUnitPrice(Long.parseLong(i.get("unit_price")));
             orderDetailsEntity.setProductEntityID(Long.parseLong(i.get("product_id")));
             orderDetailsEntity.setType(i.get("type"));
 
-            total_cost += Long.parseLong(i.get("unit_price")) * Long.parseLong(i.get("quantity"));
-
+            total_cost.addAndGet(Long.parseLong(i.get("unit_price")) * Long.parseLong(i.get("quantity")));
             orderDetailsEntityList.add(orderDetailsEntity);
-        }
+        });
 
         // map value for orderEntity
         orderEntity.setCreatedDate(created_date);
@@ -111,16 +112,16 @@ public class OrderController {
         orderEntity.setPayment(orderInformation.get("payment"));
         orderEntity.setShippingFee(Long.parseLong(orderInformation.get("shipping_fee")));
         orderEntity.setStatus(status);
-        orderEntity.setTotalPrice(total_cost);
+        orderEntity.setTotalPrice(total_cost.get());
         orderEntity.setUserId(user.getId());
 
         // insert order to DB
         orderService.addNewOrder(orderEntity);
 
         // insert order detail to DB
-        for (OrderDetailsEntity i : orderDetailsEntityList) {
-            i.setOrderEntityID(orderEntity.getId());
-        }
+        long newOrderEntityID = orderEntity.getId();
+
+        orderDetailsEntityList.forEach(orderDetailsEntity -> orderDetailsEntity.setOrderEntityID(newOrderEntityID));
 
         orderDetailService.addNewOrderDetails(orderDetailsEntityList);
 

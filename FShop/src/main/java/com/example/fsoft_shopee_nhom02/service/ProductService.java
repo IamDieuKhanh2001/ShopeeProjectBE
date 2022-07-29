@@ -1,21 +1,22 @@
 
 package com.example.fsoft_shopee_nhom02.service;
 
+import com.example.fsoft_shopee_nhom02.auth.ApplicationUser;
+import com.example.fsoft_shopee_nhom02.dto.CommentDTO;
 import com.example.fsoft_shopee_nhom02.dto.ProductDTO;
-import com.example.fsoft_shopee_nhom02.dto.ProductOutputResult;
+import com.example.fsoft_shopee_nhom02.dto.ListOutputResult;
 import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
+import com.example.fsoft_shopee_nhom02.mapper.CommentMapper;
 import com.example.fsoft_shopee_nhom02.mapper.ProductMapper;
-import com.example.fsoft_shopee_nhom02.model.ProductEntity;
-import com.example.fsoft_shopee_nhom02.model.SubCategoryEntity;
-import com.example.fsoft_shopee_nhom02.model.TypeEntity;
-import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
-import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
-import com.example.fsoft_shopee_nhom02.repository.TypeRepository;
+import com.example.fsoft_shopee_nhom02.model.*;
+import com.example.fsoft_shopee_nhom02.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,14 @@ public class ProductService {
 
     @Autowired
     TypeRepository typeRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    CommentRepository commentRepository;
+
+//region--------------------Functions for Product Crud APIs---------------------------
 
     public ProductDTO save(ProductDTO productDTO) {
         ProductEntity product;
@@ -49,21 +58,38 @@ public class ProductService {
 
         productRepository.save(product);
 
-
         return ProductMapper.toProductDTO(product);
     }
 
     // Ham xu ly viec chuyen tu product sang DTO khi co truong Price
-    public void dtoHandler(ProductEntity product, List<ProductDTO> productDTOS) {
+    ProductDTO dtoHandler(ProductEntity product) {
         ProductDTO productDTO = ProductMapper.toProductDTO(product);
         List<Long> priceList = typeRepository.findFirstPrice(product.getId());
+
+        Long sumRating = commentRepository.sumProductReview(product.getId());
+
+        // If condition de check neu sum = null thi cho danh gia tb = 0
+        if(sumRating == null) {
+            productDTO.setAvgRating(0);
+        }
+        // Tinh trung binh neu khac null
+        else {
+            long totalCmt = commentRepository.countAllByProductEntityId(product.getId());
+            // Tinh trung binh va lam tron 1 so sau dau phay
+            double avgRating = (double) sumRating / totalCmt;
+            double roundAvgRating = (double) Math.round(avgRating * 10.0) / 10.0;
+            productDTO.setAvgRating(roundAvgRating);
+        }
+
+        // List rong thi cho price = 0 neu khong se lay price tai index 0
         long price = priceList.isEmpty() ? 0 : priceList.get(0);
         productDTO.setPrice(price);
-        productDTOS.add(productDTO);
+
+        return productDTO;
     }
 
-    public ProductOutputResult getAllProducts(String page, String limit) {
-        ProductOutputResult result = new ProductOutputResult();
+    public ListOutputResult getAllProducts(String page, String limit) {
+        ListOutputResult result = new ListOutputResult();
 
         page = (page == null) ? "1"  : page;
         limit = (limit == null) ? "12" : limit;
@@ -75,7 +101,9 @@ public class ProductService {
         List<ProductEntity> products = productRepository.findAll(pageable).getContent();
 
         for (ProductEntity product : products) {
-            dtoHandler(product, productDTOS);
+            ProductDTO productDTO = dtoHandler(product);
+
+            productDTOS.add(productDTO);
         }
 
         if(products.isEmpty()) {
@@ -84,8 +112,8 @@ public class ProductService {
 
         long productsNumber = productRepository.count();
 
-        result.setProductsList(productDTOS);
-        result.setProductsNumber(productsNumber);
+        result.setList(productDTOS);
+        result.setItemsNumber(productsNumber);
 
         return result;
     }
@@ -94,7 +122,7 @@ public class ProductService {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cannot found product id " + id));
 
-        return ProductMapper.toProductDTO(product);
+        return dtoHandler(product);
     }
 
     public void deleteProduct(long id) {
@@ -105,6 +133,11 @@ public class ProductService {
 
         typeRepository.deleteAllByProductEntityId(id);
     }
+
+//endregion
+
+
+//region-------------------------Functions for Types Crud APIs, Search Function---------------------------
 
     public List<TypeEntity> getTypes(long id) {
         return typeRepository.findAllByProductEntityId(id);
@@ -150,9 +183,9 @@ public class ProductService {
           va list san pham.
 
      */
-    public ProductOutputResult search(String page, String limit, String keyword,
-                                      String minPrice, String maxPrice, String sub) {
-        ProductOutputResult result = new ProductOutputResult();
+    public ListOutputResult search(String page, String limit, String keyword,
+                                   String minPrice, String maxPrice, String sub) {
+        ListOutputResult result = new ListOutputResult();
         long defaultMaxPrice = typeRepository.findMaxPrice() + 1;
 
         page = (page == null) ? "1"  : page;
@@ -187,7 +220,9 @@ public class ProductService {
             List<ProductDTO> priceFilterDTOS = new ArrayList<>();
 
             for (ProductEntity product : productEntities) {
-                dtoHandler(product, productDTOS);
+                ProductDTO productDTO = dtoHandler(product);
+
+                productDTOS.add(productDTO);
             }
 
             // Push the Product DTO that has valid price range to a new list
@@ -215,8 +250,8 @@ public class ProductService {
                 endIndex = priceFilterDTOS.size();
             }
 
-            result.setProductsNumber(priceFilterDTOS.size());
-            result.setProductsList(priceFilterDTOS.subList(startIndex, endIndex));
+            result.setItemsNumber(priceFilterDTOS.size());
+            result.setList(priceFilterDTOS.subList(startIndex, endIndex));
         }
         // Default search if price range equal to null or not valid min max
         else {
@@ -255,12 +290,113 @@ public class ProductService {
             }
 
             for (ProductEntity product : productEntities) {
-                dtoHandler(product, productDTOS);
+                ProductDTO productDTO = dtoHandler(product);
+
+                productDTOS.add(productDTO);
             }
-            result.setProductsNumber(productsNumber);
-            result.setProductsList(productDTOS);
+            result.setItemsNumber(productsNumber);
+            result.setList(productDTOS);
         }
 
         return result;
     }
+
+//endregion
+
+
+//region--------------------Functions for Comments Crud APIs---------------------------
+
+    void commentDTOHandler(CommentEntity comment, CommentDTO commentDTO) {
+        CommentMapper.toCommentDTO(comment, commentDTO);
+
+        UserEntity resUser = userRepository.findFirstById(comment.getUserid());
+        commentDTO.setUsername(resUser.getUsername());
+        commentDTO.setAvatar(resUser.getAvatar());
+    }
+
+    public CommentDTO createComment(long id, CommentDTO commentDTO) {
+        CommentEntity comment = new CommentEntity();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+
+        ProductEntity productEntity = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot found product id " + id));
+
+        // Limit the max rating
+        if(commentDTO.getRating() > 5)
+            commentDTO.setRating(5);
+
+        // Limit the min rating
+        if(commentDTO.getRating() < 1)
+            commentDTO.setRating(1);
+
+        comment.setProductEntity(productEntity);
+        CommentMapper.toCommentEntity(commentDTO, comment);
+
+        // GET Login username to get id
+        if (principal instanceof ApplicationUser) {
+            username = ((ApplicationUser)principal).getUsername();
+        }
+        else {
+            username = principal.toString();
+        }
+
+        UserEntity user = userRepository.findFirstByUsername(username);
+        comment.setUserid(user.getId());
+
+        commentRepository.save(comment);
+
+        CommentDTO res = new CommentDTO();
+        commentDTOHandler(comment, res);
+
+        return res;
+    }
+
+    public ListOutputResult getAllComments(long id, String page, String limit, String rating) {
+        page = (page == null) ? "1"  : page;
+        limit = (limit == null) ? "12" : limit;
+
+        List<CommentDTO> commentDTOS = new ArrayList<>();
+        List<CommentEntity> commentEntities;
+        ListOutputResult res = new ListOutputResult();
+
+        Pageable pageable = PageRequest.of((Integer.parseInt(page) - 1), Integer.parseInt(limit));
+
+        // if rating param, filter the comment by rating
+        if(rating != null) {
+            if(Long.parseLong(rating) > 5)
+                rating = "5";
+            if(Long.parseLong(rating) < 1)
+                rating = "1";
+
+            commentEntities = commentRepository.
+                    findAllByProductEntityIdAndRating(id, Long.parseLong(rating), pageable);
+
+            res.setItemsNumber(commentRepository.countAllByProductEntityIdAndRating(id, Long.parseLong(rating)));
+        }
+        // Default get comments
+        else {
+            commentEntities = commentRepository.findAllByProductEntityId(id, pageable);
+            res.setItemsNumber(commentRepository.countAllByProductEntityId(id));
+        }
+
+        // Trans to DTO
+        for(CommentEntity comment : commentEntities) {
+            CommentDTO commentDTO = new CommentDTO();
+
+            commentDTOHandler(comment, commentDTO);
+            commentDTOS.add(commentDTO);
+        }
+
+        res.setList(commentDTOS);
+
+        return res;
+    }
+
+//endregion
+
+    // Loc's Function
+    public ProductEntity getProductsById(long productId) throws Exception {
+        return productRepository.findById(productId).orElseThrow(() ->new Exception("Product is not found"));}
 }
+
