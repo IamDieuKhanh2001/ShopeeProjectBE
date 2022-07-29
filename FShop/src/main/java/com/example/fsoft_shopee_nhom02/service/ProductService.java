@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -37,15 +38,56 @@ public class ProductService {
     @Autowired
     CommentRepository commentRepository;
 
+    @Autowired
+    CloudinaryService cloudinaryService;
+
 //region--------------------Functions for Product Crud APIs---------------------------
 
     // Use for Upload image controller
-    public ProductEntity getProductById(long id) {
-        return productRepository.findById(id).get();
-    }
+    public void saveProductImage(long id, MultipartFile imageProduct, MultipartFile image1, MultipartFile image2,
+    MultipartFile image3, MultipartFile image4) {
+        ProductEntity product = productRepository.findById(id).get();
 
-    // Use for Upload image controller
-    public void saveProduct(ProductEntity product) {
+        // ImageProduct url
+        String imgProUrl = cloudinaryService.uploadFile(
+                imageProduct,
+                "ImageProduct",
+                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
+
+        String imgOneUrl = cloudinaryService.uploadFile(
+                image1,
+                "Image1",
+                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
+
+        String imgTwoUrl = cloudinaryService.uploadFile(
+                image2,
+                "Image2",
+                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
+
+        String imgThreeUrl = cloudinaryService.uploadFile(
+                image3,
+                "Image3",
+                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
+
+        String imgFourUrl = cloudinaryService.uploadFile(
+                image4,
+                "Image4",
+                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
+
+        product.setImageProduct(imgProUrl);
+
+        if(imgOneUrl != "-1")
+            product.setImage1(imgOneUrl);
+
+        if(imgTwoUrl != "-1")
+            product.setImage2(imgTwoUrl);
+
+        if(imgThreeUrl != "-1")
+            product.setImage3(imgThreeUrl);
+
+        if(imgFourUrl != "-1")
+            product.setImage4(imgFourUrl);
+
         productRepository.save(product);
     }
 

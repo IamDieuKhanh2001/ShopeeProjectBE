@@ -30,7 +30,6 @@ public class CloudinaryService {
             if(file == null) {
                 return "-1";
             }
-
             uploadedFile = convertMultiPartToFile(file, imgName);
             String fileDir = directory + "/"
                     + uploadedFile.getName(); //Dir tren cloudinary: Tạo folder id product và file name là id product
