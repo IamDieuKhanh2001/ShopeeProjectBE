@@ -20,6 +20,9 @@ public interface TypeRepository extends JpaRepository<TypeEntity,Long> {
     @Query(value = "SELECT max(price) FROM types", nativeQuery = true)
     long findMaxPrice();
 
+    @Query("select type from TypeEntity type where type.type = :type")
+    TypeEntity findByType(String type);
+
     @Query(value = "select o.id as typeid,\n" +
             "       o.price,\n" +
             "       o.quantity,\n" +
