@@ -24,8 +24,9 @@ public class CloudinaryService {
     //    Upload thanh cong return duong dan chua hinh anh
 //    Upload khong thanh cong return -1
     public String uploadFile(MultipartFile file, String imgName, String directory) {
+        File uploadedFile = null;
         try {
-            File uploadedFile = convertMultiPartToFile(file, imgName);
+            uploadedFile = convertMultiPartToFile(file, imgName);
             String fileDir = directory + "/"
                     + uploadedFile.getName(); //Dir tren cloudinary: Tạo folder id product và file name là id product
             //Option cho cloudinary
@@ -38,6 +39,7 @@ public class CloudinaryService {
             uploadedFile.delete(); // Xoa file tao khi push len cloudinary xong
             return (String) uploadResult.get("secure_url");
         } catch (Exception e) {
+            uploadedFile.delete(); // Xoa file tao khi push len cloudinary xong
             return "-1";
         }
     }

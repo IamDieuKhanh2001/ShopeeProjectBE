@@ -3,12 +3,19 @@ package com.example.fsoft_shopee_nhom02.config;
 import com.cloudinary.Cloudinary;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
 public class CloudinaryConfig {
+    @Bean
+    public CommonsMultipartResolver multipartResolver() {
+        CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+        resolver.setDefaultEncoding("UTF-8");
+        return resolver;
+    }
 
     @Bean
     public Cloudinary cloudinary() {

@@ -30,8 +30,8 @@ public class EmailTemplate {
                 "                    </tr>\n" +
                 "                    <tr>\n" +
                 "                        <td style=\"text-align:center;\">\n" +
-                "                          <a href=\"http://localhost:8080/OnlineAutionHCMUTE/Home/Index\" title=\"logo\" target=\"_blank\">\n" +
-                "                            <img width=\"600\" src=\"https://hcmute.edu.vn/Resources/Images/SubDomain/HomePage/Nut/logo-news.png\" title=\"logo\" alt=\"logo\">\n" +
+                "                          <a href=\"\" title=\"logo\" target=\"_blank\">\n" +
+                "                            <img width=\"400\" height=\"200\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/FPT_logo_2010.svg/800px-FPT_logo_2010.svg.png\" title=\"logo\" alt=\"logo\">\n" +
                 "                          </a>\n" +
                 "                        </td>\n" +
                 "                    </tr>\n" +

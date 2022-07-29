@@ -31,17 +31,31 @@ public class UploadImgController {
     private ProductService productService;
 
     @PostMapping("/users/avatar")
-    public ResponseEntity<?> uploadAvatar(@RequestParam("avatar") MultipartFile avatar){
+    public ResponseEntity<?> uploadAvatar(
+            @RequestParam(value = "avatar", required = false) MultipartFile avatar
+    ){
+        if(avatar.getContentType() != "image/png" || avatar.getContentType() != "image/jpeg") {
+            throw new IllegalStateException("file khong hop le");
+        }
         String username = ApplicationUserService.GetUsernameLoggedIn();
         UserEntity userLogin = userService.findByUsername(username);
+        System.out.println(avatar.getSize());
+        System.out.println(avatar.getContentType());
+
         String url = cloudinaryService.uploadFile(
                 avatar,
                 String.valueOf(userLogin.getId()),
                 "ShopeeProject" + "/" + "Avatar");
+        if(url == "-1") {
+            throw new IllegalStateException("khong upload duoc");
+        }
+
         userLogin.setAvatar(url);
         userRepository.save(userLogin);
         return ResponseEntity.ok("ok");
     }
+//    image/png
+//    image/jpeg
 
     @PostMapping("/admin/product-img/{id}")
     public ResponseEntity<?> uploadProductImg(@PathVariable long id,
