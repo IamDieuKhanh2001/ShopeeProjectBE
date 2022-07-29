@@ -1,5 +1,7 @@
 package com.example.fsoft_shopee_nhom02.dto;
 
+import javax.persistence.Transient;
+
 public class CartProductDTO {
     private Long id;
     private Long quantity;
@@ -8,6 +10,7 @@ public class CartProductDTO {
     private Long productId;
 
     private Long cartId;
+
 
     public Long getProductId() {
         return productId;
