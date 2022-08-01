@@ -26,7 +26,7 @@ public class PaymentController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> paymentOrder(@PathVariable long id){
-        OrderEntity order = orderService.findOrderById(id).get();
+        OrderEntity order = orderService.findOrderById(id);
         // Lấy ra danh sách các sản phẩm trong order detail
         List<OrderDetailsEntity> orderDetailsEntityList = orderDetailService.findAllByOrderEntityId(id);
         // Duyệt qua từng sản phẩm này (Lấy ra productId, type, quantity),

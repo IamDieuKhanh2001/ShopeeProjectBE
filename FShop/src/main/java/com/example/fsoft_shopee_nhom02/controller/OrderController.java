@@ -120,9 +120,7 @@ public class OrderController {
 
         // insert order detail to DB
         long newOrderEntityID = orderEntity.getId();
-
         orderDetailsEntityList.forEach(orderDetailsEntity -> orderDetailsEntity.setOrderEntityID(newOrderEntityID));
-
         orderDetailService.addNewOrderDetails(orderDetailsEntityList);
 
         long endTime = System.currentTimeMillis();
@@ -133,14 +131,18 @@ public class OrderController {
 
     @PostMapping("/update_order/{id}")
     public Object UpdateOrder(@RequestBody Map<String, String> req, @PathVariable String id) {
-        System.out.println(req);
-        System.out.println(id);
+        OrderEntity orderEntity = new OrderEntity();
+        // add column those need to be updated
+        for (Map.Entry<String, String> i : req.entrySet()) {
+            System.out.println(i.getKey());
+        }
+        // orderService.updateOrder(orderEntity);
         return "updated order";
     }
 
     @PostMapping("/cancel_order/{id}")
     public Object DeleteOrder(@PathVariable String id) {
-        System.out.println(id);
+        orderService.deleteOrder(Long.parseLong(id));
         return "deleted order";
     }
 }
