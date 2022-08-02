@@ -16,6 +16,7 @@ public class CommentMapper {
     }
 
     public static CommentDTO toCommentDTO(CommentEntity comment, CommentDTO commentDTO) {
+        commentDTO.setId(comment.getId());
         commentDTO.setRating(comment.getRating());
         commentDTO.setComment(comment.getComment());
         commentDTO.setCreatedOn(comment.getCreatedDate());

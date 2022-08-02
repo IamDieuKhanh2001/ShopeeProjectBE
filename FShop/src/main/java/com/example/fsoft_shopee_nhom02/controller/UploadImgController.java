@@ -1,6 +1,8 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUserService;
+import com.example.fsoft_shopee_nhom02.dto.CommentDTO;
+import com.example.fsoft_shopee_nhom02.dto.ProductDTO;
 import com.example.fsoft_shopee_nhom02.dto.SuccessResponseDTO;
 import com.example.fsoft_shopee_nhom02.model.ProductEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
@@ -58,18 +60,26 @@ public class UploadImgController {
 //    image/jpeg
 
     @PostMapping("/admin/product-img/{id}")
-    public SuccessResponseDTO uploadProductImg(@PathVariable long id,
-                                               @RequestParam("imageProduct") MultipartFile imageProduct,
-                                               @RequestParam(value = "image1", required = false) MultipartFile image1,
-                                               @RequestParam(value = "image2", required = false) MultipartFile image2,
-                                               @RequestParam(value = "image3", required = false) MultipartFile image3,
-                                               @RequestParam(value = "image4", required = false) MultipartFile image4) {
+    public ProductDTO uploadProductImg(@PathVariable long id,
+                                       @RequestParam("imageProduct") MultipartFile imageProduct,
+                                       @RequestParam(value = "image1", required = false) MultipartFile image1,
+                                       @RequestParam(value = "image2", required = false) MultipartFile image2,
+                                       @RequestParam(value = "image3", required = false) MultipartFile image3,
+                                       @RequestParam(value = "image4", required = false) MultipartFile image4) {
 
-        productService.saveProductImage(id, imageProduct, image1, image2, image3, image4);
+        return productService.saveProductImage(id, imageProduct, image1, image2, image3, image4);
 
-        return new SuccessResponseDTO(
-                HttpStatus.OK,
-                "Đã upload ảnh của product id: " + id
-        );
+    }
+
+    @PostMapping("/users/comments-img/{id}")
+    public CommentDTO uploadCommentImg(@PathVariable long id,
+                                       @RequestParam(required = false) MultipartFile img) {
+        String username = ApplicationUserService.GetUsernameLoggedIn();
+
+        if(!img.getContentType().equals("image/png") && !img.getContentType().equals("image/jpeg")) {
+            throw new IllegalStateException("file khong hop le");
+        }
+
+        return productService.postCommentImg(id, img, username);
     }
 }

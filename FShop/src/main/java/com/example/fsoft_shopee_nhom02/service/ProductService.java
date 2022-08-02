@@ -20,26 +20,27 @@ import org.springframework.web.multipart.MultipartFile;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
     @Autowired
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
 
     @Autowired
-    SubCategoryRepository subCategoryRepository;
+    private SubCategoryRepository subCategoryRepository;
 
     @Autowired
-    TypeRepository typeRepository;
+    private TypeRepository typeRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    CommentRepository commentRepository;
+    private CommentRepository commentRepository;
 
     @Autowired
-    CloudinaryService cloudinaryService;
+    private CloudinaryService cloudinaryService;
 
 //region--------------------Functions for Product Crud APIs---------------------------
 
@@ -51,7 +52,7 @@ public class ProductService {
         productRepository.save(product);
     }
     // Use for Upload image controller
-    public void saveProductImage(long id, MultipartFile imageProduct, MultipartFile image1, MultipartFile image2,
+    public ProductDTO saveProductImage(long id, MultipartFile imageProduct, MultipartFile image1, MultipartFile image2,
     MultipartFile image3, MultipartFile image4) {
         ProductEntity product = productRepository.findById(id).get();
 
@@ -83,19 +84,30 @@ public class ProductService {
 
         product.setImageProduct(imgProUrl);
 
-        if(imgOneUrl != "-1")
+        // Condition check if not have img (Not optimize)
+        if(!imgOneUrl.equals("-1"))
             product.setImage1(imgOneUrl);
+        else
+            product.setImage1("");
 
-        if(imgTwoUrl != "-1")
+        if(!imgTwoUrl.equals("-1"))
             product.setImage2(imgTwoUrl);
+        else
+            product.setImage2("");
 
-        if(imgThreeUrl != "-1")
+        if(!imgThreeUrl.equals("-1"))
             product.setImage3(imgThreeUrl);
+        else
+            product.setImage3("");
 
-        if(imgFourUrl != "-1")
+        if(!imgFourUrl.equals("-1"))
             product.setImage4(imgFourUrl);
+        else
+            product.setImage4("");
 
         productRepository.save(product);
+
+        return dtoHandler(product);
     }
 
     public ProductDTO save(ProductDTO productDTO) {
@@ -371,6 +383,39 @@ public class ProductService {
         UserEntity resUser = userRepository.findFirstById(comment.getUserid());
         commentDTO.setUsername(resUser.getUsername());
         commentDTO.setAvatar(resUser.getAvatar());
+    }
+
+    public CommentDTO postCommentImg(long id, MultipartFile img, String username) {
+        CommentEntity comment = commentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot found comment id " + id));
+
+        Optional<UserEntity> usersOptional = userRepository.findByUsername(username);
+
+        if(!usersOptional.isPresent()) {
+            throw new IllegalStateException("Username " + username + " not found");
+        }
+
+        UserEntity userLogin = usersOptional.get();
+
+        // Check user login id and comment id
+        if(!userLogin.getId().equals(comment.getUserid())) {
+            throw new IllegalStateException("Username " + username + " is not allowed to do this action!");
+        }
+
+        String imgCommentUrl = cloudinaryService.uploadFile(
+                img,
+                String.valueOf(comment.getId()),
+                "ShopeeProject" + "/" + "Comment");
+
+        if(!imgCommentUrl.equals("-1"))
+            comment.setImage(imgCommentUrl);
+
+        commentRepository.save(comment);
+
+        CommentDTO commentDTO = new CommentDTO();
+        commentDTOHandler(comment, commentDTO);
+
+        return commentDTO;
     }
 
     public CommentDTO createComment(long id, CommentDTO commentDTO) {

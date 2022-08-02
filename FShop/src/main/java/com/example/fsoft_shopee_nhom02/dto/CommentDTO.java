@@ -3,12 +3,21 @@ package com.example.fsoft_shopee_nhom02.dto;
 import java.util.Date;
 
 public class CommentDTO {
+    private long id;
     private String username;
     private String avatar;
     private long rating;
     private String comment;
     private Date createdOn;
     private String image;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;

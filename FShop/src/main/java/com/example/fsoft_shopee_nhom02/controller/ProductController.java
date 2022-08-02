@@ -18,7 +18,7 @@ import java.util.Map;
 @RequestMapping("/products")
 public class ProductController {
     @Autowired
-    ProductService productService;
+    private ProductService productService;
 
     @PostMapping("/admin")
     public ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
@@ -85,9 +85,9 @@ public class ProductController {
         return productService.search(page, limit, keyword, minPrice, maxPrice, subCate);
     }
 
-    @PostMapping("user/{proid}/comments")
-    CommentDTO postComment(@PathVariable long proid, @RequestBody CommentDTO commentDTO) {
-        return productService.createComment(proid, commentDTO);
+    @PostMapping("user/{proId}/comments")
+    CommentDTO postComment(@PathVariable long proId, @RequestBody CommentDTO commentDTO) {
+        return productService.createComment(proId, commentDTO);
     }
 
     @GetMapping("/{id}/comments")
