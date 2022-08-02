@@ -34,4 +34,6 @@ public interface OrderRepository extends JpaRepository<OrderEntity,Long> {
     @Query(value = "SELECT count(*) \n" +
             "FROM shopee.orders where status = 'Done'", nativeQuery = true)
     long getTotalOrder();
+
+    OrderEntity searchById(Long OrderId);
 }

@@ -29,8 +29,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Optional<OrderEntity> findOrderById(Long OrderId) {
-        return orderRepository.findById(OrderId);
+    public OrderEntity findOrderById(Long OrderId) {
+        return orderRepository.searchById(OrderId);
     }
 
     @Override
@@ -56,5 +56,20 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public long getTotalOrder() {
         return orderRepository.getTotalOrder();
+    }
+
+    @Override
+    public OrderEntity findById(Long OrderId) {
+        return orderRepository.searchById(OrderId);
+    }
+
+    @Override
+    public void updateOrder(OrderEntity orderEntity) {
+        orderRepository.saveAndFlush(orderEntity);
+    }
+
+    @Override
+    public void deleteOrder(Long OrderId) {
+        orderRepository.deleteById(OrderId);
     }
 }

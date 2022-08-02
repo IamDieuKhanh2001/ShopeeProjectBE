@@ -11,11 +11,17 @@ public interface OrderService {
 
     List<OrderEntity> getAllByUserId(long UserId);
 
-    Optional<OrderEntity> findOrderById(Long OrderId);
+    OrderEntity findOrderById(Long OrderId);
 
     long getAllOrderByMonth(String Month);
     void addNewOrder(OrderEntity orderEntity);
     long getTurnOver();
     long getAllOrderByDay(String Year,String Month,String Day);
     long getTotalOrder();
+
+    OrderEntity findById(Long OrderId);
+
+    void updateOrder(OrderEntity orderEntity);
+
+    void deleteOrder(Long OrderId);
 }
