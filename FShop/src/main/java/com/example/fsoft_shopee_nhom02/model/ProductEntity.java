@@ -22,6 +22,12 @@ public class ProductEntity {
     private String image3;
     private String image4;
     private Long sale;
+    // Số lượt xem sản phẩm
+    @Column(name="totalview", columnDefinition="Bigint default '0'")
+    private Long totalView;
+    // Số lượng sản phẩm đã bán
+    @Column(name="sold", columnDefinition="Bigint default '0'")
+    private Long sold;
     // Tạo quan hệ với CartProductEntity
     @OneToMany(mappedBy = "productEntity", cascade = CascadeType.ALL)
     private List<CartProductEntity> cartProductEntities =new ArrayList<>();
@@ -59,6 +65,37 @@ public class ProductEntity {
         this.image3 = image3;
         this.image4 = image4;
         this.sale = sale;
+    }
+
+    public ProductEntity(Long id, String name, String detail, String description, String imageProduct, String image1, String image2, String image3, String image4, Long sale, Long totalView, Long sold) {
+        this.id = id;
+        this.name = name;
+        this.detail = detail;
+        this.description = description;
+        this.imageProduct = imageProduct;
+        this.image1 = image1;
+        this.image2 = image2;
+        this.image3 = image3;
+        this.image4 = image4;
+        this.sale = sale;
+        this.totalView = totalView;
+        this.sold = sold;
+    }
+
+    public Long getTotalView() {
+        return totalView;
+    }
+
+    public void setTotalView(Long totalView) {
+        this.totalView = totalView;
+    }
+
+    public Long getSold() {
+        return sold;
+    }
+
+    public void setSold(Long sold) {
+        this.sold = sold;
     }
 
     public Long getId() {

@@ -51,6 +51,9 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ProductDTO getProductDetail(@PathVariable long id) {
+        // Cập nhật số lượt view sản phẩm
+        productService.updateViewProduct(id);
+        // Trả về thông tin sản phẩm
         return productService.getDetail(id);
     }
 

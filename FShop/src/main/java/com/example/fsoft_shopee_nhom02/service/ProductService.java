@@ -43,6 +43,13 @@ public class ProductService {
 
 //region--------------------Functions for Product Crud APIs---------------------------
 
+    // update view
+    public void updateViewProduct(long id)
+    {
+        ProductEntity product = productRepository.findById(id).get();
+        product.setTotalView(product.getTotalView() + 1);
+        productRepository.save(product);
+    }
     // Use for Upload image controller
     public void saveProductImage(long id, MultipartFile imageProduct, MultipartFile image1, MultipartFile image2,
     MultipartFile image3, MultipartFile image4) {

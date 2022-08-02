@@ -34,7 +34,27 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public long getAllOrderByMonth(String Month) {
+        return orderRepository.getAllOrderByMonth(Month);
+    }
+
+    @Override
     public void addNewOrder(OrderEntity orderEntity) {
         orderRepository.save(orderEntity);
+    }
+
+    @Override
+    public long getTurnOver() {
+        return orderRepository.getTurnOver();
+    }
+
+    @Override
+    public long getAllOrderByDay(String Year, String Month, String Day) {
+        return orderRepository.getAllOrderByDay(Year, Month, Day);
+    }
+
+    @Override
+    public long getTotalOrder() {
+        return orderRepository.getTotalOrder();
     }
 }

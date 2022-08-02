@@ -37,6 +37,22 @@ public class OrderDetailsEntity {
         this.type = type;
     }
 
+    public OrderEntity getOrderEntity() {
+        return orderEntity;
+    }
+
+    public void setOrderEntity(OrderEntity orderEntity) {
+        this.orderEntity = orderEntity;
+    }
+
+    public ProductEntity getProductEntity() {
+        return productEntity;
+    }
+
+    public void setProductEntity(ProductEntity productEntity) {
+        this.productEntity = productEntity;
+    }
+
     public String getType() {
         return type;
     }
@@ -51,6 +67,10 @@ public class OrderDetailsEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getProductId() {
+        return productEntity.getId();
     }
 
     public Long getUnitPrice() {

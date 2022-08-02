@@ -13,4 +13,5 @@ public interface OrderDetailService {
     ArrayList<OrderDetailsEntity> findAllByOrderEntityId(Long OrderDetailId);
 
     void addNewOrderDetails(List<OrderDetailsEntity> orderDetailsEntityList);
+
 }
