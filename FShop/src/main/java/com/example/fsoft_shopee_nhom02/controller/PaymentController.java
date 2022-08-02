@@ -6,7 +6,6 @@ import com.example.fsoft_shopee_nhom02.model.ProductEntity;
 import com.example.fsoft_shopee_nhom02.model.TypeEntity;
 import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
 import com.example.fsoft_shopee_nhom02.repository.TypeRepository;
-import com.example.fsoft_shopee_nhom02.service.OrderDetailService;
 import com.example.fsoft_shopee_nhom02.service.impl.OrderDetailServiceImpl;
 import com.example.fsoft_shopee_nhom02.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +45,7 @@ public class PaymentController {
             // Update số lượng đã bán ở bảng Product
             product.setSold(product.getSold() + orderDetail.getQuantity());
             productRepository.save(product);
+            // done
         }
         // Set trạng thái order thành "Đặt hàng thành công!"
         order.setStatus("Đặt hàng thành công!");
