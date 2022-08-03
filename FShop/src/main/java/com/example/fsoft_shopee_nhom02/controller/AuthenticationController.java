@@ -3,6 +3,7 @@ package com.example.fsoft_shopee_nhom02.controller;
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUser;
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUserService;
 import com.example.fsoft_shopee_nhom02.auth.JwtUtil;
+import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
 import com.example.fsoft_shopee_nhom02.dto.AuthenticationRequest;
 import com.example.fsoft_shopee_nhom02.dto.AuthenticationResponse;
 import com.example.fsoft_shopee_nhom02.dto.SuccessResponseDTO;
@@ -20,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
+import java.text.ParseException;
 import java.util.*;
 
 @RestController
@@ -36,7 +38,11 @@ public class AuthenticationController {
 
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public SuccessResponseDTO saveUser(@RequestBody UserDTO user) {
+    public SuccessResponseDTO saveUser(@RequestBody UserDTO user) throws ParseException {
+
+        user.setCreatedDate(GlobalVariable.getCurrentDateTime());
+        user.setModifiedDate(GlobalVariable.getCurrentDateTime());
+
         applicationUserService.save(user);
         return new SuccessResponseDTO(HttpStatus.CREATED,
                 "Tạo tài khoản user " + user.getUsername() + " thành công");

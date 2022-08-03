@@ -1,9 +1,7 @@
 package com.example.fsoft_shopee_nhom02.auth;
 
-import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.dto.UserDTO;
 import com.example.fsoft_shopee_nhom02.mapper.UserMapper;
-import com.example.fsoft_shopee_nhom02.model.AddressEntity;
 import com.example.fsoft_shopee_nhom02.model.CartEntity;
 import com.example.fsoft_shopee_nhom02.model.RoleEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
@@ -53,7 +51,7 @@ public class ApplicationUserService implements UserDetailsService {
         return username;
     }
 
-    public Boolean save(UserDTO userDTO) {
+    public Boolean save(UserDTO userDTO){
         Optional<UserEntity> DAOUsernameOptional = userRepository.findByUsername(userDTO.getUsername());
         if(DAOUsernameOptional.isPresent()){
             throw new IllegalStateException("Username have been used! Please try another username"); //Username đã dc sd

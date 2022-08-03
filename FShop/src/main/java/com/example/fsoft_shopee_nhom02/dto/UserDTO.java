@@ -1,12 +1,12 @@
 package com.example.fsoft_shopee_nhom02.dto;
 
+import com.example.fsoft_shopee_nhom02.model.BaseClassEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.List;
 
-public class UserDTO {
+public class UserDTO extends BaseClassEntity {
 
     private long id;
     private String username;
@@ -18,7 +18,6 @@ public class UserDTO {
     @JsonFormat(pattern="yyyy-MM-dd")
     private Timestamp dob;
     private int age;
-    private List<AddressDTO> addressList;
     private String avatar;
 
     @Override
@@ -31,7 +30,6 @@ public class UserDTO {
                 ", gender='" + gender + '\'' +
                 ", email='" + email + '\'' +
                 ", dob=" + dob +
-                ", addressList=" + addressList +
                 ", avatar='" + avatar + '\'' +
                 '}';
     }
@@ -47,18 +45,6 @@ public class UserDTO {
         this.password = password;
         this.phone = phone;
         this.email = email;
-    }
-
-    public UserDTO(String username, String password, String phone, String name, String gender, String email, Timestamp dob, List<AddressDTO> addressList, String avatar) {
-        this.username = username;
-        this.password = password;
-        this.phone = phone;
-        this.name = name;
-        this.gender = gender;
-        this.email = email;
-        this.dob = dob;
-        this.addressList = addressList;
-        this.avatar = avatar;
     }
 
     public UserDTO(String username, String password, String phone, String name, String gender, String email, Timestamp dob, String avatar) {
@@ -107,14 +93,6 @@ public class UserDTO {
 
     public UserDTO(String username) {
         this.username = username;
-    }
-
-    public List<AddressDTO> getAddressList() {
-        return addressList;
-    }
-
-    public void setAddressList(List<AddressDTO> addressList) {
-        this.addressList = addressList;
     }
 
     public String getUsername() {
