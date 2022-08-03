@@ -17,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
-
 @RestController
 public class UploadImgController {
 
@@ -31,7 +29,7 @@ public class UploadImgController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping("/users/avatar")
+    @PostMapping("/user/avatar")
     public SuccessResponseDTO uploadAvatar(
             @RequestParam(value = "avatar", required = false) MultipartFile avatar
     ){
@@ -47,7 +45,7 @@ public class UploadImgController {
             throw new IllegalStateException("Update avatar user: " + username + " that bai");
         }
     }
-    @DeleteMapping("/users/avatar")
+    @DeleteMapping("/user/avatar")
     public ResponseEntity<?> deleteAva(
             @RequestParam(value = "avatar", required = false) MultipartFile avatar
     ){

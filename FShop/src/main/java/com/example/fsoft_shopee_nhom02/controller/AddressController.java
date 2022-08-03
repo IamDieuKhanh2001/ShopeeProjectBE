@@ -14,20 +14,20 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/address")
+@RequestMapping("/users")
 public class AddressController {
 
     @Autowired
     private AddressService addressService;
 
-    @GetMapping("/user")
+    @GetMapping("/address")
     public List<AddressEntity> getAllUserAddressByUsername() {
         String usernameLoggedIn = ApplicationUserService.GetUsernameLoggedIn();
         List<AddressEntity> userAddressList = addressService.getAllUserAddressByUsername(usernameLoggedIn);
         return userAddressList;
     }
 
-    @PostMapping("/user")
+    @PostMapping("/address")
     public SuccessResponseDTO createUserAddress(@RequestBody AddressDTO addressDTO) {
         String usernameLoggedIn = ApplicationUserService.GetUsernameLoggedIn();
         if(addressService.saveUserAddress(addressDTO, usernameLoggedIn)) {
@@ -40,7 +40,7 @@ public class AddressController {
 
     }
 
-    @DeleteMapping("/user")
+    @DeleteMapping("/address")
     public SuccessResponseDTO deleteUserAddress(@RequestParam Map<String, String> requestParams) {
         if(requestParams.get("addressId") == null) {
             throw new IllegalStateException("Delete address for user fail! DELETE need ?addressId= param");
@@ -52,7 +52,7 @@ public class AddressController {
         throw new IllegalStateException("Delete address for user fail");
     }
 
-    @PutMapping("/user")
+    @PutMapping("/address")
     public SuccessResponseDTO updateUserAddress(@RequestBody AddressDTO addressDTO, @RequestParam Map<String, String> requestParams) {
         if(requestParams.get("addressId") == null) {
             throw new IllegalStateException("Update address for user fail! UPDATE need ?addressId= param");

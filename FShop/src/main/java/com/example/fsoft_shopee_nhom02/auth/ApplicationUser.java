@@ -33,7 +33,7 @@ public class ApplicationUser implements UserDetails {
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        System.out.println("SET author: " + authorities);
+//        System.out.println("SET author: " + authorities);
         return authorities;
     }
 

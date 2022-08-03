@@ -62,38 +62,38 @@ public class AuthenticationController {
     }
 
 
-    //Test api sẽ xóa sau
-    @GetMapping("/test")
-    public String test() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username;
-
-        if (principal instanceof ApplicationUser) {
-            username = ((ApplicationUser)principal).getUsername();
-        } else {
-            username = principal.toString();
-        }
-        String sReturn = "<h1>Login user: " + username + "</h1>";
-        return sReturn;
-    }
-    //Test api sẽ xóa sau
-    @GetMapping("/user")
-    public String user() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username;
-
-        if (principal instanceof ApplicationUser) {
-            username = ((ApplicationUser)principal).getUsername();
-        } else {
-            username = principal.toString();
-        }
-        String sReturn = "<h1>Welcome User</h1> <h1>Login user:  </h1>";
-        return sReturn;
-    }
-    //Test api sẽ xóa sau
-    @GetMapping("/admin")
-    public ResponseEntity<?> admin() {
-        String sReturn = "<h1>Welcome Admin</h1> <h1>Login user: </h1>";
-        return ResponseEntity.ok(sReturn);
-    }
+//    //Test api sẽ xóa sau
+//    @GetMapping("/test")
+//    public String test() {
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String username;
+//
+//        if (principal instanceof ApplicationUser) {
+//            username = ((ApplicationUser)principal).getUsername();
+//        } else {
+//            username = principal.toString();
+//        }
+//        String sReturn = "<h1>Login user: " + username + "</h1>";
+//        return sReturn;
+//    }
+//    //Test api sẽ xóa sau
+//    @GetMapping("/user")
+//    public String user() {
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String username;
+//
+//        if (principal instanceof ApplicationUser) {
+//            username = ((ApplicationUser)principal).getUsername();
+//        } else {
+//            username = principal.toString();
+//        }
+//        String sReturn = "<h1>Welcome User</h1> <h1>Login user:  </h1>";
+//        return sReturn;
+//    }
+//    //Test api sẽ xóa sau
+//    @GetMapping("/admin")
+//    public ResponseEntity<?> admin() {
+//        String sReturn = "<h1>Welcome Admin</h1> <h1>Login user: </h1>";
+//        return ResponseEntity.ok(sReturn);
+//    }
 }
