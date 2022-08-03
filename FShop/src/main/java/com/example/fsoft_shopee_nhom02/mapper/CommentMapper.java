@@ -10,7 +10,6 @@ public class CommentMapper {
         comment.setRating(commentDTO.getRating());
         comment.setComment(commentDTO.getComment());
         comment.setCreatedDate(new Timestamp(System.currentTimeMillis()));
-        comment.setImage(commentDTO.getImage());
 
         return comment;
     }
