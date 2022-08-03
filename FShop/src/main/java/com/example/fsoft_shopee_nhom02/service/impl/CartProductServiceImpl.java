@@ -73,11 +73,12 @@ public class CartProductServiceImpl implements CartProductService {
 
     @Override
     public void update(CartProductDTO cartProductDTO)  {
-         CartProductEntity cartProductEntity = cartProductRepository.findById(cartProductDTO.getId())
-                .orElseThrow(() -> new NotFoundException("No Id Cart"));
+        CartProductEntity obj =
+                cartProductRepository.getCartByProductIdAnduserId(cartProductDTO.getCartId()
+                ,cartProductDTO.getProductId(),cartProductDTO.getType());
+        obj.setQuantity(cartProductDTO.getQuantity());
+        cartProductRepository.save(obj);
 
-         cartProductEntity.setQuantity(cartProductDTO.getQuantity());
-         cartProductEntity = cartProductRepository.save(cartProductEntity);
     }
 
     @Override
@@ -115,33 +116,9 @@ public class CartProductServiceImpl implements CartProductService {
             }
             return cartDetailDTOS;
         }
-
-    @Override
-    public void updateQtyByCartId(long cartId, int qty, double price) throws Exception {
-    }
-
     @Override
     public List<CartProductEntity> getCartByUserId(long cartId) {
         return null;
     }
 
-    @Override
-    public List<CartProductEntity> removeCartByUserId(long cartProductId, long cartId) {
-        return null;
-    }
-
-    @Override
-    public List<CartProductEntity> removeAllCartByUserId(long cartId) {
-        return null;
-    }
-
-    @Override
-    public Boolean checkTotalAmountAgainstCart(double totalAmount, long cartId) {
-        return null;
-    }
-
-    @Override
-    public List<CartProductEntity> getAllCheckoutByUserId(long cartId) {
-        return null;
-    }
 }

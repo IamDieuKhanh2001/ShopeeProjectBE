@@ -33,11 +33,9 @@ public class CartProductController {
         }
     }
 
-    @PutMapping("products/{id}")
-    public void  updateProductCount(@PathVariable long id,
-                                    @RequestBody CartProductDTO cartProductDTO)
+    @PutMapping("update")
+    public void  updateProductCount(@RequestBody CartProductDTO cartProductDTO)
     {
-        cartProductDTO.setId(id);
         cartProductService.update(cartProductDTO);
     }
 
