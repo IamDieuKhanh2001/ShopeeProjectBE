@@ -18,15 +18,15 @@ public class CartProductController {
     CartProductServiceImpl cartProductService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> addCartwithProduct(@RequestBody HashMap<String, String> addCartRequest) {
+    public ResponseEntity<?> add(@RequestBody HashMap<String, String> addCartRequest) {
         try {
             String keys[] = {"productId", "cartId","type", "quantity"};
             long productId = Long.parseLong(addCartRequest.get("productId"));
             long cartId = Long.parseLong(addCartRequest.get("cartId"));
             String type = (addCartRequest.get("type"));
             long quantity = Long.parseLong(addCartRequest.get("quantity"));
-            List<CartProductEntity> obj = cartProductService.addCartbyCartIdAndProductId(productId, cartId,type, quantity);
-                return ResponseEntity.ok(obj);
+            CartProductDTO obj = cartProductService.addCart(productId, cartId,type, quantity);
+            return ResponseEntity.ok(obj);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -34,20 +34,28 @@ public class CartProductController {
     }
 
     @PutMapping("update")
-    public void  updateProductCount(@RequestBody CartProductDTO cartProductDTO)
+    public ResponseEntity<?>  updateProductCount(@RequestBody CartProductDTO cartProductDTO)
     {
-        cartProductService.update(cartProductDTO);
+
+        return  ResponseEntity.ok(cartProductService.update(cartProductDTO));
     }
 
     @DeleteMapping("")
-    public void  deleteProduct(@RequestParam Long productId,
-                               @RequestParam Long cartId)
+    public ResponseEntity<?>  deleteProduct(@RequestBody CartProductDTO cartProductDTO)
     {
-        cartProductService.delete(productId, cartId);
+        try {
+            cartProductService.delete(cartProductDTO);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+        return ResponseEntity.ok("xoá thành công");
     }
 
-    @GetMapping("/{cartId}")
-    public ResponseEntity<?>getCart(@PathVariable Long cartId){
+    @GetMapping("")
+    public ResponseEntity<?>getCart(@RequestBody HashMap<String, String> bodyRes){
+        String keys[] = {"cartId"};
+        long cartId = Long.parseLong(bodyRes.get("cartId"));
         return ResponseEntity.ok(cartProductService.getAllCart(cartId));
     }
     @GetMapping("/test")

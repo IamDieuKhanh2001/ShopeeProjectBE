@@ -18,7 +18,7 @@ import java.util.Optional;
 @Repository
 public interface CartProductRepository extends JpaRepository<CartProductEntity, Long> {
     @Query("Select addCart  FROM CartProductEntity addCart WHERE addCart.cartEntity.id=:cart_id")
-    List<CartProductEntity> getCartByCartId(@Param("cart_id")Long cart_id);
+    CartProductEntity getCartByCartId(@Param("cart_id")Long cart_id);
     @Query("Select addCart  FROM CartProductEntity addCart" +
             " WHERE addCart.productEntity.id= :product_id and addCart.cartEntity.id=:cart_id and addCart.type= :type")
     CartProductEntity getCartByProductIdAnduserId(@Param("cart_id")Long cart_id, @Param("product_id")Long product_id
@@ -30,8 +30,12 @@ public interface CartProductRepository extends JpaRepository<CartProductEntity, 
             ,@Param("type")String type);
     @Modifying
     @Transactional
-    @Query("DELETE  FROM CartProductEntity addCart WHERE addCart.cartEntity.id=:cart_id and addCart.productEntity.id = :product_id")
-    void deleteProduct(@Param("product_id")Long product_id,@Param("cart_id")Long cart_id);
+    @Query("DELETE  FROM CartProductEntity addCart" +
+            " WHERE addCart.cartEntity.id= :cart_id " +
+            "and addCart.productEntity.id = :product_id and addCart.type =:type")
+    void deleteProduct(@Param("product_id")Long product_id,
+                       @Param("cart_id")Long cart_id,
+                       @Param("type")String type);
 
     void removeAllByProductEntityIdInAndCartEntityIdAndTypeIn(Collection<Long> productEntity_id, Long cartEntity_id, Collection<String> type);
 
