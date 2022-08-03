@@ -63,7 +63,7 @@ public class CartProductServiceImpl implements CartProductService {
             }
             //TODO price has to check with qty
             cartProductRepository.save(obj);
-            return this.getCartByUserId(cartId);
+            return this.getCartByCartId(cartId);
         }catch(Exception e) {
             e.printStackTrace();
             throw new Exception(e.getMessage());
@@ -117,8 +117,7 @@ public class CartProductServiceImpl implements CartProductService {
             return cartDetailDTOS;
         }
     @Override
-    public List<CartProductEntity> getCartByUserId(long cartId) {
-        return null;
+    public List<CartProductEntity> getCartByCartId(long cartId) {
+        return cartProductRepository.getCartByCartId(cartId);
     }
-
 }

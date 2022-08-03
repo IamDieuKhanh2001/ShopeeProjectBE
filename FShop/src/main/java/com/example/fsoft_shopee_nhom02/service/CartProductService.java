@@ -19,7 +19,7 @@ public interface CartProductService {
     List<CartDetailDTO> getAllCart(long cartId);
     //List<HashMap<Object,Object>> getAllCart(long cartId)
 
-    List<CartProductEntity> getCartByUserId(long cartId);
+    List<CartProductEntity> getCartByCartId(long cartId);
 
 
     // List<CartProductDTO> saveProductsForCheckout(List<CheckoutCart> tmp)  throws Exception;
