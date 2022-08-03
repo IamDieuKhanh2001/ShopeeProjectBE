@@ -30,11 +30,6 @@ public class ProductMapper {
         productEntity.setName(productDTO.getName());
         productEntity.setDescription(productDTO.getDescription());
         productEntity.setDetail(productDTO.getDetail());
-        productEntity.setImageProduct(productDTO.getImageProduct());
-        productEntity.setImage1(productDTO.getImage1());
-        productEntity.setImage2(productDTO.getImage2());
-        productEntity.setImage3(productDTO.getImage3());
-        productEntity.setImage4(productDTO.getImage4());
         productEntity.setSale(productDTO.getSale());
 
         return productEntity;
@@ -44,11 +39,6 @@ public class ProductMapper {
         productEntity.setName(productDTO.getName());
         productEntity.setDescription(productDTO.getDescription());
         productEntity.setDetail(productDTO.getDetail());
-        productEntity.setImageProduct(productDTO.getImageProduct());
-        productEntity.setImage1(productDTO.getImage1());
-        productEntity.setImage2(productDTO.getImage2());
-        productEntity.setImage3(productDTO.getImage3());
-        productEntity.setImage4(productDTO.getImage4());
         productEntity.setSale(productDTO.getSale());
 
         return productEntity;
