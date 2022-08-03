@@ -1,10 +1,14 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
 import com.example.fsoft_shopee_nhom02.dto.SubCategoryDTO;
+import com.example.fsoft_shopee_nhom02.dto.SuccessResponseDTO;
 import com.example.fsoft_shopee_nhom02.service.SubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.ParseException;
 
 @RestController
 public class SubCategoryController {
@@ -52,8 +56,8 @@ public class SubCategoryController {
     }
 
     @DeleteMapping("/admin/subcategory/{id}")
-    public ResponseEntity<?> deleteSubCategory(@PathVariable long id){
+    public SuccessResponseDTO deleteSubCategory(@PathVariable long id) throws ParseException{
         subCategoryService.delete(id);
-        return ResponseEntity.ok("Success");
+        return new SuccessResponseDTO(HttpStatus.OK,"Delete success");
     }
 }
