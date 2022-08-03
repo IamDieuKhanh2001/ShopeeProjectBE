@@ -18,8 +18,15 @@ import java.util.Optional;
 public interface CartProductRepository extends JpaRepository<CartProductEntity, Long> {
     @Query("Select addCart  FROM CartProductEntity addCart WHERE addCart.cartEntity.id=:cart_id")
     List<CartProductEntity> getCartByuserId(@Param("cart_id")Long cart_id);
-    @Query("Select addCart  FROM CartProductEntity addCart WHERE addCart.productEntity.id= :product_id and addCart.cartEntity.id=:cart_id")
-    Optional<CartProductEntity> getCartByProductIdAnduserId(@Param("cart_id")Long cart_id, @Param("product_id")Long product_id);
+    @Query("Select addCart  FROM CartProductEntity addCart" +
+            " WHERE addCart.productEntity.id= :product_id and addCart.cartEntity.id=:cart_id and addCart.type= :type")
+    CartProductEntity getCartByProductIdAnduserId(@Param("cart_id")Long cart_id, @Param("product_id")Long product_id
+            ,@Param("type")String type);
+
+    @Query("Select addCart  FROM CartProductEntity addCart" +
+            " WHERE addCart.productEntity.id= :product_id and addCart.cartEntity.id=:cart_id and addCart.type= :type")
+    Optional<CartProductEntity> getCartByProductIdAndCartId(@Param("cart_id")Long cart_id, @Param("product_id")Long product_id
+            ,@Param("type")String type);
     @Modifying
     @Transactional
     @Query("DELETE  FROM CartProductEntity addCart WHERE addCart.cartEntity.id=:cart_id and addCart.productEntity.id = :product_id")

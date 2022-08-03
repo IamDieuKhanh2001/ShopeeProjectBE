@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 public interface CartProductService {
-    List<CartProductEntity> addCartbyCartIdAndProductId(long productId, long userId, long qty) throws Exception;
+    List<CartProductEntity> addCartbyCartIdAndProductId(long productId, long userId, String type,long qty) throws Exception;
 
     void update(CartProductDTO cartProductDTO);
 

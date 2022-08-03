@@ -20,11 +20,12 @@ public class CartProductController {
     @PostMapping("/add")
     public ResponseEntity<?> addCartwithProduct(@RequestBody HashMap<String, String> addCartRequest) {
         try {
-            String keys[] = {"productId", "cartId", "quantity"};
+            String keys[] = {"productId", "cartId","type", "quantity"};
             long productId = Long.parseLong(addCartRequest.get("productId"));
             long cartId = Long.parseLong(addCartRequest.get("cartId"));
+            String type = (addCartRequest.get("type"));
             long quantity = Long.parseLong(addCartRequest.get("quantity"));
-            List<CartProductEntity> obj = cartProductService.addCartbyCartIdAndProductId(productId, cartId, quantity);
+            List<CartProductEntity> obj = cartProductService.addCartbyCartIdAndProductId(productId, cartId,type, quantity);
                 return ResponseEntity.ok(obj);
         } catch (Exception e) {
             e.printStackTrace();
