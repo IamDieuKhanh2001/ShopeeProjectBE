@@ -13,7 +13,7 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @PostMapping("/category/admin")
+    @PostMapping("/admin/category")
     public ResponseEntity<?> createNewCategory(@RequestBody CategoryDTO model){
         return ResponseEntity.ok(categoryService.save(model));
     }
@@ -47,13 +47,13 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getRandomCategory(categoryNumber));
     }
 
-    @PutMapping("/category/admin/{id}")
+    @PutMapping("/admin/category/{id}")
     public ResponseEntity<?> updateCategory(@PathVariable long id, @RequestBody CategoryDTO model){
         model.setId(id);
         return ResponseEntity.ok(categoryService.update(model));
     }
 
-    @DeleteMapping("/category/admin/{id}")
+    @DeleteMapping("/admin/category/{id}")
     public ResponseEntity<?> deleteCategory(@PathVariable long id){
         categoryService.delete(id);
         return ResponseEntity.ok("Success");

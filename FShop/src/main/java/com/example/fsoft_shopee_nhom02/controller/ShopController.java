@@ -12,7 +12,7 @@ public class ShopController {
     @Autowired
     private ShopService shopService;
 
-    @PostMapping("/shop/admin")
+    @PostMapping("/admin/shop")
     public ResponseEntity<?> createNewShop(@RequestBody ShopDTO model){
         return ResponseEntity.ok(shopService.save(model));
     }
@@ -40,13 +40,13 @@ public class ShopController {
         return ResponseEntity.ok(shopService.searchByName(keyword));
     }
 
-    @PutMapping("/shop/admin/{id}")
+    @PutMapping("/admin/shop/{id}")
     public ResponseEntity<?> update(@RequestBody ShopDTO model, @PathVariable long id){
         model.setId(id);
         return ResponseEntity.ok(shopService.update(model));
     }
 
-    @DeleteMapping("/shop/admin/{id}")
+    @DeleteMapping("/admin/shop/{id}")
     public ResponseEntity<?> delete(@PathVariable long id){
         shopService.delete(id);
         return ResponseEntity.ok("Success");
