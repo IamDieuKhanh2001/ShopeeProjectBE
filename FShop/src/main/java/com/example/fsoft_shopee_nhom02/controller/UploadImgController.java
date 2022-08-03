@@ -29,7 +29,7 @@ public class UploadImgController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping("/user/avatar")
+    @PostMapping("/users/avatar")
     public SuccessResponseDTO uploadAvatar(
             @RequestParam(value = "avatar", required = false) MultipartFile avatar
     ){
@@ -45,7 +45,7 @@ public class UploadImgController {
             throw new IllegalStateException("Update avatar user: " + username + " that bai");
         }
     }
-    @DeleteMapping("/user/avatar")
+    @DeleteMapping("/users/avatar")
     public ResponseEntity<?> deleteAva(
             @RequestParam(value = "avatar", required = false) MultipartFile avatar
     ){

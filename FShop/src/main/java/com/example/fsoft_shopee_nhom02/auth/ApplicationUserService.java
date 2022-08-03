@@ -1,5 +1,6 @@
 package com.example.fsoft_shopee_nhom02.auth;
 
+import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
 import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.dto.UserDTO;
 import com.example.fsoft_shopee_nhom02.mapper.UserMapper;
@@ -83,6 +84,7 @@ public class ApplicationUserService implements UserDetailsService {
 
         newUser.setCartEntity(new CartEntity()); //tạo 1 cart cho user
 
+        newUser.setName("Unname#" + GlobalVariable.GetOTP());
         userRepository.save(newUser);
         return true;
     }

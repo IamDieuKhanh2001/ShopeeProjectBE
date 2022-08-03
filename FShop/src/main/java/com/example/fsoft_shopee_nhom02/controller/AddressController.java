@@ -1,9 +1,9 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUserService;
-import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
 import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.dto.SuccessResponseDTO;
+import com.example.fsoft_shopee_nhom02.exception.ErrorResponse;
 import com.example.fsoft_shopee_nhom02.model.AddressEntity;
 import com.example.fsoft_shopee_nhom02.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;

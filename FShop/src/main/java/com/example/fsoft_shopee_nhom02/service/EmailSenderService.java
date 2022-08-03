@@ -11,6 +11,7 @@ import javax.mail.internet.MimeMessage;
 
 @Service
 public class EmailSenderService {
+
     @Autowired
     private JavaMailSender mailSender;
 
@@ -34,6 +35,7 @@ public class EmailSenderService {
         MimeMessageHelper helper = new MimeMessageHelper(mail);
         helper.setSubject(subject);
         helper.setFrom("quachdieukhanhfpttrainee@gmail.com");
+//        helper.setFrom("quachdieukhanhfpttrainee@gmail.com");
         helper.setTo(toEmail);
         boolean html = true;
         helper.setText(body, html);
