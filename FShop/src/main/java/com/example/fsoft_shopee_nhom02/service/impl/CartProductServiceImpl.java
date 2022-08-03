@@ -45,17 +45,22 @@ public class CartProductServiceImpl implements CartProductService {
 
 
     @Override
-    public List<CartProductEntity> addCartbyCartIdAndProductId(long productId, long cartId, long qty) throws Exception {
+    public List<CartProductEntity> addCartbyCartIdAndProductId(long productId, long cartId,String type, long qty) throws Exception {
+        CartProductEntity obj = new CartProductEntity();
+        CartProductEntity obj1 = cartProductRepository.getCartByProductIdAnduserId(cartId, productId,type);
         try {
-            if(cartProductRepository.getCartByProductIdAnduserId(cartId, productId).isPresent()){
-                throw new Exception("Product is already exist.");
+            if(cartProductRepository.getCartByProductIdAndCartId(cartId, productId,type).isPresent()){
+                obj1.setQuantity(obj1.getQuantity()+qty);
+                cartProductRepository.save(obj1);
             }
-            CartProductEntity obj = new CartProductEntity();
+            else {
             obj.setQuantity(qty);
             CartEntity cart = cartService.getCartsById(cartId);
             obj.setCartEntity(cart);
             ProductEntity pro = proServices.getProductsById(productId);
             obj.setProductEntity(pro);
+            obj.setType(type);
+            }
             //TODO price has to check with qty
             cartProductRepository.save(obj);
             return this.getCartByUserId(cartId);
