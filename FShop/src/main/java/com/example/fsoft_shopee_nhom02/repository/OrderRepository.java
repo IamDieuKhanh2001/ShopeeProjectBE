@@ -17,7 +17,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity,Long> {
     @Query(value = "select sum(total_price) \n" +
             "from orders \n" +
             "where year(modified_date) = '2022' and month(modified_date) =:Month and status = 'Done'", nativeQuery = true)
-    long getAllOrderByMonth(@Param("Month") String Month);
+    String getAllOrderByMonth(@Param("Month") String Month);
 
     // Tổng doanh thu
     @Query(value = "select sum(total_price) \n" +
@@ -28,7 +28,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity,Long> {
     @Query(value = "select sum(total_price) \n" +
             "from orders \n" +
             "where year(modified_date) = :Year and month(modified_date) =:Month and day(modified_date) =:Day and status = 'Done'", nativeQuery = true)
-    long getAllOrderByDay(@Param("Year") String Year, @Param("Month") String Month, @Param("Day") String Day);
+    String getAllOrderByDay(@Param("Year") String Year, @Param("Month") String Month, @Param("Day") String Day);
 
     // Thống kê tổng số đơn hàng
     @Query(value = "SELECT count(*) \n" +

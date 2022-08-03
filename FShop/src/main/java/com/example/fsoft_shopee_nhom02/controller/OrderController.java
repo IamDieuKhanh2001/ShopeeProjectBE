@@ -5,10 +5,7 @@ import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.model.OrderDetailsEntity;
 import com.example.fsoft_shopee_nhom02.model.OrderEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
-import com.example.fsoft_shopee_nhom02.service.AddressService;
-import com.example.fsoft_shopee_nhom02.service.OrderDetailService;
-import com.example.fsoft_shopee_nhom02.service.OrderService;
-import com.example.fsoft_shopee_nhom02.service.UserService;
+import com.example.fsoft_shopee_nhom02.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,13 +22,17 @@ public class OrderController {
     private final OrderService orderService;
     private final UserService userService;
     private final AddressService addressService;
+    private final CartService cartService;
+    private final CartProductService cartProductService;
 
     @Autowired
-    public OrderController(OrderDetailService orderDetailService, OrderService orderService, UserService userService, AddressService addressService) {
+    public OrderController(OrderDetailService orderDetailService, OrderService orderService, UserService userService, AddressService addressService, CartService cartService, CartProductService cartProductService) {
         this.orderDetailService = orderDetailService;
         this.orderService = orderService;
         this.userService = userService;
         this.addressService = addressService;
+        this.cartService = cartService;
+        this.cartProductService = cartProductService;
     }
 
     @GetMapping("/all")
@@ -73,6 +74,8 @@ public class OrderController {
 
         // get user information
         UserEntity user = userService.findByIdUser(Long.parseLong(orderInformation.get("user_id")));
+        // get user cartService.
+        long CardId = cartService.findByUserId(user.getId()).getId();
 
         // calculate for order Entity
         Timestamp created_date = GlobalVariable.getCurrentDateTime();
@@ -120,7 +123,14 @@ public class OrderController {
 
         // insert order detail to DB
         long newOrderEntityID = orderEntity.getId();
-        orderDetailsEntityList.forEach(orderDetailsEntity -> orderDetailsEntity.setOrderEntityID(newOrderEntityID));
+        orderDetailsEntityList.forEach(
+                (orderDetailsEntity) -> {
+                    // set id for order Detail
+                    orderDetailsEntity.setOrderEntityID(newOrderEntityID);
+                    // delete in cartProduct
+                    cartProductService.delete(orderDetailsEntity.getProductId(), CardId);
+                }
+        );
         orderDetailService.addNewOrderDetails(orderDetailsEntityList);
 
         long endTime = System.currentTimeMillis();
