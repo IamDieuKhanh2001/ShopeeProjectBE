@@ -13,10 +13,10 @@ public interface OrderService {
 
     OrderEntity findOrderById(Long OrderId);
 
-    long getAllOrderByMonth(String Month);
+    String getAllOrderByMonth(String Month);
     void addNewOrder(OrderEntity orderEntity);
     long getTurnOver();
-    long getAllOrderByDay(String Year,String Month,String Day);
+    String getAllOrderByDay(String Year, String Month, String Day);
     long getTotalOrder();
 
     OrderEntity findById(Long OrderId);

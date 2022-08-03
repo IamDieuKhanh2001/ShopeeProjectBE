@@ -18,11 +18,17 @@ public class StatisticController {
     @Autowired
     OrderServiceImpl orderService;
     @GetMapping("/year")
-    public Map<String, Long> getStatisticByYear(){
-        Map<String, Long> monthly = new HashMap<>();
+    public Map<String, String> getStatisticByYear(){
+        Map<String, String> monthly = new HashMap<>();
         for (int i = 1; i< 13; i++)
         {
-            monthly.put("Month "+i, orderService.getAllOrderByMonth(i+""));
+            if (orderService.getAllOrderByMonth(i+"") == null)
+            {
+                monthly.put("Month "+i, "0");
+            }
+            else {
+                monthly.put("Month "+i, orderService.getAllOrderByMonth(i+""));
+            }
         }
         return monthly;
     }
@@ -32,7 +38,11 @@ public class StatisticController {
         return orderService.getTurnOver();
     }
     @GetMapping("/day")
-    public Long getStatisticByDay(@RequestBody DayStatisticDTO dayStatisticDTO){
+    public String getStatisticByDay(@RequestBody DayStatisticDTO dayStatisticDTO){
+        if (orderService.getAllOrderByDay(dayStatisticDTO.getYear(), dayStatisticDTO.getMonth(), dayStatisticDTO.getDay()) == null)
+        {
+            return "0";
+        }
         return orderService.getAllOrderByDay(dayStatisticDTO.getYear(), dayStatisticDTO.getMonth(), dayStatisticDTO.getDay());
     }
 
