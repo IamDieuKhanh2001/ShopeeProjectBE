@@ -36,4 +36,5 @@ public interface OrderRepository extends JpaRepository<OrderEntity,Long> {
     long getTotalOrder();
 
     OrderEntity searchById(Long OrderId);
+
 }
