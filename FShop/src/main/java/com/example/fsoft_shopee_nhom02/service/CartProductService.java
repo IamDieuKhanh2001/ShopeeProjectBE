@@ -5,6 +5,7 @@ import com.example.fsoft_shopee_nhom02.dto.CartProductDTO;
 import com.example.fsoft_shopee_nhom02.model.CartProductEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,6 +16,8 @@ public interface CartProductService {
     void update(CartProductDTO cartProductDTO);
 
     void delete(long productId, long cartId);
+
+    void deleteListOfCartProduct(Collection<Long> productEntity_id, Long cartEntity_id, Collection<String> type);
 
     List<CartDetailDTO> getAllCart(long cartId);
     //List<HashMap<Object,Object>> getAllCart(long cartId)

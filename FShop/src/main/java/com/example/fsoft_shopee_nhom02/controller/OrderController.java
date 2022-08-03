@@ -71,6 +71,8 @@ public class OrderController {
         // create variable for usage
         OrderEntity orderEntity = new OrderEntity();
         List<OrderDetailsEntity> orderDetailsEntityList = new ArrayList<>();
+        Collection<Long> productEntity_idList = new ArrayList<>();
+        Collection<String> typeList = new ArrayList<>();
 
         // get user information
         UserEntity user = userService.findByIdUser(Long.parseLong(orderInformation.get("user_id")));
@@ -121,17 +123,24 @@ public class OrderController {
         // insert order to DB
         orderService.addNewOrder(orderEntity);
 
-        // insert order detail to DB
+        // insert orderId for orderDetails
         long newOrderEntityID = orderEntity.getId();
         orderDetailsEntityList.forEach(
                 (orderDetailsEntity) -> {
                     // set id for order Detail
                     orderDetailsEntity.setOrderEntityID(newOrderEntityID);
-                    // delete in cartProduct
-                    cartProductService.delete(orderDetailsEntity.getProductId(), CardId);
+
+                    // set attribute for delete cartProduct func
+                    productEntity_idList.add(orderDetailsEntity.getProductId());
+                    typeList.add(orderDetailsEntity.getType());
                 }
         );
+
+        // insert order detail to DB
         orderDetailService.addNewOrderDetails(orderDetailsEntityList);
+
+        // delete cartProduct from DB
+        cartProductService.deleteListOfCartProduct(productEntity_idList, CardId, typeList);
 
         long endTime = System.currentTimeMillis();
         long totalTime = endTime - startTime;

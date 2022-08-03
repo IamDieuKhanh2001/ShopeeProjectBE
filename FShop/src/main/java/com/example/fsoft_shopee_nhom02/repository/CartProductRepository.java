@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,7 @@ public interface CartProductRepository extends JpaRepository<CartProductEntity, 
     @Query("DELETE  FROM CartProductEntity addCart WHERE addCart.cartEntity.id=:cart_id and addCart.productEntity.id = :product_id")
     void deleteProduct(@Param("product_id")Long product_id,@Param("cart_id")Long cart_id);
 
+    void removeAllByProductEntityIdInAndCartEntityIdAndTypeIn(Collection<Long> productEntity_id, Long cartEntity_id, Collection<String> type);
 
    @Query(" select product.name , type.type  , type.price,cart_product.quantity  ,product.image1 " +
             "from CartProductEntity cart_product, TypeEntity  type , ProductEntity  product" +

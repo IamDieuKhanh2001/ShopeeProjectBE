@@ -18,10 +18,7 @@ import com.example.fsoft_shopee_nhom02.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CartProductServiceImpl implements CartProductService {
@@ -84,6 +81,11 @@ public class CartProductServiceImpl implements CartProductService {
     @Override
     public void delete(long productId, long cartId) {
         cartProductRepository.deleteProduct(productId,cartId);
+    }
+
+    @Override
+    public void deleteListOfCartProduct(Collection<Long> productEntity_id, Long cartEntity_id, Collection<String> type) {
+        cartProductRepository.removeAllByProductEntityIdInAndCartEntityIdAndTypeIn(productEntity_id, cartEntity_id,  type);
     }
 
 //    @Override
