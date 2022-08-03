@@ -20,28 +20,26 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping("/admin/products")
-    public ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
+    public ResponseEntity<?> createProduct(@RequestBody ProductDTO productDTO) {
         return productService.save(productDTO);
     }
 
     // Sua cac truong cua bang Product
     @PutMapping("/admin/products/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(@PathVariable long id, @RequestBody ProductDTO product) {
+    public ResponseEntity<?> updateProduct(@PathVariable long id, @RequestBody ProductDTO product) {
         product.setId(id);
-        return ResponseEntity.ok(productService.save(product));
+        return productService.save(product);
     }
 
     // Xoa 1 product trong bang Product (Chua xet bang Type)
     @DeleteMapping("/admin/products/{id}")
-    public ResponseEntity<ProductEntity> deleteProduct(@PathVariable long id) {
-        productService.deleteProduct(id);
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<?> deleteProduct(@PathVariable long id) {
+        return productService.deleteProduct(id);
     }
 
     // Lay products co phan trang
     @GetMapping("/products")
-    public ListOutputResult getAllProducts(@RequestParam Map<String, String> requestParams) {
+    public ResponseEntity<ListOutputResult> getAllProducts(@RequestParam Map<String, String> requestParams) {
         String page = requestParams.get("page");
         String limit = requestParams.get("limit");
 
@@ -49,31 +47,29 @@ public class ProductController {
     }
 
     @GetMapping("/products/{id}")
-    public ProductDTO getProductDetail(@PathVariable long id) {
-        // Cập nhật số lượt view sản phẩm
-        productService.updateViewProduct(id);
+    public ResponseEntity<?> getProductDetail(@PathVariable long id) {
         // Trả về thông tin sản phẩm
         return productService.getDetail(id);
     }
 
     // Lay types cua san pham tuong ung
     @GetMapping("/products/{id}/types")
-    public List<TypeEntity> getProductTypes(@PathVariable long id) {
+    public ResponseEntity<?> getProductTypes(@PathVariable long id) {
         return productService.getTypes(id);
     }
 
     @PostMapping("/admin/products/{id}/types")
-    public List<TypeEntity> createProductTypes(@PathVariable long id, @RequestBody List<TypeEntity> types) {
+    public ResponseEntity<?> createProductTypes(@PathVariable long id, @RequestBody List<TypeEntity> types) {
         return productService.createTypes(id, types);
     }
 
     @PutMapping("/admin/products/{id}/types")
-    public List<?> updateProductTypes(@PathVariable long id, @RequestBody List<TypeEntity> types) {
+    public ResponseEntity<?> updateProductTypes(@PathVariable long id, @RequestBody List<TypeEntity> types) {
         return productService.updateAllTypes(id, types);
     }
 
     @GetMapping("/products/search")
-    public ListOutputResult searchProduct(@RequestParam Map<String, String> requestParams) {
+    public ResponseEntity<ListOutputResult> searchProduct(@RequestParam Map<String, String> requestParams) {
         String page = requestParams.get("page");
         String limit = requestParams.get("limit");
         String keyword = requestParams.get("keyword");
@@ -85,12 +81,12 @@ public class ProductController {
     }
 
     @PostMapping("/users/products/{proId}/comments")
-    CommentDTO postComment(@PathVariable long proId, @RequestBody CommentDTO commentDTO) {
+    ResponseEntity<?> postComment(@PathVariable long proId, @RequestBody CommentDTO commentDTO) {
         return productService.createComment(proId, commentDTO);
     }
 
     @GetMapping("/products/{id}/comments")
-    ListOutputResult getComments(@PathVariable long id, @RequestParam Map<String, String> requestParams) {
+    ResponseEntity<ListOutputResult> getComments(@PathVariable long id, @RequestParam Map<String, String> requestParams) {
         String page = requestParams.get("page");
         String limit = requestParams.get("limit");
         String rating = requestParams.get("rating");

@@ -13,9 +13,12 @@ import com.example.fsoft_shopee_nhom02.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -44,13 +47,7 @@ public class ProductService {
 
 //region--------------------Functions for Product Crud APIs---------------------------
 
-    // update view
-    public void updateViewProduct(long id)
-    {
-        ProductEntity product = productRepository.findById(id).get();
-        product.setTotalView(product.getTotalView() + 1);
-        productRepository.save(product);
-    }
+
     // Use for Upload image controller
     public ProductDTO saveProductImage(long id, MultipartFile imageProduct, MultipartFile image1, MultipartFile image2,
     MultipartFile image3, MultipartFile image4) {
@@ -110,13 +107,18 @@ public class ProductService {
         return dtoHandler(product);
     }
 
-    public ProductDTO save(ProductDTO productDTO) {
+    public ResponseEntity<?> save(ProductDTO productDTO) {
         ProductEntity product;
 
         if(productDTO.getId() != 0) {
             // UPDATE
             product = productRepository.findById(productDTO.getId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Cannot found product id " + productDTO.getId()));
+                    .orElse(null);
+
+            if(product == null) {
+                return new ResponseEntity<>("Not found product id " + productDTO.getId(),
+                        HttpStatus.BAD_REQUEST);
+            }
             ProductMapper.toProductEntity(product, productDTO);
         }
         else {
@@ -126,12 +128,18 @@ public class ProductService {
             product.setTotalView(0L);
         }
         SubCategoryEntity subCategoryEntity = subCategoryRepository.findById(productDTO.getSubCategoryId())
-                .orElseThrow(() -> new ResourceNotFoundException("Cannot found category id " + productDTO.getSubCategoryId()));
+                .orElse(null);
+
+        if(subCategoryEntity == null) {
+            return new ResponseEntity<>("Not found sub category id " + productDTO.getSubCategoryId(),
+                    HttpStatus.BAD_REQUEST);
+        }
+
         product.setSubCategoryEntity(subCategoryEntity);
 
         productRepository.save(product);
 
-        return ProductMapper.toProductDTO(product);
+        return new ResponseEntity<>(ProductMapper.toProductDTO(product), HttpStatus.OK);
     }
 
     // Ham xu ly viec chuyen tu product sang DTO khi co truong Price
@@ -162,7 +170,7 @@ public class ProductService {
         return productDTO;
     }
 
-    public ListOutputResult getAllProducts(String page, String limit) {
+    public ResponseEntity<ListOutputResult> getAllProducts(String page, String limit) {
         ListOutputResult result = new ListOutputResult();
 
         page = (page == null) ? "1"  : page;
@@ -181,7 +189,7 @@ public class ProductService {
         }
 
         if(products.isEmpty()) {
-            throw new ResourceNotFoundException("Empty data!");
+            return new ResponseEntity<>(new ListOutputResult(), HttpStatus.BAD_REQUEST);
         }
 
         long productsNumber = productRepository.count();
@@ -189,23 +197,35 @@ public class ProductService {
         result.setList(productDTOS);
         result.setItemsNumber(productsNumber);
 
-        return result;
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    public ProductDTO getDetail(long id) {
+    public ResponseEntity<?> getDetail(long id) {
         ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cannot found product id " + id));
+                .orElse(null);
 
-        return dtoHandler(product);
+        if(product == null) {
+            return new ResponseEntity<>("Cannot found product id " + id, HttpStatus.BAD_REQUEST);
+        }
+
+        // Update view
+        product.setTotalView(product.getTotalView() + 1);
+        productRepository.save(product);
+
+        return new ResponseEntity<>(dtoHandler(product), HttpStatus.OK);
     }
 
-    public void deleteProduct(long id) {
+    public ResponseEntity<?> deleteProduct(long id) {
         ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cannot found product id " + id));
+                .orElse(null);
+
+        if(product == null) {
+            return new ResponseEntity<>("Cannot found product id " + id, HttpStatus.BAD_REQUEST);
+        }
 
         productRepository.delete(product);
-
         typeRepository.deleteAllByProductEntityId(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 //endregion
@@ -213,25 +233,36 @@ public class ProductService {
 
 //region-------------------------Functions for Types Crud APIs, Search Function---------------------------
 
-    public List<TypeEntity> getTypes(long id) {
-        return typeRepository.findAllByProductEntityId(id);
+    public ResponseEntity<?> getTypes(long id) {
+        if(typeRepository.findAllByProductEntityId(id).size() > 0) {
+            return new ResponseEntity<>(typeRepository.findAllByProductEntityId(id), HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Not found product id " + id, HttpStatus.BAD_REQUEST);
     }
 
-    public List<TypeEntity> createTypes(long id, List<TypeEntity> types) {
+    public ResponseEntity<?> createTypes(long id, List<TypeEntity> types) {
         ProductEntity productEntity = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cannot found product id " + id));
+                .orElse(null);
+
+        if(productEntity == null) {
+            return new ResponseEntity<>("Cannot found product id " + id, HttpStatus.BAD_REQUEST);
+        }
 
         for(TypeEntity type : types) {
             type.setProductEntity(productEntity);
             typeRepository.save(type);
         }
 
-        return types;
+        return new ResponseEntity<>(types, HttpStatus.OK);
     }
 
-    public List<?> updateAllTypes(long id, List<TypeEntity> typesList) {
+    public ResponseEntity<?> updateAllTypes(long id, List<TypeEntity> typesList) {
         ProductEntity productEntity = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cannot found product id " + id));
+                .orElse(null);
+
+        if(productEntity == null) {
+            return new ResponseEntity<>("Cannot found product id " + id, HttpStatus.BAD_REQUEST);
+        }
 
         List<TypeEntity> updatedTypesList = typeRepository.findAllByProductEntityId(id);
 
@@ -247,7 +278,7 @@ public class ProductService {
 
         typeRepository.saveAll(updatedTypesList);
 
-        return updatedTypesList;
+        return new ResponseEntity<>(updatedTypesList, HttpStatus.OK);
     }
     /*
         Search truyen 3 params: page, limit, keyword
@@ -257,7 +288,7 @@ public class ProductService {
           va list san pham.
 
      */
-    public ListOutputResult search(String page, String limit, String keyword,
+    public ResponseEntity<ListOutputResult> search(String page, String limit, String keyword,
                                    String minPrice, String maxPrice, String sub) {
         ListOutputResult result = new ListOutputResult();
         long defaultMaxPrice = typeRepository.findMaxPrice() + 1;
@@ -312,7 +343,7 @@ public class ProductService {
             int totalPage = (int) Math.ceil((double) priceFilterDTOS.size() / Integer.parseInt(limit));
 
             if(priceFilterDTOS.isEmpty() || totalPage < Integer.parseInt(page)) {
-                throw new ResourceNotFoundException("No result!");
+                return new ResponseEntity<>(new ListOutputResult(), HttpStatus.NOT_FOUND);
             }
 
             // Start index and end index
@@ -360,7 +391,7 @@ public class ProductService {
             }
 
             if(productEntities.isEmpty()) {
-                throw new ResourceNotFoundException("No result!");
+                return new ResponseEntity<>(new ListOutputResult(), HttpStatus.NOT_FOUND);
             }
 
             for (ProductEntity product : productEntities) {
@@ -372,7 +403,7 @@ public class ProductService {
             result.setList(productDTOS);
         }
 
-        return result;
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 //endregion
@@ -388,9 +419,14 @@ public class ProductService {
         commentDTO.setAvatar(resUser.getAvatar());
     }
 
-    public CommentDTO postCommentImg(long id, MultipartFile img, String username) {
+    public ResponseEntity<?> postCommentImg(long id, MultipartFile img, String username) {
         CommentEntity comment = commentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cannot found comment id " + id));
+                .orElse(null);
+
+        if(comment == null) {
+            return new ResponseEntity<>("Not found comment id " + id, HttpStatus.BAD_REQUEST);
+        }
+
 
         Optional<UserEntity> usersOptional = userRepository.findByUsername(username);
 
@@ -418,16 +454,20 @@ public class ProductService {
         CommentDTO commentDTO = new CommentDTO();
         commentDTOHandler(comment, commentDTO);
 
-        return commentDTO;
+        return new ResponseEntity<>(commentDTO, HttpStatus.OK);
     }
 
-    public CommentDTO createComment(long id, CommentDTO commentDTO) {
+    public ResponseEntity<?> createComment(long id, CommentDTO commentDTO) {
         CommentEntity comment = new CommentEntity();
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
 
         ProductEntity productEntity = productRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cannot found product id " + id));
+                .orElse(null);
+
+        if(productEntity == null) {
+            return new ResponseEntity<>("Not found product id " + id, HttpStatus.BAD_REQUEST);
+        }
 
         // Limit the max rating
         if(commentDTO.getRating() > 5)
@@ -456,10 +496,10 @@ public class ProductService {
         CommentDTO res = new CommentDTO();
         commentDTOHandler(comment, res);
 
-        return res;
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    public ListOutputResult getAllComments(long id, String page, String limit, String rating) {
+    public ResponseEntity<ListOutputResult> getAllComments(long id, String page, String limit, String rating) {
         page = (page == null) ? "1"  : page;
         limit = (limit == null) ? "6" : limit;
 
@@ -497,7 +537,7 @@ public class ProductService {
 
         res.setList(commentDTOS);
 
-        return res;
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
 //endregion
