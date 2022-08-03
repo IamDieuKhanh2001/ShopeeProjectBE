@@ -11,32 +11,17 @@ public class ProductDTO {
     private String detail;
     private double avgRating;
     private String imageProduct;
-        private String image1;
+    private String image1;
     private String image2;
     private String image3;
     private String image4;
     private long price;
-    private Long sale;
+    private long sale;
+    private long sold;
+    private long totalView;
     private long subCategoryId;
 
     public ProductDTO() {
-    }
-
-    public ProductDTO(long id, String name, String description, String detail, double avgRating,
-                      String imageProduct, String image1, String image2, String image3, String image4, long price, Long sale, long subCategoryId) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.detail = detail;
-        this.avgRating = avgRating;
-        this.imageProduct = imageProduct;
-        this.image1 = image1;
-        this.image2 = image2;
-        this.image3 = image3;
-        this.image4 = image4;
-        this.price = price;
-        this.sale = sale;
-        this.subCategoryId = subCategoryId;
     }
 
     public long getId() {
@@ -133,6 +118,22 @@ public class ProductDTO {
 
     public void setSale(Long sale) {
         this.sale = sale;
+    }
+
+    public long getSold() {
+        return sold;
+    }
+
+    public void setSold(long sold) {
+        this.sold = sold;
+    }
+
+    public long getTotalView() {
+        return totalView;
+    }
+
+    public void setTotalView(long totalView) {
+        this.totalView = totalView;
     }
 
     public long getSubCategoryId() {

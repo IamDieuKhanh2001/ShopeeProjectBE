@@ -48,7 +48,8 @@ public class PaymentController {
             // done
         }
         // Set trạng thái order thành "Đặt hàng thành công!"
-        order.setStatus("Đặt hàng thành công!");
+        order.setStatus("Done");
+        orderService.updateOrder(order);
         return new ResponseEntity<>(order, HttpStatus.OK);
     }
 

@@ -23,13 +23,13 @@ public interface TypeRepository extends JpaRepository<TypeEntity,Long> {
     @Query("select type from TypeEntity type where type.type = :type")
     TypeEntity findByType(String type);
 
-    @Query(value = "select o.id as typeid,\n" +
+    @Query(value = "select o.id,\n" +
             "       o.price,\n" +
             "       o.quantity,\n" +
             "       o.type,\n" +
-            "       o.product_id,\n" +
-            "            from types o\n" +
-            "                     left join products od on o.product_id = od.id\n" +
+            "       o.product_id \n" +
+            "            from types o \n" +
+            "                     left join products pd on o.product_id = pd.id\n" +
             "            where o.product_id=:ProductId and o.type =:TypeProduct", nativeQuery = true)
     TypeEntity findProductByType(@Param("ProductId") Long ProductId, @Param("TypeProduct") String TypeProduct);
 }

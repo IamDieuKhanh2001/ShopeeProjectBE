@@ -22,6 +22,5 @@ public interface OrderService {
     OrderEntity findById(Long OrderId);
 
     void updateOrder(OrderEntity orderEntity);
-
     void deleteOrder(Long OrderId);
 }
