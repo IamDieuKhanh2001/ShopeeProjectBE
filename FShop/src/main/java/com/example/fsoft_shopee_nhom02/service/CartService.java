@@ -9,7 +9,12 @@ import org.springframework.stereotype.Service;
 public class CartService {
     @Autowired
     CartRepository cartRepository;
+
     public CartEntity getCartsById(long cartID) throws Exception {
-        return  cartRepository.findById(cartID).orElseThrow(() -> new Exception("cart is not found"));
+        return cartRepository.findById(cartID).orElseThrow(() -> new Exception("cart is not found"));
+    }
+
+    public CartEntity findByUserId(Long UserId) {
+        return cartRepository.searchByUserEntityId(UserId);
     }
 }
