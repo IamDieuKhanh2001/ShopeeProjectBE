@@ -15,25 +15,24 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/products")
 public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping("/admin")
+    @PostMapping("/admin/products")
     public ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
         return productService.save(productDTO);
     }
 
     // Sua cac truong cua bang Product
-    @PutMapping("/admin/{id}")
+    @PutMapping("/admin/products/{id}")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable long id, @RequestBody ProductDTO product) {
         product.setId(id);
         return ResponseEntity.ok(productService.save(product));
     }
 
     // Xoa 1 product trong bang Product (Chua xet bang Type)
-    @DeleteMapping("/admin/{id}")
+    @DeleteMapping("/admin/products/{id}")
     public ResponseEntity<ProductEntity> deleteProduct(@PathVariable long id) {
         productService.deleteProduct(id);
 
@@ -41,7 +40,7 @@ public class ProductController {
     }
 
     // Lay products co phan trang
-    @GetMapping("")
+    @GetMapping("/products")
     public ListOutputResult getAllProducts(@RequestParam Map<String, String> requestParams) {
         String page = requestParams.get("page");
         String limit = requestParams.get("limit");
@@ -49,7 +48,7 @@ public class ProductController {
         return productService.getAllProducts(page, limit);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/products/{id}")
     public ProductDTO getProductDetail(@PathVariable long id) {
         // Cập nhật số lượt view sản phẩm
         productService.updateViewProduct(id);
@@ -58,22 +57,22 @@ public class ProductController {
     }
 
     // Lay types cua san pham tuong ung
-    @GetMapping("/{id}/types")
+    @GetMapping("/products/{id}/types")
     public List<TypeEntity> getProductTypes(@PathVariable long id) {
         return productService.getTypes(id);
     }
 
-    @PostMapping("/{id}/types")
+    @PostMapping("/admin/products/{id}/types")
     public List<TypeEntity> createProductTypes(@PathVariable long id, @RequestBody List<TypeEntity> types) {
         return productService.createTypes(id, types);
     }
 
-    @PutMapping("/{id}/types")
+    @PutMapping("/admin/products/{id}/types")
     public List<?> updateProductTypes(@PathVariable long id, @RequestBody List<TypeEntity> types) {
         return productService.updateAllTypes(id, types);
     }
 
-    @GetMapping("/search")
+    @GetMapping("/products/search")
     public ListOutputResult searchProduct(@RequestParam Map<String, String> requestParams) {
         String page = requestParams.get("page");
         String limit = requestParams.get("limit");
@@ -85,12 +84,12 @@ public class ProductController {
         return productService.search(page, limit, keyword, minPrice, maxPrice, subCate);
     }
 
-    @PostMapping("user/{proId}/comments")
+    @PostMapping("/users/products/{proId}/comments")
     CommentDTO postComment(@PathVariable long proId, @RequestBody CommentDTO commentDTO) {
         return productService.createComment(proId, commentDTO);
     }
 
-    @GetMapping("/{id}/comments")
+    @GetMapping("/products/{id}/comments")
     ListOutputResult getComments(@PathVariable long id, @RequestParam Map<String, String> requestParams) {
         String page = requestParams.get("page");
         String limit = requestParams.get("limit");

@@ -42,7 +42,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/", "/login", "/register",
-                        "/products/*", "/products","/order/**",
+                        "/products/**", "/products","/order/**",
                          "/recoveryPassword/**").permitAll() //Các API không cần đăng nhập
                 .antMatchers().hasAnyRole(ADMIN.name(), USER.name()) //Các API cần đăng nhập bằng tk admin, user
                 .antMatchers("/admin/**").hasRole(ADMIN.name()) //Các API cần đăng nhập bằng tk admin

@@ -122,6 +122,8 @@ public class ProductService {
         else {
             // CREATE
             product = ProductMapper.toProductEntity(productDTO);
+            product.setSold(0L);
+            product.setTotalView(0L);
         }
         SubCategoryEntity subCategoryEntity = subCategoryRepository.findById(productDTO.getSubCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cannot found category id " + productDTO.getSubCategoryId()));
@@ -154,6 +156,7 @@ public class ProductService {
 
         // List rong thi cho price = 0 neu khong se lay price tai index 0
         long price = priceList.isEmpty() ? 0 : priceList.get(0);
+
         productDTO.setPrice(price);
 
         return productDTO;
@@ -458,7 +461,7 @@ public class ProductService {
 
     public ListOutputResult getAllComments(long id, String page, String limit, String rating) {
         page = (page == null) ? "1"  : page;
-        limit = (limit == null) ? "12" : limit;
+        limit = (limit == null) ? "6" : limit;
 
         List<CommentDTO> commentDTOS = new ArrayList<>();
         List<CommentEntity> commentEntities;

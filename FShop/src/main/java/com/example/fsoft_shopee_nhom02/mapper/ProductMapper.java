@@ -17,6 +17,8 @@ public class ProductMapper {
         productDTO.setImage3(productEntity.getImage3());
         productDTO.setImage4(productEntity.getImage4());
         productDTO.setSale(productEntity.getSale());
+        productDTO.setSold((productEntity.getSold() == null) ? 0 : productEntity.getSold());
+        productDTO.setTotalView((productEntity.getTotalView() == null) ? 0 : productEntity.getTotalView());
         productDTO.setSubCategoryId(productEntity.getSubCategoryId());
 
         return productDTO;
