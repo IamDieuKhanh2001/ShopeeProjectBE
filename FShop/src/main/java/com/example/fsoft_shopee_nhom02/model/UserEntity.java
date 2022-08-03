@@ -42,7 +42,7 @@ public class UserEntity {
     private List<OrderEntity> orderEntities =new ArrayList<>();
 
     // Tạo quan hệ với RoleEntity
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles", //Tên bảng trung gian
             joinColumns = @JoinColumn(name = "userID"), //Khóa chính để liên kết với bảng Users
             inverseJoinColumns = @JoinColumn(name = "roleId")) //Khóa chính để liên kết với bảng Roles
