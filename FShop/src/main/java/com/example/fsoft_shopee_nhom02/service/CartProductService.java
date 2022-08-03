@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 public interface CartProductService {
-    CartProductDTO addCart(long productId, long userId, String type,long qty) throws Exception;
+    CartProductDTO addCart(CartProductDTO cartProductDTO) throws Exception;
 
     CartProductDTO update(CartProductDTO cartProductDTO);
 
