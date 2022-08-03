@@ -1,6 +1,7 @@
 package com.example.fsoft_shopee_nhom02.service.impl;
 
 import com.example.fsoft_shopee_nhom02.dto.ShopDTO;
+import com.example.fsoft_shopee_nhom02.exception.BadRequest;
 import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.ShopMapper;
 import com.example.fsoft_shopee_nhom02.model.ShopEntity;
@@ -28,7 +29,7 @@ public class ShopServiceImpl implements ShopService {
     @Override
     public ShopDTO update(ShopDTO shopDTO) {
         ShopEntity shop = shopRepository.findById(shopDTO.getId()).orElseThrow(()
-        -> new NotFoundException("Not found shop with id ="+shopDTO.getId()));
+        -> new BadRequest("Not found shop with id ="+shopDTO.getId()));
 
         shop.setName(shopDTO.getName());
         shop.setAvatar(shopDTO.getAvatar());
@@ -44,6 +45,8 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public void delete(long id) {
+        ShopEntity shop = shopRepository.findById(id).orElseThrow(()
+                -> new BadRequest("This shop not exist"));
         shopRepository.deleteById(id);
     }
 
@@ -63,7 +66,7 @@ public class ShopServiceImpl implements ShopService {
     @Override
     public ShopDTO findShopById(long id) {
         ShopEntity shop = shopRepository.findById(id).orElseThrow(()
-        -> new NotFoundException("Not found shop with id = "+id));
+        -> new BadRequest("Not found shop with id = "+id));
         return ShopMapper.toShopDto(shop);
     }
 
@@ -80,7 +83,7 @@ public class ShopServiceImpl implements ShopService {
             shopDTOS.add(ShopMapper.toShopDto(shop));
         }
         if(shopDTOS.isEmpty()){
-            throw  new NotFoundException("Not found shop name "+keyword);
+            throw  new BadRequest("Not found shop name "+keyword);
         }
         return shopDTOS.get(0);
     }

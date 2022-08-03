@@ -52,7 +52,7 @@ public class OrderController {
 
     @GetMapping("/detail/{id}")
     public Object getOrderDetailByOrderId(@PathVariable String id) {
-        return orderDetailService.getOrderDetailByOrderId(Long.parseLong(id));
+        return orderDetailService.findAllByOrderEntityId(Long.parseLong(id));
     }
 
     @GetMapping("/get_order/{id}")
@@ -150,12 +150,41 @@ public class OrderController {
 
     @PostMapping("/update_order/{id}")
     public Object UpdateOrder(@RequestBody Map<String, String> req, @PathVariable String id) {
-        OrderEntity orderEntity = new OrderEntity();
-        // add column those need to be updated
+        OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
+
         for (Map.Entry<String, String> i : req.entrySet()) {
             System.out.println(i.getKey());
+            switch (i.getKey()) {
+                case "address":
+                    orderEntity.setAddress(i.getValue());
+                    break;
+                case "note":
+                    orderEntity.setNote(i.getValue());
+                    break;
+                case "payment":
+                    orderEntity.setPayment(i.getValue());
+                    break;
+                case "phone":
+                    orderEntity.setPhone(i.getValue());
+                    break;
+                case "shipping_fee":
+                    orderEntity.setShippingFee(Long.parseLong(i.getValue()));
+                    break;
+                case "status":
+                    orderEntity.setStatus(i.getValue());
+                    break;
+                case "total_price":
+                    orderEntity.setTotalPrice(Long.parseLong(i.getValue()));
+                    break;
+                case "username":
+                    orderEntity.setUserName(i.getValue());
+                    break;
+                default:
+                    break;
+            }
         }
-        // orderService.updateOrder(orderEntity);
+
+        orderService.updateOrder(orderEntity);
         return "updated order";
     }
 

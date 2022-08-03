@@ -12,7 +12,7 @@ public class SubCategoryController {
     @Autowired
     private SubCategoryService subCategoryService;
 
-    @PostMapping("/subcategory/admin")
+    @PostMapping("/admin/subcategory")
     public ResponseEntity<?> createNewSubCategory(@RequestBody SubCategoryDTO model){
         return ResponseEntity.ok(subCategoryService.save(model));
     }
@@ -45,13 +45,13 @@ public class SubCategoryController {
         return ResponseEntity.ok(subCategoryService.countSubCategoryByCategoryId(categoryId));
     }
 
-    @PutMapping("/subcategory/admin/{id}")
+    @PutMapping("/admin/subcategory/{id}")
     public ResponseEntity<?> updateSubCategory(@PathVariable long id, @RequestBody SubCategoryDTO model){
         model.setId(id);
         return ResponseEntity.ok(subCategoryService.update(model));
     }
 
-    @DeleteMapping("/subcategory/admin/{id}")
+    @DeleteMapping("/admin/subcategory/{id}")
     public ResponseEntity<?> deleteSubCategory(@PathVariable long id){
         subCategoryService.delete(id);
         return ResponseEntity.ok("Success");

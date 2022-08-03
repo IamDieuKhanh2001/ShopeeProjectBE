@@ -20,4 +20,10 @@ public class CustomExceptionHandler {
         return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
+    @ExceptionHandler(BadRequest.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlerBadRequest(Exception ex, WebRequest req) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
+    }
+
 }

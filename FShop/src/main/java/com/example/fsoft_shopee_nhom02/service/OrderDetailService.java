@@ -8,8 +8,6 @@ import java.util.List;
 public interface OrderDetailService {
     List<OrderDetailsEntity> getAll();
 
-    Object getOrderDetailByOrderId(Long OrderId);
-
     ArrayList<OrderDetailsEntity> findAllByOrderEntityId(Long OrderDetailId);
 
     void addNewOrderDetails(List<OrderDetailsEntity> orderDetailsEntityList);

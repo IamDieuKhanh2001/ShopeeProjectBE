@@ -1,6 +1,7 @@
 package com.example.fsoft_shopee_nhom02.service.impl;
 
 import com.example.fsoft_shopee_nhom02.dto.CategoryDTO;
+import com.example.fsoft_shopee_nhom02.exception.BadRequest;
 import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.CategoryMapper;
 import com.example.fsoft_shopee_nhom02.model.CategoryEntity;
@@ -27,7 +28,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO save(CategoryDTO categoryDTO) {
         ShopEntity shopEntity = shopRepository.findById(categoryDTO.getShopId()).orElseThrow(()
-                -> new NotFoundException("Not found shop with id = "+categoryDTO.getShopId()));
+                -> new BadRequest("Not found shop with id = "+categoryDTO.getShopId()));
         CategoryEntity category = CategoryMapper.toEntity(categoryDTO);
         category.setShopEntity(shopEntity);
         category = categoryRepository.save(category);
@@ -38,10 +39,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDTO update(CategoryDTO categoryDTO) {
         ShopEntity shopEntity = shopRepository.findById(categoryDTO.getShopId()).orElseThrow(()
-                -> new NotFoundException("Not found shop with id = "+categoryDTO.getShopId()));
+                -> new BadRequest("Not found shop with id = "+categoryDTO.getShopId()));
 
         CategoryEntity category = categoryRepository.findById(categoryDTO.getId()).orElseThrow(()
-                -> new NotFoundException("Not found category with id = "+categoryDTO.getId()));
+                -> new BadRequest("Not found category with id = "+categoryDTO.getId()));
 
         category.setName(categoryDTO.getName());
         category.setImage(categoryDTO.getImage());
@@ -90,12 +91,14 @@ public class CategoryServiceImpl implements CategoryService {
             return categoryRepository.count();
         }
         shopRepository.findById(shopId).orElseThrow(() ->
-                new NotFoundException("Not found shop with id = "+shopId));
+                new BadRequest("Not found shop with id = "+shopId));
         return categoryRepository.countByShopEntityId(shopId);
     }
 
     @Override
     public void delete(long id) {
+        CategoryEntity category = categoryRepository.findById(id).orElseThrow(()
+                -> new BadRequest("Category not exist"));
         categoryRepository.deleteById(id);
     }
 

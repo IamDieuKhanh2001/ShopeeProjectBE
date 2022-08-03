@@ -70,7 +70,7 @@ public class UploadImgController {
     }
 
     @PostMapping("/users/comments-img/{id}")
-    public CommentDTO uploadCommentImg(@PathVariable long id,
+    public ResponseEntity<?> uploadCommentImg(@PathVariable long id,
                                        @RequestParam(required = false) MultipartFile img) {
         String username = ApplicationUserService.GetUsernameLoggedIn();
 
