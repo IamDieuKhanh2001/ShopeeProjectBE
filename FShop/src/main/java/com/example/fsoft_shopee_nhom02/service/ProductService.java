@@ -5,7 +5,6 @@ import com.example.fsoft_shopee_nhom02.auth.ApplicationUser;
 import com.example.fsoft_shopee_nhom02.dto.CommentDTO;
 import com.example.fsoft_shopee_nhom02.dto.ProductDTO;
 import com.example.fsoft_shopee_nhom02.dto.ListOutputResult;
-import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.CommentMapper;
 import com.example.fsoft_shopee_nhom02.mapper.ProductMapper;
 import com.example.fsoft_shopee_nhom02.model.*;
@@ -18,9 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -170,11 +167,34 @@ public class ProductService {
         return productDTO;
     }
 
+    String checkTotalPage(long totalItems, long limit, long page) {
+        long totalPage = (long) Math.ceil((double) totalItems / limit);
+
+        page = (page < 0) ? 1 : Math.min(totalPage, page);
+
+        return String.valueOf(page);
+    }
+
+    Boolean isNumber(String s) {
+        long value;
+
+        try {
+            value = Long.parseLong(s);
+            return true;
+        }
+        catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
     public ResponseEntity<ListOutputResult> getAllProducts(String page, String limit) {
         ListOutputResult result = new ListOutputResult();
+        long productsNumber = productRepository.count();
 
-        page = (page == null) ? "1"  : page;
-        limit = (limit == null) ? "12" : limit;
+        limit = (limit == null || limit.equals("")
+                || !isNumber(limit) || Long.parseLong(limit) < 0) ? "12" : limit;
+        page = (page == null || page.equals("") || !isNumber(page)) ? "1" :
+                checkTotalPage(productsNumber, Long.parseLong(limit), Long.parseLong(page));
 
         List<ProductDTO> productDTOS = new ArrayList<>();
 
@@ -189,10 +209,9 @@ public class ProductService {
         }
 
         if(products.isEmpty()) {
-            return new ResponseEntity<>(new ListOutputResult(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
+                    HttpStatus.NOT_FOUND);
         }
-
-        long productsNumber = productRepository.count();
 
         result.setList(productDTOS);
         result.setItemsNumber(productsNumber);
@@ -293,10 +312,15 @@ public class ProductService {
         ListOutputResult result = new ListOutputResult();
         long defaultMaxPrice = typeRepository.findMaxPrice() + 1;
 
-        page = (page == null) ? "1"  : page;
-        limit = (limit == null) ? "12" : limit;
-        minPrice = (minPrice == null) ? "-1" : minPrice;
-        maxPrice = (maxPrice == null) ? String.valueOf(defaultMaxPrice) : maxPrice;
+        page = (page == null || page.equals("") || !isNumber(page)) ? "1" : page;
+
+        limit = (limit == null || limit.equals("") ||
+                !isNumber(limit) || Long.parseLong(limit) < 0) ? "12" : limit;
+
+        minPrice = (minPrice == null || minPrice.equals("") || !isNumber(minPrice)) ? "-1" : minPrice;
+
+        maxPrice = (maxPrice == null || maxPrice.equals("") || !isNumber(maxPrice))
+                ? String.valueOf(defaultMaxPrice) : maxPrice;
 
         List<ProductEntity> productEntities;
         List<ProductDTO> productDTOS = new ArrayList<>();
@@ -308,15 +332,16 @@ public class ProductService {
 //            productEntities = (keyword == null) ? productRepository.findAll()
 //                : productRepository.findAllBySearchQuery(keyword);
             if(keyword == null) {
-                if(sub != null) {
+                if(sub != null && isNumber(sub) && !sub.equals("")) {
                     productEntities = productRepository.findAllBySubCategoryEntityId(Long.parseLong(sub));
                 }
                 else
                     productEntities = productRepository.findAll();
             }
             else {
-                if(sub != null) {
-                    productEntities = productRepository.findAllBySearchAndSubCate(keyword, Long.parseLong(sub));
+                if(sub != null && isNumber(sub) && !sub.equals("")) {
+                    productEntities = productRepository.findAllBySearchAndSubCate(keyword,
+                            Long.parseLong(sub));
                 }
                 else
                     productEntities = productRepository.findAllBySearchQuery(keyword);
@@ -340,10 +365,11 @@ public class ProductService {
             }
 
             // Pagination code below after filter the price range
-            int totalPage = (int) Math.ceil((double) priceFilterDTOS.size() / Integer.parseInt(limit));
+            page = checkTotalPage(priceFilterDTOS.size(), Long.parseLong(limit), Long.parseLong(page));
 
-            if(priceFilterDTOS.isEmpty() || totalPage < Integer.parseInt(page)) {
-                return new ResponseEntity<>(new ListOutputResult(), HttpStatus.NOT_FOUND);
+            if(priceFilterDTOS.isEmpty()) {
+                return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
+                        HttpStatus.NOT_FOUND);
             }
 
             // Start index and end index
@@ -369,7 +395,7 @@ public class ProductService {
             long productsNumber;
 
             if(keyword == null) {
-                if(sub != null) {
+                if(sub != null && isNumber(sub) && !sub.equals("")) {
                     productEntities = productRepository.findAllBySubCategoryEntityId(Long.parseLong(sub), pageable);
                     productsNumber = productRepository.countAllBySubCate(Long.parseLong(sub));
                 }
@@ -379,7 +405,7 @@ public class ProductService {
                 }
             }
             else {
-                if(sub != null) {
+                if(sub != null && isNumber(sub) && !sub.equals("")) {
                     productEntities = productRepository.findAllBySearchAndSubCate(keyword,
                             Long.parseLong(sub), pageable);
                     productsNumber = productRepository.countAllBySearchAndSubCate(keyword, Long.parseLong(sub));
@@ -391,7 +417,8 @@ public class ProductService {
             }
 
             if(productEntities.isEmpty()) {
-                return new ResponseEntity<>(new ListOutputResult(), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
+                        HttpStatus.NOT_FOUND);
             }
 
             for (ProductEntity product : productEntities) {
@@ -501,8 +528,10 @@ public class ProductService {
     }
 
     public ResponseEntity<ListOutputResult> getAllComments(long id, String page, String limit, String rating) {
-        page = (page == null) ? "1"  : page;
-        limit = (limit == null) ? "6" : limit;
+        page = (page == null || page.equals("") || !isNumber(page)) ? "1"  : page;
+
+        limit = (limit == null || limit.equals("") ||
+                !isNumber(limit) || Long.parseLong(limit) < 0) ? "12" : limit;
 
         List<CommentDTO> commentDTOS = new ArrayList<>();
         List<CommentEntity> commentEntities;
@@ -511,6 +540,10 @@ public class ProductService {
         Pageable pageable = PageRequest.of((Integer.parseInt(page) - 1), Integer.parseInt(limit));
 
         // if rating param, filter the comment by rating
+
+        // Check if rating not a number or empty string set it to null
+        rating = (!isNumber(rating) || rating.equals("")) ? null : rating;
+
         if(rating != null) {
             if(Long.parseLong(rating) > 5)
                 rating = "5";
@@ -526,6 +559,11 @@ public class ProductService {
         else {
             commentEntities = commentRepository.findAllByProductEntityId(id, pageable);
             res.setItemsNumber(commentRepository.countAllByProductEntityId(id));
+        }
+
+        if(commentEntities.size() == 0) {
+            return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
+                    HttpStatus.NOT_FOUND);
         }
 
         // Trans to DTO
