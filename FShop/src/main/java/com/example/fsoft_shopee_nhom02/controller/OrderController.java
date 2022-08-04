@@ -14,6 +14,9 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static com.example.fsoft_shopee_nhom02.config.GlobalVariable.datetimeFormat;
+import static com.example.fsoft_shopee_nhom02.config.GlobalVariable.ORDER_STATUS;
+
 @RestController
 @RequestMapping("/order")
 @CrossOrigin
@@ -46,18 +49,18 @@ public class OrderController {
     }
 
     @GetMapping("/user/{id}")
-    public Object getAllByUserId(@PathVariable String id) {
+    public Object getAllByUserId(@PathVariable String id) throws ParseException {
         return orderService.getAllByUserId(Long.parseLong(id));
     }
 
     @GetMapping("/pending/{id}")
     public Object getAllOrderByUserId(@PathVariable String id) {
-        return orderService.getAllPendingOrderByUserId(Long.parseLong(id), GlobalVariable.ORDER_STATUS_DONE);
+        return orderService.getAllPendingOrderByUserId(Long.parseLong(id), ORDER_STATUS.DONE.toString());
     }
 
     @GetMapping("/history/{id}")
     public Object getAllOrderHistoryByUserId(@PathVariable String id) {
-        return orderService.getAllHistoryOrderByUserId(Long.parseLong(id), GlobalVariable.ORDER_STATUS_DONE);
+        return orderService.getAllHistoryOrderByUserId(Long.parseLong(id), ORDER_STATUS.DONE.toString());
     }
 
     @GetMapping("/detail/{id}")
@@ -163,7 +166,7 @@ public class OrderController {
         long endTime = System.currentTimeMillis();
         long totalTime = endTime - startTime;
 
-        return "created order at " + GlobalVariable.datetimeFormat.format(new Date()) + " with duration: " + totalTime + "ms";
+        return "created order at " + datetimeFormat.format(new Date()) + " with duration: " + totalTime + "ms";
     }
 
     @PostMapping("/update_order/{id}")
@@ -211,7 +214,7 @@ public class OrderController {
     @PostMapping("/cancel_order/{id}")
     public Object CancelOrder(@PathVariable String id) {
         OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
-        orderEntity.setStatus(GlobalVariable.ORDER_STATUS_CANCELED);
+        orderEntity.setStatus(ORDER_STATUS.CANCELED.toString());
 
         orderService.updateOrder(orderEntity);
         return "canceled order";

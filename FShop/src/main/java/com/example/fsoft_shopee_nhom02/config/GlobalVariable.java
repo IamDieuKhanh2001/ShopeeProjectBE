@@ -17,7 +17,8 @@ public class GlobalVariable {
         return String.format("%06d", new Random().nextInt(999999));
     }
 
-    public static String ORDER_STATUS_DONE = "DONE";
-    public static String ORDER_STATUS_CANCELED = "CANCELED";
-
+    public enum ORDER_STATUS {
+        DONE,
+        CANCELED
+    }
 }
