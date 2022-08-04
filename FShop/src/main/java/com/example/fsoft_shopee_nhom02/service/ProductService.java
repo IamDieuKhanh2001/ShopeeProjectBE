@@ -170,21 +170,23 @@ public class ProductService {
     String checkTotalPage(long totalItems, long limit, long page) {
         long totalPage = (long) Math.ceil((double) totalItems / limit);
 
-        page = (page < 0) ? 1 : Math.min(totalPage, page);
+        page = Math.min(totalPage, page);
 
         return String.valueOf(page);
     }
 
     Boolean isNumber(String s) {
-        long value;
-
         try {
-            value = Long.parseLong(s);
+            Long.parseLong(s);
             return true;
         }
         catch (NumberFormatException e) {
             return false;
         }
+    }
+
+    Boolean isValidPage(String page) {
+        return page != null && !page.equals("") && isNumber(page) && Long.parseLong(page) >= 0;
     }
 
     public ResponseEntity<ListOutputResult> getAllProducts(String page, String limit) {
@@ -193,7 +195,7 @@ public class ProductService {
 
         limit = (limit == null || limit.equals("")
                 || !isNumber(limit) || Long.parseLong(limit) < 0) ? "12" : limit;
-        page = (page == null || page.equals("") || !isNumber(page)) ? "1" :
+        page = (!isValidPage(page)) ? "1" :
                 checkTotalPage(productsNumber, Long.parseLong(limit), Long.parseLong(page));
 
         List<ProductDTO> productDTOS = new ArrayList<>();
@@ -312,7 +314,7 @@ public class ProductService {
         ListOutputResult result = new ListOutputResult();
         long defaultMaxPrice = typeRepository.findMaxPrice() + 1;
 
-        page = (page == null || page.equals("") || !isNumber(page)) ? "1" : page;
+        page = (!isValidPage(page)) ? "1" : page;
 
         limit = (limit == null || limit.equals("") ||
                 !isNumber(limit) || Long.parseLong(limit) < 0) ? "12" : limit;
@@ -528,7 +530,7 @@ public class ProductService {
     }
 
     public ResponseEntity<ListOutputResult> getAllComments(long id, String page, String limit, String rating) {
-        page = (page == null || page.equals("") || !isNumber(page)) ? "1"  : page;
+        page = (!isValidPage(page)) ? "1" : page;
 
         limit = (limit == null || limit.equals("") ||
                 !isNumber(limit) || Long.parseLong(limit) < 0) ? "12" : limit;
