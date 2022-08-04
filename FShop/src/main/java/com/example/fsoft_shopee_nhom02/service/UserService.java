@@ -12,7 +12,6 @@ public interface UserService {
 
     List<UserDTO> getAllUser();
     UserEntity findByIdUser(Long id);
-    UserEntity updateUser(UserDTO newUser, Long id);
     void delete(Long id);
     void deleteUser(String username);
     long countAllUser();

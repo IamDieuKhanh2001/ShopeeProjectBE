@@ -52,31 +52,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity updateUser(UserDTO newUser, Long id) {
-        UserEntity updatedUser = userRepository.findById(id)
-                .map(user -> {
-                    user.setAvatar(newUser.getAvatar());
-                    user.setDob(newUser.getDob());
-                    user.setEmail(newUser.getEmail());
-                    user.setGender(newUser.getGender());
-                    user.setName(newUser.getName());
-                    user.setPassword(newUser.getPassword());
-                    user.setPhone(newUser.getPhone());
-                    user.setUsername(newUser.getUsername());
-                    return userRepository.save(user);
-                }).orElseThrow(() -> new ResourceNotFoundException("Cannot found user with id = " + id));
-        return updatedUser;
-    }
-
-    @Override
     public void delete(Long id) {
         userRepository.deleteById(id);
     }
 
     @Override
     public void deleteUser(String username) {
-        Optional<UserEntity> deleteUser = userRepository.findByUsername(username);
-        userRepository.deleteById(deleteUser.get().getId());
+        UserEntity deleteUser = userRepository.findByUsername(username).orElseThrow(()
+                -> new ResourceNotFoundException("Cannot found user with username = " + username));
+        userRepository.deleteById(deleteUser.getId());
     }
 
     @Override
@@ -129,6 +113,7 @@ public class UserServiceImpl implements UserService {
                     user.setDob(userChange.getDob());
                     user.setGender(userChange.getGender());
                     user.setName(userChange.getName());
+                    user.setModifiedDate(new Timestamp(System.currentTimeMillis()));
                     return userRepository.save(user);
                 }).orElseThrow(() -> new ResourceNotFoundException("Cannot found user with username = " + username));
         return changeProfileUser;
@@ -161,7 +146,7 @@ public class UserServiceImpl implements UserService {
     public UserEntity findByUsername(String username) {
         Optional<UserEntity> user = userRepository.findByUsername(username);
         if(!user.isPresent()){
-            throw new IllegalStateException("Khong tim thay username");
+            throw new IllegalStateException("Khong tim thay username "+username);
         }
 
         return user.get();
@@ -183,7 +168,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("khong upload duoc");
         }
         userLogin.setAvatar(url);
-        userLogin.setModifiedDate(new Timestamp(System.currentTimeMillis()));
+        userLogin.setModifiedDate(new Timestamp(System.currentTimeMillis()));       //Cập nhật thời gian chỉnh sửa
         userRepository.save(userLogin);
         return true;
     }
