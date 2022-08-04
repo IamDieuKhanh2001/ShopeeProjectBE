@@ -34,21 +34,21 @@ public class StatisticController {
     }
 
     @GetMapping("/reveune")
-    public Long getRevenue(){
-        return orderService.getTurnOver();
+    public String getRevenue(){
+        return "Tổng oanh thu: " + orderService.getTurnOver();
     }
     @GetMapping("/day")
     public String getStatisticByDay(@RequestBody DayStatisticDTO dayStatisticDTO){
         if (orderService.getAllOrderByDay(dayStatisticDTO.getYear(), dayStatisticDTO.getMonth(), dayStatisticDTO.getDay()) == null)
         {
-            return "0";
+            return "Doanh thu: 0";
         }
-        return orderService.getAllOrderByDay(dayStatisticDTO.getYear(), dayStatisticDTO.getMonth(), dayStatisticDTO.getDay());
+        return "Doanh thu: "+ orderService.getAllOrderByDay(dayStatisticDTO.getYear(), dayStatisticDTO.getMonth(), dayStatisticDTO.getDay());
     }
 
     @GetMapping("/totalorder")
-    public Long getTotalOrder(){
-        return orderService.getTotalOrder();
+    public String getTotalOrder(){
+        return  "Tổng số đơn hàng: "+ orderService.getTotalOrder();
     }
 
 
