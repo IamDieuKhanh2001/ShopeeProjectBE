@@ -8,6 +8,8 @@ import com.example.fsoft_shopee_nhom02.model.ShopEntity;
 import com.example.fsoft_shopee_nhom02.repository.ShopRepository;
 import com.example.fsoft_shopee_nhom02.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -21,15 +23,25 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public ShopDTO save(ShopDTO shopDTO) {
-        ShopEntity shop = ShopMapper.toEntity(shopDTO);
-        shop = shopRepository.save(shop);
-        return ShopMapper.toShopDto(shop);
+        ShopEntity shop = shopRepository.findOneByName(shopDTO.getName());
+        if(shop != null){
+            throw new BadRequest(shopDTO.getName()+" have been used");
+        }
+        else {
+            shop = ShopMapper.toEntity(shopDTO);
+            shop = shopRepository.save(shop);
+            return ShopMapper.toShopDto(shop);
+        }
     }
 
     @Override
     public ShopDTO update(ShopDTO shopDTO) {
         ShopEntity shop = shopRepository.findById(shopDTO.getId()).orElseThrow(()
         -> new BadRequest("Not found shop with id ="+shopDTO.getId()));
+
+        if(shopRepository.findByNameExceptCurrentName(shopDTO.getId(),shopDTO.getName()) != null){
+            throw new BadRequest(shopDTO.getName()+" have been used");
+        }
 
         shop.setName(shopDTO.getName());
         shop.setAvatar(shopDTO.getAvatar());
@@ -46,7 +58,7 @@ public class ShopServiceImpl implements ShopService {
     @Override
     public void delete(long id) {
         ShopEntity shop = shopRepository.findById(id).orElseThrow(()
-                -> new BadRequest("This shop not exist"));
+                -> new BadRequest("Fail! This shop not exist"));
         shopRepository.deleteById(id);
     }
 

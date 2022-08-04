@@ -2,8 +2,6 @@ package com.example.fsoft_shopee_nhom02.mapper;
 
 import com.example.fsoft_shopee_nhom02.dto.UserDTO;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserMapper {
 
@@ -17,6 +15,8 @@ public class UserMapper {
         userEntity.setEmail(userDTO.getEmail());
         userEntity.setDob(userDTO.getDob());
         userEntity.setAvatar(userDTO.getAvatar());
+        userEntity.setCreatedDate(userDTO.getCreatedDate());
+        userEntity.setModifiedDate(userDTO.getModifiedDate());
         userEntity.setCartEntity(null);
         return userEntity;
     }
@@ -33,6 +33,8 @@ public class UserMapper {
         userDTO.setEmail(userEntity.getEmail());
         userDTO.setDob(userEntity.getDob());
         userDTO.setAvatar(userEntity.getAvatar());
+        userDTO.setCreatedDate(userEntity.getCreatedDate());
+        userDTO.setModifiedDate(userEntity.getModifiedDate());
 
         return userDTO;
     }

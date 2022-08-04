@@ -11,18 +11,18 @@ import java.util.List;
 
 @Service
 public interface CartProductService {
-    List<CartProductEntity> addCartbyCartIdAndProductId(long productId, long userId, String type,long qty) throws Exception;
+    CartProductDTO addCart(CartProductDTO cartProductDTO) throws Exception;
 
-    void update(CartProductDTO cartProductDTO);
+    CartProductDTO update(CartProductDTO cartProductDTO);
 
-    void delete(long productId, long cartId);
+    void delete(CartProductDTO cartProductDTO);
 
     void deleteListOfCartProduct(Collection<Long> productEntity_id, Long cartEntity_id, Collection<String> type);
 
     List<CartDetailDTO> getAllCart(long cartId);
     //List<HashMap<Object,Object>> getAllCart(long cartId)
 
-    List<CartProductEntity> getCartByCartId(long cartId);
+    CartProductDTO getCartByCartId(long cartId);
 
 
     // List<CartProductDTO> saveProductsForCheckout(List<CheckoutCart> tmp)  throws Exception;

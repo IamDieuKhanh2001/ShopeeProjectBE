@@ -8,12 +8,12 @@ import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
 import com.example.fsoft_shopee_nhom02.service.CloudinaryService;
 import com.example.fsoft_shopee_nhom02.service.UserService;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -69,8 +69,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Long id) {
+    public void delete(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteUser(String username) {
+        Optional<UserEntity> deleteUser = userRepository.findByUsername(username);
+        userRepository.deleteById(deleteUser.get().getId());
     }
 
     @Override
@@ -177,6 +183,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("khong upload duoc");
         }
         userLogin.setAvatar(url);
+        userLogin.setModifiedDate(new Timestamp(System.currentTimeMillis()));
         userRepository.save(userLogin);
         return true;
     }

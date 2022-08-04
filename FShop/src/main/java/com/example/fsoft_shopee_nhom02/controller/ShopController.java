@@ -1,10 +1,14 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
 import com.example.fsoft_shopee_nhom02.dto.ShopDTO;
+import com.example.fsoft_shopee_nhom02.dto.SuccessResponseDTO;
 import com.example.fsoft_shopee_nhom02.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.ParseException;
 
 @RestController
 public class ShopController {
@@ -29,9 +33,6 @@ public class ShopController {
 
     @GetMapping("/shop/count")
     public ResponseEntity<?> countAllShop(){
-        if(shopService.countAllShop() == 0L){
-            return ResponseEntity.ok("Empty!!");
-        }
         return ResponseEntity.ok(shopService.countAllShop());
     }
 
@@ -47,8 +48,8 @@ public class ShopController {
     }
 
     @DeleteMapping("/admin/shop/{id}")
-    public ResponseEntity<?> delete(@PathVariable long id){
+    public SuccessResponseDTO delete(@PathVariable long id) throws ParseException {
         shopService.delete(id);
-        return ResponseEntity.ok("Success");
+        return new SuccessResponseDTO(HttpStatus.OK,"Delete success");
     }
 }
