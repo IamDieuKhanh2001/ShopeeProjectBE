@@ -51,8 +51,18 @@ public class OrderController {
     }
 
     @GetMapping("/detail/{id}")
-    public List<Object> getOrderDetailByOrderId(@PathVariable String id) {
-        return orderDetailService.findByOrderId(Long.parseLong(id));
+    public Map<String, Object> getOrderDetailByOrderId(@PathVariable String id) {
+        List<OrderDetailsEntity> orderDetailsEntityList = orderDetailService.findAllByOrderEntityId(Long.parseLong(id));
+
+        OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
+
+        Map<String, Object> res = new HashMap<>();
+
+        res.put("orderDetailsList", orderDetailsEntityList);
+
+        res.put("orderInfo",orderEntity);
+
+        return res;
     }
 
     @GetMapping("/get_order/{id}")

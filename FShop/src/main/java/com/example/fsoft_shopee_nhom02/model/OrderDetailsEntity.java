@@ -15,7 +15,7 @@ public class OrderDetailsEntity {
     private Long quantity;
     private String type;
     //  Tạo quan hệ với bảng Order
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "orderId", nullable = false, referencedColumnName = "id")
     private OrderEntity orderEntity;

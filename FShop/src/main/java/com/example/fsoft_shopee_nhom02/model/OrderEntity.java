@@ -33,7 +33,7 @@ public class OrderEntity extends BaseClassEntity {
 
     // Tạo quan hệ với OrderDetailsEntity
     @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL)
-    private List<OrderDetailsEntity> orderDetailsEntities = new ArrayList<>();
+    private List<OrderDetailsEntity> orderDetailsEntities;
 
     // Constructor, Getter, Setter
     public OrderEntity() {
