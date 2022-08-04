@@ -27,17 +27,28 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryDTO save(CategoryDTO categoryDTO) {
-        ShopEntity shopEntity = shopRepository.findById(categoryDTO.getShopId()).orElseThrow(()
-                -> new BadRequest("Not found shop with id = "+categoryDTO.getShopId()));
-        CategoryEntity category = CategoryMapper.toEntity(categoryDTO);
-        category.setShopEntity(shopEntity);
-        category = categoryRepository.save(category);
+        CategoryEntity category;
 
+        if(categoryDTO.getShopId() == null){
+            throw new BadRequest("Please provide the shop id want to add this category.");
+            //category = CategoryMapper.toEntity(categoryDTO);
+        }
+        else {
+            ShopEntity shopEntity = shopRepository.findById(categoryDTO.getShopId()).orElseThrow(()
+                    -> new BadRequest("Not found shop with id = " + categoryDTO.getShopId()));
+            category = CategoryMapper.toEntity(categoryDTO);
+            category.setShopEntity(shopEntity);
+        }
+        category = categoryRepository.save(category);
         return CategoryMapper.toCategoryDto(category);
     }
 
     @Override
     public CategoryDTO update(CategoryDTO categoryDTO) {
+        if(categoryDTO.getShopId() == null){
+            throw new BadRequest("Please provide the shop id want to add this category.");
+            //category = CategoryMapper.toEntity(categoryDTO);
+        }
         ShopEntity shopEntity = shopRepository.findById(categoryDTO.getShopId()).orElseThrow(()
                 -> new BadRequest("Not found shop with id = "+categoryDTO.getShopId()));
 
@@ -54,7 +65,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDTO> getAllCategory() {
-
         List<CategoryDTO> categoryDTOS = new ArrayList<>();
         List<CategoryEntity> categories = categoryRepository.findAll();
         for (CategoryEntity category : categories){
@@ -72,6 +82,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDTO> getCategoryByShopId(long shopId) {
+        ShopEntity shop = shopRepository.findById(shopId).orElseThrow(()
+                -> new BadRequest("Not found shop with id = "+shopId));
         List<CategoryDTO> categoryDTOS = new ArrayList<>();
         List<CategoryEntity> categories = categoryRepository.findAllByShopEntityId(shopId);
 

@@ -43,9 +43,9 @@ public class UserController {
                 ", Women user: "+userService.countWomen()+", Kid user: "+userService.countKid());
     }
 
-    @DeleteMapping("/admin/users/{id}")
-    ResponseEntity<?> delete(@PathVariable Long id){
-        userService.delete(id);
+    @DeleteMapping("/admin/users/{username}")
+    ResponseEntity<?> delete(@PathVariable String username){
+        userService.deleteUser(username);
         return ResponseEntity.ok("Delete Success");
     }
 
@@ -74,7 +74,6 @@ public class UserController {
         } else {
             throw new IllegalStateException("Thay đổi thông tin tài khoản user thất bại");
         }
-        userProfileChange.setModifiedDate(GlobalVariable.getCurrentDateTime());
 
         userService.changeProfile(userProfileChange, username);
         return new SuccessResponseDTO(HttpStatus.OK,

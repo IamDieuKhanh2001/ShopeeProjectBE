@@ -34,7 +34,7 @@ public class UploadImgController {
             @RequestParam(value = "avatar", required = false) MultipartFile avatar
     ){
         if(!avatar.getContentType().equals("image/png") && !avatar.getContentType().equals("image/jpeg")) {
-            return ResponseEntity.badRequest().body("file khong thuoc dinh dang jpg, png");
+            return ResponseEntity.badRequest().body("file khong thuoc dinh dang jpeg, png");
         }
         String username = ApplicationUserService.GetUsernameLoggedIn();
         if(userService.uploadUserAvatar(avatar, username)) {

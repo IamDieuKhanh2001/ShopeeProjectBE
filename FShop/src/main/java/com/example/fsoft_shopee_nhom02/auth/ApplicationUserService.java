@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
@@ -85,6 +86,9 @@ public class ApplicationUserService implements UserDetailsService {
         newUser.setRoleEntitySet(roleUserSet);
 
         newUser.setCartEntity(new CartEntity()); //tạo 1 cart cho user
+
+        newUser.setCreatedDate(new Timestamp(System.currentTimeMillis()));      //thời gian đăng ký
+        newUser.setModifiedDate(new Timestamp(System.currentTimeMillis()));     //Lúc tạo mới thời gian đăng ký bằng thời gian chỉnh sửa
 
         newUser.setName("Unname#" + GlobalVariable.GetOTP());
         userRepository.save(newUser);
