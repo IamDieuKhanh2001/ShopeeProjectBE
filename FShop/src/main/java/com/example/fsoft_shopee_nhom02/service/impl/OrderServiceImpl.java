@@ -23,8 +23,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderEntity> getAllByUserId(long UserId) {
+    public List<OrderEntity> getAllByUserId(Long UserId) {
         return orderRepository.findAllByUserEntitiesId(UserId);
+    }
+
+    @Override
+    public List<OrderEntity> getAllPendingOrderByUserId(Long UserId, String Status) {
+        return orderRepository.getAllByUserEntitiesIdAndStatusNot(UserId, Status);
+    }
+
+    @Override
+    public List<OrderEntity> getAllHistoryOrderByUserId(Long UserId, String Status) {
+        return orderRepository.getAllByUserEntitiesIdAndStatus(UserId, Status);
     }
 
     @Override

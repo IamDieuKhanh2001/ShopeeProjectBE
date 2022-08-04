@@ -10,9 +10,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface OrderRepository extends JpaRepository<OrderEntity,Long> {
+public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
     List<OrderEntity> findAllByUserEntitiesId(Long UserId);
+
+    List<OrderEntity> getAllByUserEntitiesIdAndStatusNot(Long userEntities_id, String status);
+
+    List<OrderEntity> getAllByUserEntitiesIdAndStatus(Long userEntities_id, String status);
+
     // Thống kê doanh thu theo tháng
     @Query(value = "select sum(total_price) \n" +
             "from orders \n" +
@@ -21,7 +26,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity,Long> {
 
     // Tổng doanh thu
     @Query(value = "select sum(total_price) \n" +
-            "from orders where status = 'Done'\n" , nativeQuery = true)
+            "from orders where status = 'Done'\n", nativeQuery = true)
     long getTurnOver();
 
     // Thống kê doanh thu theo ngày

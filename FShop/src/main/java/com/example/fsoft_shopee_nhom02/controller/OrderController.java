@@ -40,14 +40,24 @@ public class OrderController {
         return orderService.getAll();
     }
 
-    @GetMapping("/detail")
+    @GetMapping("/detail/all")
     public Object getAllOrderDetail() {
         return orderDetailService.getAll();
     }
 
-    @GetMapping("/{id}")
-    public Object getAllOrderByUserId(@PathVariable String id) {
+    @GetMapping("/user/{id}")
+    public Object getAllByUserId(@PathVariable String id) {
         return orderService.getAllByUserId(Long.parseLong(id));
+    }
+
+    @GetMapping("/pending/{id}")
+    public Object getAllOrderByUserId(@PathVariable String id) {
+        return orderService.getAllPendingOrderByUserId(Long.parseLong(id), GlobalVariable.ORDER_STATUS_DONE);
+    }
+
+    @GetMapping("/history/{id}")
+    public Object getAllOrderHistoryByUserId(@PathVariable String id) {
+        return orderService.getAllHistoryOrderByUserId(Long.parseLong(id), GlobalVariable.ORDER_STATUS_DONE);
     }
 
     @GetMapping("/detail/{id}")
@@ -58,7 +68,7 @@ public class OrderController {
         Map<String, Object> res = new HashMap<>();
 
         res.put("orderDetailsList", orderDetailsEntityList);
-        res.put("orderInfo",orderEntity);
+        res.put("orderInfo", orderEntity);
 
         return res;
     }
@@ -157,8 +167,10 @@ public class OrderController {
     }
 
     @PostMapping("/update_order/{id}")
-    public Object UpdateOrder(@RequestBody Map<String, String> req, @PathVariable String id) {
+    public Object UpdateOrder(@RequestBody Map<String, String> req, @PathVariable String id) throws ParseException {
         OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
+
+        orderEntity.setModifiedDate(GlobalVariable.getCurrentDateTime());
 
         for (Map.Entry<String, String> i : req.entrySet()) {
             System.out.println(i.getKey());
@@ -197,8 +209,12 @@ public class OrderController {
     }
 
     @PostMapping("/cancel_order/{id}")
-    public Object DeleteOrder(@PathVariable String id) {
-        orderService.deleteOrder(Long.parseLong(id));
-        return "deleted order";
+    public Object CancelOrder(@PathVariable String id) {
+        OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
+
+        orderEntity.setStatus(GlobalVariable.ORDER_STATUS_CANCELED);
+
+        orderService.updateOrder(orderEntity);
+        return "canceled order";
     }
 }

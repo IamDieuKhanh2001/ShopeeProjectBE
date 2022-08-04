@@ -9,18 +9,27 @@ import java.util.Optional;
 public interface OrderService {
     List<OrderEntity> getAll();
 
-    List<OrderEntity> getAllByUserId(long UserId);
+    List<OrderEntity> getAllByUserId(Long UserId);
+
+    List<OrderEntity> getAllPendingOrderByUserId(Long UserId, String Status);
+
+    List<OrderEntity> getAllHistoryOrderByUserId(Long UserId, String Status);
 
     OrderEntity findOrderById(Long OrderId);
 
     String getAllOrderByMonth(String Month);
+
     void addNewOrder(OrderEntity orderEntity);
+
     long getTurnOver();
+
     String getAllOrderByDay(String Year, String Month, String Day);
+
     long getTotalOrder();
 
     OrderEntity findById(Long OrderId);
 
     void updateOrder(OrderEntity orderEntity);
+
     void deleteOrder(Long OrderId);
 }
