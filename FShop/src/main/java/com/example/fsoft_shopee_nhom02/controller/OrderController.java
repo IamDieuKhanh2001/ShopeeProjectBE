@@ -211,7 +211,6 @@ public class OrderController {
     @PostMapping("/cancel_order/{id}")
     public Object CancelOrder(@PathVariable String id) {
         OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
-
         orderEntity.setStatus(GlobalVariable.ORDER_STATUS_CANCELED);
 
         orderService.updateOrder(orderEntity);
