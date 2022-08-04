@@ -37,6 +37,8 @@ public interface CartProductRepository extends JpaRepository<CartProductEntity, 
                        @Param("cart_id")Long cart_id,
                        @Param("type")String type);
 
+    @Modifying
+    @Transactional
     void removeAllByProductEntityIdInAndCartEntityIdAndTypeIn(Collection<Long> productEntity_id, Long cartEntity_id, Collection<String> type);
 
    @Query(" select product.name , type.type  , type.price,cart_product.quantity  ,product.image1 " +

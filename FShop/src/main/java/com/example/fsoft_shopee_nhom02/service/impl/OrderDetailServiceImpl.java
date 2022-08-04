@@ -25,8 +25,13 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     @Override
-    public ArrayList<OrderDetailsEntity> findAllByOrderEntityId(Long OrderDetailId) {
+    public List<OrderDetailsEntity> findAllByOrderEntityId(Long OrderDetailId) {
         return orderDetailRepository.findAllByOrderEntityId(OrderDetailId);
+    }
+
+    @Override
+    public List<Object>  findByOrderId(Long OrderId) {
+        return orderDetailRepository.findByOrderId(OrderId);
     }
 
     @Override

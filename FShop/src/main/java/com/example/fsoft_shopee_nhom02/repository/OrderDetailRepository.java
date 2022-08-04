@@ -31,7 +31,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetailsEntity,
             "            from orders o\n" +
             "                     left join orderdetails od on o.id = od.order_id\n" +
             "            where od.order_id=:OrderId", nativeQuery = true)
-    Object findByOrderId(@Param("OrderId") Long OrderId);
+    List<Object> findByOrderId(@Param("OrderId") Long OrderId);
 
-    ArrayList<OrderDetailsEntity> findAllByOrderEntityId(Long OrderDetailId);
+    List<OrderDetailsEntity> findAllByOrderEntityId(Long OrderDetailId);
 }
