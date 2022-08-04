@@ -42,7 +42,7 @@ public class SubCategoryController {
     }
 
     @GetMapping("/subcategory/count")
-    public ResponseEntity<?> countSubCategoryByCategoryId(@RequestParam long categoryId){
+    public ResponseEntity<?> countSubCategoryByCategoryId(@RequestParam(required = false, defaultValue = "0") long categoryId){
         if(subCategoryService.countSubCategoryByCategoryId(categoryId) == 0L){
             return ResponseEntity.ok("Empty!!");
         }
