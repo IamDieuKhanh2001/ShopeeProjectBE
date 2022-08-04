@@ -16,4 +16,5 @@ public class GlobalVariable {
     public static String GetOTP() {
         return String.format("%06d", new Random().nextInt(999999));
     }
+
 }

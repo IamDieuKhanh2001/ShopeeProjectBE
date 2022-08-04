@@ -29,23 +29,23 @@ public class UploadImgController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping("/user/avatar")
-    public SuccessResponseDTO uploadAvatar(
+    @PostMapping("/users/avatar")
+    public ResponseEntity<?> uploadAvatar(
             @RequestParam(value = "avatar", required = false) MultipartFile avatar
     ){
         if(!avatar.getContentType().equals("image/png") && !avatar.getContentType().equals("image/jpeg")) {
-            throw new IllegalStateException("file khong hop le");
+            return ResponseEntity.badRequest().body("file khong thuoc dinh dang jpg, png");
         }
         String username = ApplicationUserService.GetUsernameLoggedIn();
         if(userService.uploadUserAvatar(avatar, username)) {
-            return new SuccessResponseDTO(
+            return ResponseEntity.ok(new SuccessResponseDTO(
                     HttpStatus.OK,
-                    "Update avatar user: " + username + " thanh cong");
+                    "Update avatar user: " + username + " thanh cong"));
         } else {
-            throw new IllegalStateException("Update avatar user: " + username + " that bai");
+            return ResponseEntity.badRequest().body("Update avatar user: " + username + " that bai");
         }
     }
-    @DeleteMapping("/user/avatar")
+    @DeleteMapping("/users/avatar")
     public ResponseEntity<?> deleteAva(
             @RequestParam(value = "avatar", required = false) MultipartFile avatar
     ){

@@ -3,7 +3,6 @@ package com.example.fsoft_shopee_nhom02.controller;
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUser;
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUserService;
 import com.example.fsoft_shopee_nhom02.auth.JwtUtil;
-import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
 import com.example.fsoft_shopee_nhom02.dto.AuthenticationRequest;
 import com.example.fsoft_shopee_nhom02.dto.AuthenticationResponse;
 import com.example.fsoft_shopee_nhom02.dto.SuccessResponseDTO;
@@ -16,12 +15,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.mail.MessagingException;
-import java.text.ParseException;
 import java.util.*;
 
 @RestController
@@ -38,14 +34,14 @@ public class AuthenticationController {
 
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public SuccessResponseDTO saveUser(@RequestBody UserDTO user) throws ParseException {
-
-        user.setCreatedDate(GlobalVariable.getCurrentDateTime());
-        user.setModifiedDate(GlobalVariable.getCurrentDateTime());
-
-        applicationUserService.save(user);
-        return new SuccessResponseDTO(HttpStatus.CREATED,
-                "Tạo tài khoản user " + user.getUsername() + " thành công");
+    public ResponseEntity<?> saveUser(@RequestBody UserDTO user) {
+        ResponseEntity<?> saveResult = applicationUserService.save(user);
+        if(saveResult.getStatusCode() == HttpStatus.OK) {
+            return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
+                    "Tạo tài khoản user " + user.getUsername() + " thành công"));
+        } else {
+            return ResponseEntity.badRequest().body(saveResult.getBody());
+        }
     }
 
     @PostMapping("/login")
@@ -55,7 +51,7 @@ public class AuthenticationController {
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
             );
         } catch (BadCredentialsException exception) {
-            throw  new IllegalStateException("Username or password is invalid");
+            return ResponseEntity.badRequest().body("Username or password is invalid");
         }
         final UserDetails userDetails = applicationUserService
                 .loadUserByUsername(authenticationRequest.getUsername());
