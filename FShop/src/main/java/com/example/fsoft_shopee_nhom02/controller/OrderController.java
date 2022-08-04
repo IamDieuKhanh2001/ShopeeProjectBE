@@ -51,7 +51,7 @@ public class OrderController {
     }
 
     @GetMapping("/detail/{id}")
-    public Map<String, Object> getOrderDetailByOrderId(@PathVariable String id) {
+    public Object getOrderDetailByOrderId(@PathVariable String id) {
         List<OrderDetailsEntity> orderDetailsEntityList = orderDetailService.findAllByOrderEntityId(Long.parseLong(id));
         OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
 
