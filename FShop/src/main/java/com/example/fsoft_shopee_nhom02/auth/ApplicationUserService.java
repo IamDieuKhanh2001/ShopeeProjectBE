@@ -11,6 +11,8 @@ import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.RoleRepository;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -54,22 +56,22 @@ public class ApplicationUserService implements UserDetailsService {
         return username;
     }
 
-    public Boolean save(UserDTO userDTO) {
+    public ResponseEntity<?> save(UserDTO userDTO) {
         Optional<UserEntity> DAOUsernameOptional = userRepository.findByUsername(userDTO.getUsername());
         if(DAOUsernameOptional.isPresent()){
-            throw new IllegalStateException("Username have been used! Please try another username"); //Username đã dc sd
+            return new ResponseEntity<>("Username have been used! Please try another username", HttpStatus.BAD_REQUEST);
         }
 
         if(Objects.equals(userDTO.getEmail(), "")){
-            throw new IllegalStateException("Email not null! Please try another Email"); //Username đã dc sd
+            return new ResponseEntity<>("Email not null! Please try another Email", HttpStatus.BAD_REQUEST);
         }
         Optional<UserEntity> DAOUserEmailOptional = userRepository.findByEmail(userDTO.getEmail());
         if(DAOUserEmailOptional.isPresent()){
-            throw new IllegalStateException("Email have been registered for another account! Please try another Email"); //Username đã dc sd
+            return new ResponseEntity<>("Email have been registered for another account! Please try another Email", HttpStatus.BAD_REQUEST);
         }
 
         if(userDTO.getPassword() == null || userDTO.getPassword().length() <= 6) {
-            throw new IllegalStateException("Password must be longer than 7 character and can't be null");
+            return new ResponseEntity<>("Password must be longer than 7 character and can't be null", HttpStatus.BAD_REQUEST);
         }
 
         //Nếu không trùng username, encode pwd và lưu vào db user
@@ -86,6 +88,6 @@ public class ApplicationUserService implements UserDetailsService {
 
         newUser.setName("Unname#" + GlobalVariable.GetOTP());
         userRepository.save(newUser);
-        return true;
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
 }

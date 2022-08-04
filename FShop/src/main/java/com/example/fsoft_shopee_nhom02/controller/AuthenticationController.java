@@ -34,10 +34,14 @@ public class AuthenticationController {
 
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public SuccessResponseDTO saveUser(@RequestBody UserDTO user) {
-        applicationUserService.save(user);
-        return new SuccessResponseDTO(HttpStatus.CREATED,
-                "Tạo tài khoản user " + user.getUsername() + " thành công");
+    public ResponseEntity<?> saveUser(@RequestBody UserDTO user) {
+        ResponseEntity<?> saveResult = applicationUserService.save(user);
+        if(saveResult.getStatusCode() == HttpStatus.OK) {
+            return ResponseEntity.ok(new SuccessResponseDTO(HttpStatus.OK,
+                    "Tạo tài khoản user " + user.getUsername() + " thành công"));
+        } else {
+            return ResponseEntity.badRequest().body(saveResult.getBody());
+        }
     }
 
     @PostMapping("/login")
@@ -47,7 +51,7 @@ public class AuthenticationController {
                     new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
             );
         } catch (BadCredentialsException exception) {
-            throw  new IllegalStateException("Username or password is invalid");
+            return ResponseEntity.badRequest().body("Username or password is invalid");
         }
         final UserDetails userDetails = applicationUserService
                 .loadUserByUsername(authenticationRequest.getUsername());
