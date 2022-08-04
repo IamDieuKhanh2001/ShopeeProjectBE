@@ -30,6 +30,10 @@ public class PaymentController {
     @PutMapping("/{id}")
     public ResponseEntity<?> paymentOrder(@PathVariable long id){
         OrderEntity order = orderService.findOrderById(id);
+        if (order == null)
+        {
+            return new ResponseEntity<>("Không tìm thấy đơn hàng", HttpStatus.NOT_FOUND);
+        }
         // Lấy ra danh sách các sản phẩm trong order detail
         List<OrderDetailsEntity> orderDetailsEntityList = orderDetailService.findAllByOrderEntityId(id);
         // Duyệt qua từng sản phẩm này (Lấy ra productId, type, quantity),
@@ -50,7 +54,8 @@ public class PaymentController {
         // Set trạng thái order thành "Đặt hàng thành công!"
         order.setStatus("Done");
         orderService.updateOrder(order);
-        return new ResponseEntity<>(order, HttpStatus.OK);
+        return ResponseEntity.ok("Thanh toán thành công!");
+
     }
 
 

@@ -5,8 +5,10 @@ import com.example.fsoft_shopee_nhom02.exception.BadRequest;
 import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.SubCategoryMapper;
 import com.example.fsoft_shopee_nhom02.model.CategoryEntity;
+import com.example.fsoft_shopee_nhom02.model.ShopEntity;
 import com.example.fsoft_shopee_nhom02.model.SubCategoryEntity;
 import com.example.fsoft_shopee_nhom02.repository.CategoryRepository;
+import com.example.fsoft_shopee_nhom02.repository.ShopRepository;
 import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
 import com.example.fsoft_shopee_nhom02.service.SubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +25,15 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private ShopRepository shopRepository;
 
     @Override
     public SubCategoryDTO save(SubCategoryDTO subCategoryDTO) {
+        if(subCategoryDTO.getCategoryId() == null){
+            throw new BadRequest("Please provide the category id want to add this subcategory.");
+            //subCategory = subCategoryRepository.save(subCategory);
+        }
         CategoryEntity category = categoryRepository.findById(subCategoryDTO.getCategoryId())
                 .orElseThrow(() -> new BadRequest("Not found category with id = "
                         +subCategoryDTO.getCategoryId()));
@@ -44,6 +52,9 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         for(SubCategoryEntity subCategory : subCategories){
             subCategoryDTOS.add(SubCategoryMapper.toSubCategoryDto(subCategory));
         }
+        if(subCategoryDTOS.isEmpty()){
+            throw new NotFoundException("Empty!!");
+        }
         return subCategoryDTOS;
     }
 
@@ -57,6 +68,9 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     @Override
     public List<SubCategoryDTO> getSubCategoryByCategoryId(long categoryId) {
+        CategoryEntity category = categoryRepository.findById(categoryId).orElseThrow(()->
+                new BadRequest("There is no category with id = "+categoryId));
+
         List<SubCategoryDTO> subCategoryDTOS = new ArrayList<>();
         List<SubCategoryEntity> subCategories = subCategoryRepository.findAllByCategoryEntityId(categoryId);
         for(SubCategoryEntity subCategory : subCategories){
@@ -64,7 +78,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         }
 
         if(subCategoryDTOS.isEmpty()){
-            throw new NotFoundException("Empty!!");
+            throw new NotFoundException("There is no subcategory in this category!");
         }
 
         return subCategoryDTOS;
@@ -72,6 +86,9 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     @Override
     public List<SubCategoryDTO> getSubCategoryByShopId(long shopId) {
+        ShopEntity shop = shopRepository.findById(shopId).orElseThrow(()
+                -> new BadRequest("There is no shop with id = "+shopId));
+
         List<SubCategoryDTO> subCategoryDTOS = new ArrayList<>();
         List<SubCategoryEntity> subCategories = subCategoryRepository.findAllByShopEntityId(shopId);
         for(SubCategoryEntity subCategory : subCategories){
@@ -87,6 +104,9 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     @Override
     public long countSubCategoryByCategoryId(long categoryId) {
+        if(categoryId == 0l){
+            return subCategoryRepository.count();
+        }
         categoryRepository.findById(categoryId).orElseThrow(() ->
                 new BadRequest("Not found category with id = "+categoryId));
         return subCategoryRepository.countByCategoryEntityId(categoryId);
@@ -94,6 +114,11 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     @Override
     public SubCategoryDTO update(SubCategoryDTO subCategoryDTO) {
+        if(subCategoryDTO.getCategoryId() == null){
+            throw new BadRequest("Please provide the category id want to add this subcategory.");
+            //subCategory = subCategoryRepository.save(subCategory);
+        }
+
         CategoryEntity category = categoryRepository.findById(subCategoryDTO.getCategoryId())
                 .orElseThrow(() -> new BadRequest("Not found category with id = "
                         +subCategoryDTO.getCategoryId()));
@@ -112,7 +137,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     @Override
     public void delete(long id) {
         SubCategoryEntity subCategory  = subCategoryRepository.findById(id)
-                .orElseThrow(() -> new BadRequest("This subcategory not exist"));
+                .orElseThrow(() -> new BadRequest("Fail! This subcategory not exist"));
 
         subCategoryRepository.deleteById(id);
     }

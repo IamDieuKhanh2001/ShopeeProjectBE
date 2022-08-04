@@ -431,14 +431,15 @@ public class ProductService {
         Optional<UserEntity> usersOptional = userRepository.findByUsername(username);
 
         if(!usersOptional.isPresent()) {
-            throw new IllegalStateException("Username " + username + " not found");
+            return new ResponseEntity<>("Not found username " + username, HttpStatus.BAD_REQUEST);
         }
 
         UserEntity userLogin = usersOptional.get();
 
         // Check user login id and comment id
         if(!userLogin.getId().equals(comment.getUserid())) {
-            throw new IllegalStateException("Username " + username + " is not allowed to do this action!");
+            return new ResponseEntity<>("Username " + username + " is not allowed to do this action!",
+                    HttpStatus.BAD_REQUEST);
         }
 
         String imgCommentUrl = cloudinaryService.uploadFile(

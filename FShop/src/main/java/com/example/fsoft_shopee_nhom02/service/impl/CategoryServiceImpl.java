@@ -10,7 +10,6 @@ import com.example.fsoft_shopee_nhom02.repository.CategoryRepository;
 import com.example.fsoft_shopee_nhom02.repository.ShopRepository;
 import com.example.fsoft_shopee_nhom02.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -70,6 +69,9 @@ public class CategoryServiceImpl implements CategoryService {
         for (CategoryEntity category : categories){
             categoryDTOS.add(CategoryMapper.toCategoryDto(category));
         }
+        if(categoryDTOS.isEmpty()){
+            throw new NotFoundException("Empty!!");
+        }
         return categoryDTOS;
     }
 
@@ -110,7 +112,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void delete(long id) {
         CategoryEntity category = categoryRepository.findById(id).orElseThrow(()
-                -> new BadRequest("Category not exist"));
+                -> new BadRequest("Fail!This category not exist"));
         categoryRepository.deleteById(id);
     }
 

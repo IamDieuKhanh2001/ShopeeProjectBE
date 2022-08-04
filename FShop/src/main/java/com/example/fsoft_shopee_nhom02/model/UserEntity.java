@@ -46,7 +46,6 @@ public class UserEntity extends BaseClassEntity{
     @JoinTable(name = "users_roles", //Tên bảng trung gian
             joinColumns = @JoinColumn(name = "userID"), //Khóa chính để liên kết với bảng Users
             inverseJoinColumns = @JoinColumn(name = "roleId")) //Khóa chính để liên kết với bảng Roles
-    @JsonManagedReference
     private Set<RoleEntity> roleEntitySet; //Liên kết với mapedBy ở RoleEntity
 
     // Tạo quan hệ với CartEntity

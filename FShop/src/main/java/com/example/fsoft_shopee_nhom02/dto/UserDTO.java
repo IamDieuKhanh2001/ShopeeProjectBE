@@ -1,10 +1,12 @@
 package com.example.fsoft_shopee_nhom02.dto;
 
 import com.example.fsoft_shopee_nhom02.model.BaseClassEntity;
+import com.example.fsoft_shopee_nhom02.model.RoleEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Set;
 
 public class UserDTO extends BaseClassEntity {
 
@@ -19,6 +21,7 @@ public class UserDTO extends BaseClassEntity {
     private Timestamp dob;
     private int age;
     private String avatar;
+    private Set<RoleEntity> roleEntitySet;
 
     @Override
     public String toString() {
@@ -71,7 +74,7 @@ public class UserDTO extends BaseClassEntity {
         this.avatar = avatar;
     }
 
-    public UserDTO(long id, String username, String password, String phone, String name, String gender, String email, Timestamp dob, int age, String avatar) {
+    public UserDTO(long id, String username, String password, String phone, String name, String gender, String email, Timestamp dob, String avatar, Set<RoleEntity> roleEntitySet) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -81,6 +84,7 @@ public class UserDTO extends BaseClassEntity {
         this.email = email;
         this.dob = dob;
         this.avatar = avatar;
+        this.roleEntitySet = roleEntitySet;
     }
 
     public long getId() {
@@ -158,6 +162,19 @@ public class UserDTO extends BaseClassEntity {
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
+
+    public Set<RoleEntity> getRoleEntitySet() {
+        return roleEntitySet;
+    }
+
+    public void setRoleEntitySet(Set<RoleEntity> roleEntitySet) {
+        this.roleEntitySet = roleEntitySet;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
     public int getAge(){
         Calendar dobCal = Calendar.getInstance();
         dobCal.setTimeInMillis(dob.getTime());

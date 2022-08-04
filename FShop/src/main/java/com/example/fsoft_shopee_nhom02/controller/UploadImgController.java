@@ -57,7 +57,7 @@ public class UploadImgController {
 //    image/png
 //    image/jpeg
 
-    @PostMapping("/admin/product-img/{id}")
+    @PostMapping("/admin/products/{id}/image")
     public ProductDTO uploadProductImg(@PathVariable long id,
                                        @RequestParam("imageProduct") MultipartFile imageProduct,
                                        @RequestParam(value = "image1", required = false) MultipartFile image1,
@@ -69,13 +69,13 @@ public class UploadImgController {
 
     }
 
-    @PostMapping("/users/comments-img/{id}")
+    @PostMapping("/users/comments/{id}/image")
     public ResponseEntity<?> uploadCommentImg(@PathVariable long id,
                                        @RequestParam(required = false) MultipartFile img) {
         String username = ApplicationUserService.GetUsernameLoggedIn();
 
         if(!img.getContentType().equals("image/png") && !img.getContentType().equals("image/jpeg")) {
-            throw new IllegalStateException("file khong hop le");
+            return new ResponseEntity<>("File khong hop le!", HttpStatus.BAD_REQUEST);
         }
 
         return productService.postCommentImg(id, img, username);

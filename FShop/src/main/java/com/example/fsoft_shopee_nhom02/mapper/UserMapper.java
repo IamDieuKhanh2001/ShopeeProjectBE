@@ -35,6 +35,7 @@ public class UserMapper {
         userDTO.setAvatar(userEntity.getAvatar());
         userDTO.setCreatedDate(userEntity.getCreatedDate());
         userDTO.setModifiedDate(userEntity.getModifiedDate());
+        userDTO.setRoleEntitySet(userEntity.getRoleEntitySet());
 
         return userDTO;
     }
