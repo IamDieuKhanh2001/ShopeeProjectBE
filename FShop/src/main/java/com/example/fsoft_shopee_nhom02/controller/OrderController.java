@@ -9,6 +9,11 @@ import com.example.fsoft_shopee_nhom02.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.*;
@@ -49,7 +54,7 @@ public class OrderController {
     }
 
     @GetMapping("/user/{id}")
-    public Object getAllByUserId(@PathVariable String id) throws ParseException {
+    public Object getAllByUserId(@PathVariable String id) {
         return orderService.getAllByUserId(Long.parseLong(id));
     }
 
@@ -218,5 +223,29 @@ public class OrderController {
 
         orderService.updateOrder(orderEntity);
         return "canceled order";
+    }
+
+    @GetMapping("/get_shipping_fee")
+    public Object get_shipping_fee(@RequestParam String f, @RequestParam String t, @RequestParam String w) {
+        String httpRequest = "Exception";
+
+        try {
+            URL url = new URL("http://www.vnpost.vn/vi-vn/tra-cuu-gia-cuoc?from=" + f + "&to=" + t + "&weight=" + w);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            String line;
+            InputStreamReader streamReader = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8);
+            BufferedReader bufferedReader = new BufferedReader(streamReader);
+            StringBuilder res_html = new StringBuilder();
+            while ((line = bufferedReader.readLine()) != null) {
+                res_html.append(line);
+            }
+            bufferedReader.close();
+            httpRequest = res_html.toString();
+        } catch (Exception e) {
+            System.out.println("Exception");
+        }
+
+        return httpRequest;
     }
 }
