@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>FSoft_Shopee_Nhom02</artifactId>
+        <artifactId>FSoft_Shopee_Nhom02</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>FSoft_Shopee_Nhom02</name>
     <description>FSoft_Shopee_Nhom02</description>
@@ -121,4 +121,5 @@
         </plugins>
     </build>
 
+    <packaging>jar</packaging>
 </project>
