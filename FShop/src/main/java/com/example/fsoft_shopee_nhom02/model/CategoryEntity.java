@@ -15,6 +15,8 @@ public class CategoryEntity {
     private Long id;
     private String name;
     private String image;
+    @Column(name="status", columnDefinition="Varchar(255) default 'Active'")
+    private String status;
     // Tạo quan hệ với SubCategoryEntity
     @OneToMany(mappedBy = "categoryEntity", cascade = CascadeType.ALL)
     private List<SubCategoryEntity> subCategoryEntities =new ArrayList<>();
@@ -33,6 +35,14 @@ public class CategoryEntity {
         this.id = id;
         this.name = name;
         this.image = image;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Long getId() {

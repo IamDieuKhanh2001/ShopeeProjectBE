@@ -18,6 +18,8 @@ public class CommentEntity extends BaseClassEntity{
     private String image;
     private Long userid;
     private long rating;
+    @Column(name="status", columnDefinition="Varchar(255) default 'Active'")
+    private String status;
 
     // Tạo quan hệ với ProductEntity
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,6 +36,23 @@ public class CommentEntity extends BaseClassEntity{
         this.comment = comment;
         this.image = image;
         this.userid = userid;
+    }
+
+    public CommentEntity(Long id, String comment, String image, Long userid, long rating, String status) {
+        this.id = id;
+        this.comment = comment;
+        this.image = image;
+        this.userid = userid;
+        this.rating = rating;
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Long getId() {

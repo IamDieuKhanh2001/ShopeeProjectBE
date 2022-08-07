@@ -28,6 +28,8 @@ public class ProductEntity {
     // Số lượng sản phẩm đã bán
     @Column(name="sold", columnDefinition="Bigint default '0'")
     private Long sold;
+    @Column(name="status", columnDefinition="Varchar(255) default 'Active'")
+    private String status;
     // Tạo quan hệ với CartProductEntity
     @OneToMany(mappedBy = "productEntity", cascade = CascadeType.ALL)
     private List<CartProductEntity> cartProductEntities =new ArrayList<>();
@@ -52,6 +54,14 @@ public class ProductEntity {
 
     // Constructor, Getter, Setter
     public ProductEntity() {
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public ProductEntity(Long id, String name, String detail, String description, String imageProduct, String image1, String image2, String image3, String image4, Long sale) {
