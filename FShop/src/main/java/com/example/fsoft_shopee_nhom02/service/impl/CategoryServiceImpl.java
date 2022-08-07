@@ -4,10 +4,13 @@ import com.example.fsoft_shopee_nhom02.dto.CategoryDTO;
 import com.example.fsoft_shopee_nhom02.exception.BadRequest;
 import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.CategoryMapper;
+import com.example.fsoft_shopee_nhom02.mapper.SubCategoryMapper;
 import com.example.fsoft_shopee_nhom02.model.CategoryEntity;
 import com.example.fsoft_shopee_nhom02.model.ShopEntity;
+import com.example.fsoft_shopee_nhom02.model.SubCategoryEntity;
 import com.example.fsoft_shopee_nhom02.repository.CategoryRepository;
 import com.example.fsoft_shopee_nhom02.repository.ShopRepository;
+import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
 import com.example.fsoft_shopee_nhom02.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,6 +26,9 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private SubCategoryRepository subCategoryRepository;
 
     @Override
     public CategoryDTO save(CategoryDTO categoryDTO) {
@@ -56,6 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
 
         category.setName(categoryDTO.getName());
         category.setImage(categoryDTO.getImage());
+        category.setStatus(categoryDTO.getStatus());
         category.setShopEntity(shopEntity);
         category = categoryRepository.save(category);
 
@@ -66,6 +73,19 @@ public class CategoryServiceImpl implements CategoryService {
     public List<CategoryDTO> getAllCategory() {
         List<CategoryDTO> categoryDTOS = new ArrayList<>();
         List<CategoryEntity> categories = categoryRepository.findAll();
+        for (CategoryEntity category : categories){
+            categoryDTOS.add(CategoryMapper.toCategoryDto(category));
+        }
+        if(categoryDTOS.isEmpty()){
+            throw new NotFoundException("Empty!!");
+        }
+        return categoryDTOS;
+    }
+
+    @Override
+    public List<CategoryDTO> getAllActiveCategory() {
+        List<CategoryDTO> categoryDTOS = new ArrayList<>();
+        List<CategoryEntity> categories = categoryRepository.findAllByStatus("Active");
         for (CategoryEntity category : categories){
             categoryDTOS.add(CategoryMapper.toCategoryDto(category));
         }
@@ -100,6 +120,24 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<CategoryDTO> getActiveCategoryByShopId(long shopId) {
+        ShopEntity shop = shopRepository.findById(shopId).orElseThrow(()
+                -> new BadRequest("Not found shop with id = "+shopId));
+        List<CategoryDTO> categoryDTOS = new ArrayList<>();
+        List<CategoryEntity> categories = categoryRepository.findAllByShopEntityIdAndStatus(shopId,
+                "Active");
+
+        for (CategoryEntity category : categories){
+            categoryDTOS.add(CategoryMapper.toCategoryDto(category));
+        }
+        if(categoryDTOS.isEmpty()){
+            throw new NotFoundException("Empty!!");
+        }
+
+        return categoryDTOS;
+    }
+
+    @Override
     public long countCategoryByShopId(long shopId) {
         if(shopId == 0l){
             return categoryRepository.count();
@@ -110,10 +148,36 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public long countActiveCategoryByShopId(long shopId) {
+        if(shopId == 0l){
+            return categoryRepository.countByStatus("Active");
+        }
+        shopRepository.findById(shopId).orElseThrow(() ->
+                new BadRequest("Not found shop with id = "+shopId));
+        return categoryRepository.countByShopEntityIdAndStatus(shopId,"Active");
+    }
+
+    @Override
     public void delete(long id) {
         CategoryEntity category = categoryRepository.findById(id).orElseThrow(()
                 -> new BadRequest("Fail!This category not exist"));
         categoryRepository.deleteById(id);
+    }
+
+    @Override
+    public void hide(long id) {
+        CategoryEntity category = categoryRepository.findById(id).orElseThrow(()
+                -> new BadRequest("Fail!This category not exist"));
+
+//        List<SubCategoryEntity> subCategories = subCategoryRepository.findAllByCategoryEntityId(id);
+//        for(SubCategoryEntity subCategory : subCategories){
+//            subCategory.setStatus("Inactive");
+//            subCategory = subCategoryRepository.save(subCategory);
+//        }
+
+        category.setStatus("Inactive");
+
+        category = categoryRepository.save(category);
     }
 
     @Override
