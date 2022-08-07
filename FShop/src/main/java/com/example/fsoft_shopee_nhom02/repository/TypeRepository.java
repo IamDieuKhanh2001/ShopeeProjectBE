@@ -18,7 +18,7 @@ public interface TypeRepository extends JpaRepository<TypeEntity,Long> {
     List<Long> findFirstPrice(long productId);
 
     @Query(value = "SELECT max(price) FROM types", nativeQuery = true)
-    long findMaxPrice();
+    Long findMaxPrice();
 
     @Query("select type from TypeEntity type where type.type = :type")
     TypeEntity findByType(String type);
