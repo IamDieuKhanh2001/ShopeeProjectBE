@@ -12,7 +12,11 @@ import java.util.List;
 @EnableJpaRepositories
 public interface CategoryRepository extends JpaRepository<CategoryEntity,Long> {
     long countByShopEntityId(long shopId);
+    long countByStatus(String status);
+    long countByShopEntityIdAndStatus(long shopId,String status);
     List<CategoryEntity> findAllByShopEntityId(long shopId);
-    @Query(value = "SELECT * FROM categories ORDER BY rand() limit ?",nativeQuery = true)
+    List<CategoryEntity> findAllByStatus(String status);
+    List<CategoryEntity> findAllByShopEntityIdAndStatus(long shopId,String status);
+    @Query(value = "SELECT * FROM categories WHERE status = 'Active' ORDER BY rand() limit ?",nativeQuery = true)
     List<CategoryEntity> findRandomByTop(Integer limit);
 }
