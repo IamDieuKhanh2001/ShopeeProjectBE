@@ -9,6 +9,7 @@ public class CategoryMapper {
         categoryDTO.setId(category.getId());
         categoryDTO.setName(category.getName());
         categoryDTO.setImage(category.getImage());
+        categoryDTO.setStatus(category.getStatus());
         categoryDTO.setShopId(category.getShopEntity().getId());
 
         return categoryDTO;
@@ -19,7 +20,7 @@ public class CategoryMapper {
         category.setId(categoryDTO.getId());
         category.setName(categoryDTO.getName());
         category.setImage(categoryDTO.getImage());
-
+        category.setStatus(categoryDTO.getStatus());
         return category;
     }
 }

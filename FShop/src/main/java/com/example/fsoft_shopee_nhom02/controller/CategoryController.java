@@ -25,6 +25,12 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getAllCategory());
     }
 
+    //get all category active
+    @GetMapping("/category/get-all-active")
+    public ResponseEntity<?> getAllActiveCategory(){
+        return ResponseEntity.ok(categoryService.getAllActiveCategory());
+    }
+
     @GetMapping("/category/{id}")
     public ResponseEntity<?> getCategoryById(@PathVariable long id){
         return ResponseEntity.ok(categoryService.getCategoryById(id));
@@ -35,9 +41,24 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getCategoryByShopId(shopId));
     }
 
+    //get active category by shopId
+    @GetMapping("/category/active")
+    public ResponseEntity<?> getActiveCategoryByShopId(@RequestParam long shopId){
+        return ResponseEntity.ok(categoryService.getActiveCategoryByShopId(shopId));
+    }
+
     @GetMapping("/category/count")
     public ResponseEntity<?> countByShopId(@RequestParam(required = false, defaultValue = "0") long shopId){
         long countProduct = categoryService.countCategoryByShopId(shopId);
+        if(countProduct == 0L){
+            return ResponseEntity.ok("Empty!!");
+        }
+        return ResponseEntity.ok(countProduct);
+    }
+
+    @GetMapping("/category/active/count")
+    public ResponseEntity<?> countActiveByShopId(@RequestParam(required = false, defaultValue = "0") long shopId){
+        long countProduct = categoryService.countActiveCategoryByShopId(shopId);
         if(countProduct == 0L){
             return ResponseEntity.ok("Empty!!");
         }
@@ -58,6 +79,12 @@ public class CategoryController {
     @DeleteMapping("/admin/category/{id}")
     public SuccessResponseDTO deleteCategory(@PathVariable long id) throws ParseException {
         categoryService.delete(id);
+        return new SuccessResponseDTO(HttpStatus.OK,"Delete success");
+    }
+    //delete by just set status = Inactive
+    @DeleteMapping("/admin/category/hide/{id}")
+    public SuccessResponseDTO hideCategory(@PathVariable long id) throws ParseException {
+        categoryService.hide(id);
         return new SuccessResponseDTO(HttpStatus.OK,"Delete success");
     }
 }
