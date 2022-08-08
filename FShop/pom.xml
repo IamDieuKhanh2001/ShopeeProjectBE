@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>FSoft_Shopee_Nhom02</artifactId>
+        <artifactId>FSoft_Shopee_Nhom02</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>FSoft_Shopee_Nhom02</name>
     <description>FSoft_Shopee_Nhom02</description>
@@ -77,6 +77,11 @@
             <artifactId>cloudinary-http44</artifactId>
             <version>1.32.2</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.twilio.sdk</groupId>-->
+<!--            <artifactId>twilio</artifactId>-->
+<!--            <version>9.0.0-rc.2</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
@@ -84,6 +89,26 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals><goal>copy</goal></goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.heroku</groupId>
+                                    <artifactId>webapp-runner</artifactId>
+                                    <version>9.0.30.0</version>
+                                    <destFileName>webapp-runner.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -96,4 +121,5 @@
         </plugins>
     </build>
 
+    <packaging>jar</packaging>
 </project>

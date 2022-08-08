@@ -312,6 +312,12 @@ public class ProductService {
     public ResponseEntity<ListOutputResult> search(String page, String limit, String keyword,
                                    String minPrice, String maxPrice, String sub) {
         ListOutputResult result = new ListOutputResult();
+
+        if(typeRepository.findMaxPrice() == null) {
+            return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
+                    HttpStatus.NOT_FOUND);
+        }
+
         long defaultMaxPrice = typeRepository.findMaxPrice() + 1;
 
         page = (!isValidPage(page)) ? "1" : page;

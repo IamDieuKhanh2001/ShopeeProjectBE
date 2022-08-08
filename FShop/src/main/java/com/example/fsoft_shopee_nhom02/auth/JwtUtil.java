@@ -1,5 +1,6 @@
 package com.example.fsoft_shopee_nhom02.auth;
 
+import com.example.fsoft_shopee_nhom02.config.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

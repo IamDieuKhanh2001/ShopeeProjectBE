@@ -4,12 +4,14 @@ public class CategoryDTO {
     private Long id;
     private String name;
     private String image;
+    private String status = "Active";
     private Long shopId;
 
-    public CategoryDTO(Long id, String name, String image, Long shopId) {
+    public CategoryDTO(Long id, String name, String image, String status, Long shopId) {
         this.id = id;
         this.name = name;
         this.image = image;
+        this.status = status;
         this.shopId = shopId;
     }
 
@@ -38,6 +40,14 @@ public class CategoryDTO {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Long getShopId() {

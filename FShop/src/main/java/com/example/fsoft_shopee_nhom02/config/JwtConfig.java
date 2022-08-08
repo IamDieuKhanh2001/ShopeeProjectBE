@@ -1,4 +1,4 @@
-package com.example.fsoft_shopee_nhom02.auth;
+package com.example.fsoft_shopee_nhom02.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

@@ -15,6 +15,8 @@ public class SubCategoryEntity {
     private Long id;
     private String name;
     private String image;
+    @Column(name="status", columnDefinition="Varchar(255) default 'Active'")
+    private String status;
     // Tạo quan hệ với CategoryEntity
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -33,6 +35,21 @@ public class SubCategoryEntity {
         this.id = id;
         this.name = name;
         this.image = image;
+    }
+
+    public SubCategoryEntity(Long id, String name, String image, String status) {
+        this.id = id;
+        this.name = name;
+        this.image = image;
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Long getId() {
