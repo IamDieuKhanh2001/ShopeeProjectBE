@@ -7,7 +7,6 @@ import com.example.fsoft_shopee_nhom02.dto.RecoveryPasswordDTO;
 import com.example.fsoft_shopee_nhom02.dto.SuccessResponseDTO;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.service.EmailSenderService;
-import com.example.fsoft_shopee_nhom02.service.SmsSenderService;
 import com.example.fsoft_shopee_nhom02.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,17 +24,6 @@ public class PasswordRecoveryController {
 
     @Autowired
     UserService userService;
-
-    @Autowired
-    private SmsSenderService smsSenderService;
-
-    @PostMapping("/phoneNumber/getOtp")
-    public String sendmessage()
-    {
-        String status = smsSenderService.sendsms("+84938427896", "Test TWILIO");
-
-        return status;
-    }
 
     @GetMapping(path = "/getOtp")
     public OtpSendMailResponseDTO sendOtpRecoveryCodeToUserEmail(@RequestParam Map<String, String> requestParams) {
