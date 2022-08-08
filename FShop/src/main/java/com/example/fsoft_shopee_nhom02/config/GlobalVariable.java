@@ -8,6 +8,8 @@ import java.util.Random;
 import java.util.TimeZone;
 
 public class GlobalVariable {
+    public static final SimpleDateFormat datetimeFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
     public static Timestamp getCurrentDateTime() throws ParseException {
         return new Timestamp(new Date().getTime());
     }

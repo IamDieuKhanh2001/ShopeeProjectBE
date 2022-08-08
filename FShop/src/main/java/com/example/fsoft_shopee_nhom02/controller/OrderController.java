@@ -92,6 +92,8 @@ public class OrderController {
 
     @PostMapping("/create_order")
     public Object CreateOrder(@RequestBody List<Object> req) throws ParseException {
+        long startTime = System.currentTimeMillis();
+
         // get request data
         List<Map<String, String>> orderDetailsEntityList_req = (List<Map<String, String>>) req.get(0);
         Map<String, String> orderInformation = (Map<String, String>) req.get(1);
@@ -170,7 +172,10 @@ public class OrderController {
         // delete cartProduct from DB
         cartProductService.deleteListOfCartProduct(productEntity_idList, CardId, typeList);
 
-        return "1";
+        long endTime = System.currentTimeMillis();
+        long totalTime = endTime - startTime;
+
+        return "created order at " + datetimeFormat.format(new Date()) + " with duration: " + totalTime + "ms";
     }
 
     @PostMapping("/update_order/{id}")
