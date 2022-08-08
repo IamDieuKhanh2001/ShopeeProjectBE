@@ -9,13 +9,10 @@ import java.util.List;
 public interface CategoryService {
     CategoryDTO save(CategoryDTO categoryDTO);
     CategoryDTO update(CategoryDTO categoryDTO);
-    List<CategoryDTO> getAllCategory();
-    List<CategoryDTO> getAllActiveCategory();
+    List<CategoryDTO> getAllCategory(boolean active);
     CategoryDTO getCategoryById(long id);
-    List<CategoryDTO> getCategoryByShopId(long shopId);
-    List<CategoryDTO> getActiveCategoryByShopId(long shopId);
-    long countCategoryByShopId(long shopId);
-    long countActiveCategoryByShopId(long shopId);
+    List<CategoryDTO> getCategoryByShopId(long shopId, boolean active);
+    long countCategoryByShopId(long shopId, boolean active);
     void delete(long id);
     void hide(long id);
     List<CategoryDTO> getRandomCategory(Integer limit);

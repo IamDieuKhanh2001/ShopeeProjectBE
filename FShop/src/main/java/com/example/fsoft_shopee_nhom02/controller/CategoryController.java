@@ -22,13 +22,13 @@ public class CategoryController {
 
     @GetMapping("/category/get-all")
     public ResponseEntity<?> getAllCategory(){
-        return ResponseEntity.ok(categoryService.getAllCategory());
+        return ResponseEntity.ok(categoryService.getAllCategory(false));
     }
 
     //get all category active
     @GetMapping("/category/get-all-active")
     public ResponseEntity<?> getAllActiveCategory(){
-        return ResponseEntity.ok(categoryService.getAllActiveCategory());
+        return ResponseEntity.ok(categoryService.getAllCategory(true));
     }
 
     @GetMapping("/category/{id}")
@@ -38,18 +38,18 @@ public class CategoryController {
 
     @GetMapping("/category")
     public ResponseEntity<?> getCategoryByShopId(@RequestParam long shopId){
-        return ResponseEntity.ok(categoryService.getCategoryByShopId(shopId));
+        return ResponseEntity.ok(categoryService.getCategoryByShopId(shopId,false));
     }
 
     //get active category by shopId
     @GetMapping("/category/active")
     public ResponseEntity<?> getActiveCategoryByShopId(@RequestParam long shopId){
-        return ResponseEntity.ok(categoryService.getActiveCategoryByShopId(shopId));
+        return ResponseEntity.ok(categoryService.getCategoryByShopId(shopId,true));
     }
 
     @GetMapping("/category/count")
     public ResponseEntity<?> countByShopId(@RequestParam(required = false, defaultValue = "0") long shopId){
-        long countProduct = categoryService.countCategoryByShopId(shopId);
+        long countProduct = categoryService.countCategoryByShopId(shopId,false);
         if(countProduct == 0L){
             return ResponseEntity.ok("Empty!!");
         }
@@ -58,7 +58,7 @@ public class CategoryController {
 
     @GetMapping("/category/active/count")
     public ResponseEntity<?> countActiveByShopId(@RequestParam(required = false, defaultValue = "0") long shopId){
-        long countProduct = categoryService.countActiveCategoryByShopId(shopId);
+        long countProduct = categoryService.countCategoryByShopId(shopId,true);
         if(countProduct == 0L){
             return ResponseEntity.ok("Empty!!");
         }

@@ -23,7 +23,13 @@ public class SubCategoryController {
 
     @GetMapping("/subcategory/get-all")
     public ResponseEntity<?> getAllSubCategory(){
-        return ResponseEntity.ok(subCategoryService.getAllSubCategory());
+        return ResponseEntity.ok(subCategoryService.getAllSubCategory(false));
+    }
+
+    //get all category active
+    @GetMapping("/subcategory/get-all-active")
+    public ResponseEntity<?> getAllActiveSubCategory(){
+        return ResponseEntity.ok(subCategoryService.getAllSubCategory(true));
     }
 
     @GetMapping("/subcategory/{id}")
@@ -33,20 +39,46 @@ public class SubCategoryController {
 
     @GetMapping("/subcategory/get")
     public ResponseEntity<?> getSubCategoryByCategoryId(@RequestParam long categoryId){
-        return ResponseEntity.ok(subCategoryService.getSubCategoryByCategoryId(categoryId));
+        return ResponseEntity.ok(subCategoryService.getSubCategoryByCategoryId(categoryId,false));
+    }
+
+    //get list active subcategory in category
+    @GetMapping("/subcategory/active/get")
+    public ResponseEntity<?> getActiveSubCategoryByCategoryId(@RequestParam long categoryId){
+        return ResponseEntity.ok(subCategoryService.getSubCategoryByCategoryId(categoryId,true));
     }
 
     @GetMapping("/subcategory")
-    public ResponseEntity<?> getSubCategoryByShopId(@RequestParam long shopId){
-        return ResponseEntity.ok(subCategoryService.getSubCategoryByShopId(shopId));
+    public ResponseEntity<?> getSubCategoryByShopId(@RequestParam long shopId) {
+        return ResponseEntity.ok(subCategoryService.getSubCategoryByShopId(shopId,false));
+    }
+
+    //get list active subcategory in shop
+    @GetMapping("/subcategory/active")
+    public ResponseEntity<?> getActiveSubCategoryByShopId(@RequestParam long shopId){
+        return ResponseEntity.ok(subCategoryService.getSubCategoryByShopId(shopId,true));
     }
 
     @GetMapping("/subcategory/count")
-    public ResponseEntity<?> countSubCategoryByCategoryId(@RequestParam(required = false, defaultValue = "0") long categoryId){
-        if(subCategoryService.countSubCategoryByCategoryId(categoryId) == 0L){
+    public ResponseEntity<?> countSubCategoryByCategoryId(@RequestParam(required = false,
+            defaultValue = "0") long categoryId){
+        long count = subCategoryService.countSubCategoryByCategoryId(categoryId,false);
+        if(count == 0L){
             return ResponseEntity.ok("Empty!!");
         }
-        return ResponseEntity.ok(subCategoryService.countSubCategoryByCategoryId(categoryId));
+        return ResponseEntity.ok(count);
+
+    }
+
+    //count active subcategory in category
+    @GetMapping("/subcategory/active/count")
+    public ResponseEntity<?> countActiveSubCategoryByCategoryId(@RequestParam(required = false,
+            defaultValue = "0") long categoryId){
+        long count = subCategoryService.countSubCategoryByCategoryId(categoryId,true);
+        if(count == 0L){
+            return ResponseEntity.ok("Empty!!");
+        }
+        return ResponseEntity.ok(count);
     }
 
     @PutMapping("/admin/subcategory/{id}")
@@ -58,6 +90,13 @@ public class SubCategoryController {
     @DeleteMapping("/admin/subcategory/{id}")
     public SuccessResponseDTO deleteSubCategory(@PathVariable long id) throws ParseException{
         subCategoryService.delete(id);
+        return new SuccessResponseDTO(HttpStatus.OK,"Delete success");
+    }
+
+    //delete by just set status = Inactive
+    @DeleteMapping("/admin/subcategory/hide/{id}")
+    public SuccessResponseDTO hideSubCategory(@PathVariable long id) throws ParseException{
+        subCategoryService.hide(id);
         return new SuccessResponseDTO(HttpStatus.OK,"Delete success");
     }
 }

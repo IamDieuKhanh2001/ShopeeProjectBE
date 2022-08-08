@@ -9,6 +9,7 @@ public class SubCategoryMapper {
         subCategoryDTO.setId(subCategory.getId());
         subCategoryDTO.setName(subCategory.getName());
         subCategoryDTO.setImage(subCategory.getImage());
+        subCategoryDTO.setStatus(subCategory.getStatus());
         subCategoryDTO.setCategoryId(subCategory.getCategoryEntity().getId());
 
         return subCategoryDTO;
@@ -19,6 +20,7 @@ public class SubCategoryMapper {
         subCategory.setId(subCategoryDTO.getId());
         subCategory.setName(subCategoryDTO.getName());
         subCategory.setImage(subCategoryDTO.getImage());
+        subCategory.setStatus(subCategoryDTO.getStatus());
 
         return subCategory;
     }
