@@ -4,14 +4,13 @@ import com.example.fsoft_shopee_nhom02.dto.CategoryDTO;
 import com.example.fsoft_shopee_nhom02.exception.BadRequest;
 import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.CategoryMapper;
-import com.example.fsoft_shopee_nhom02.mapper.SubCategoryMapper;
 import com.example.fsoft_shopee_nhom02.model.CategoryEntity;
 import com.example.fsoft_shopee_nhom02.model.ShopEntity;
-import com.example.fsoft_shopee_nhom02.model.SubCategoryEntity;
 import com.example.fsoft_shopee_nhom02.repository.CategoryRepository;
 import com.example.fsoft_shopee_nhom02.repository.ShopRepository;
 import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
 import com.example.fsoft_shopee_nhom02.service.CategoryService;
+import com.example.fsoft_shopee_nhom02.service.SubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,13 +19,13 @@ import java.util.List;
 
 @Component
 public class CategoryServiceImpl implements CategoryService {
+    @Autowired
+    private SubCategoryService subCategoryService;
 
     @Autowired
     private ShopRepository shopRepository;
-
     @Autowired
     private CategoryRepository categoryRepository;
-
     @Autowired
     private SubCategoryRepository subCategoryRepository;
 
@@ -38,12 +37,18 @@ public class CategoryServiceImpl implements CategoryService {
             throw new BadRequest("Please provide the shop id want to add this category.");
             //category = CategoryMapper.toEntity(categoryDTO);
         }
-        else {
-            ShopEntity shopEntity = shopRepository.findById(categoryDTO.getShopId()).orElseThrow(()
-                    -> new BadRequest("Not found shop with id = " + categoryDTO.getShopId()));
-            category = CategoryMapper.toEntity(categoryDTO);
-            category.setShopEntity(shopEntity);
+
+        ShopEntity shopEntity = shopRepository.findById(categoryDTO.getShopId()).orElseThrow(()
+                -> new BadRequest("Not found shop with id = " + categoryDTO.getShopId()));
+
+        //check name category in 1 shop is not similar
+        if(checkNameInShop(categoryDTO)){
+            throw new BadRequest("This name have been used!!");
         }
+
+        category = CategoryMapper.toEntity(categoryDTO);
+        category.setShopEntity(shopEntity);
+
         category = categoryRepository.save(category);
         return CategoryMapper.toCategoryDto(category);
     }
@@ -60,6 +65,11 @@ public class CategoryServiceImpl implements CategoryService {
         CategoryEntity category = categoryRepository.findById(categoryDTO.getId()).orElseThrow(()
                 -> new BadRequest("Not found category with id = "+categoryDTO.getId()));
 
+        //check name category in 1 shop is not similar
+        if(checkNameInShop(categoryDTO)){
+            throw new BadRequest("This name have been used!!");
+        }
+
         category.setName(categoryDTO.getName());
         category.setImage(categoryDTO.getImage());
         category.setStatus(categoryDTO.getStatus());
@@ -70,22 +80,15 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDTO> getAllCategory() {
+    public List<CategoryDTO> getAllCategory(boolean active) {
         List<CategoryDTO> categoryDTOS = new ArrayList<>();
-        List<CategoryEntity> categories = categoryRepository.findAll();
-        for (CategoryEntity category : categories){
-            categoryDTOS.add(CategoryMapper.toCategoryDto(category));
+        List<CategoryEntity> categories;
+        if(active) {
+            categories = categoryRepository.findAllByStatus("Active");
         }
-        if(categoryDTOS.isEmpty()){
-            throw new NotFoundException("Empty!!");
+        else{
+            categories = categoryRepository.findAll();
         }
-        return categoryDTOS;
-    }
-
-    @Override
-    public List<CategoryDTO> getAllActiveCategory() {
-        List<CategoryDTO> categoryDTOS = new ArrayList<>();
-        List<CategoryEntity> categories = categoryRepository.findAllByStatus("Active");
         for (CategoryEntity category : categories){
             categoryDTOS.add(CategoryMapper.toCategoryDto(category));
         }
@@ -103,11 +106,17 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDTO> getCategoryByShopId(long shopId) {
+    public List<CategoryDTO> getCategoryByShopId(long shopId, boolean active) {
         ShopEntity shop = shopRepository.findById(shopId).orElseThrow(()
                 -> new BadRequest("Not found shop with id = "+shopId));
         List<CategoryDTO> categoryDTOS = new ArrayList<>();
-        List<CategoryEntity> categories = categoryRepository.findAllByShopEntityId(shopId);
+        List<CategoryEntity> categories;
+        if(active) {
+            categories = categoryRepository.findAllByShopEntityIdAndStatus(shopId, "Active");
+        }
+        else{
+            categories = categoryRepository.findAllByShopEntityId(shopId);
+        }
 
         for (CategoryEntity category : categories){
             categoryDTOS.add(CategoryMapper.toCategoryDto(category));
@@ -120,41 +129,21 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDTO> getActiveCategoryByShopId(long shopId) {
-        ShopEntity shop = shopRepository.findById(shopId).orElseThrow(()
-                -> new BadRequest("Not found shop with id = "+shopId));
-        List<CategoryDTO> categoryDTOS = new ArrayList<>();
-        List<CategoryEntity> categories = categoryRepository.findAllByShopEntityIdAndStatus(shopId,
-                "Active");
-
-        for (CategoryEntity category : categories){
-            categoryDTOS.add(CategoryMapper.toCategoryDto(category));
-        }
-        if(categoryDTOS.isEmpty()){
-            throw new NotFoundException("Empty!!");
-        }
-
-        return categoryDTOS;
-    }
-
-    @Override
-    public long countCategoryByShopId(long shopId) {
-        if(shopId == 0l){
-            return categoryRepository.count();
-        }
-        shopRepository.findById(shopId).orElseThrow(() ->
+    public long countCategoryByShopId(long shopId, boolean active) {
+        ShopEntity shop = shopRepository.findById(shopId).orElseThrow(() ->
                 new BadRequest("Not found shop with id = "+shopId));
-        return categoryRepository.countByShopEntityId(shopId);
-    }
-
-    @Override
-    public long countActiveCategoryByShopId(long shopId) {
-        if(shopId == 0l){
-            return categoryRepository.countByStatus("Active");
+        if(active) {
+            if (shopId == 0L) {
+                return categoryRepository.countByStatus("Active");
+            }
+            return categoryRepository.countByShopEntityIdAndStatus(shopId,"Active");
         }
-        shopRepository.findById(shopId).orElseThrow(() ->
-                new BadRequest("Not found shop with id = "+shopId));
-        return categoryRepository.countByShopEntityIdAndStatus(shopId,"Active");
+        else{
+            if (shopId == 0L) {
+                return categoryRepository.count();
+            }
+            return categoryRepository.countByShopEntityId(shopId);
+        }
     }
 
     @Override
@@ -168,6 +157,9 @@ public class CategoryServiceImpl implements CategoryService {
     public void hide(long id) {
         CategoryEntity category = categoryRepository.findById(id).orElseThrow(()
                 -> new BadRequest("Fail!This category not exist"));
+
+        //set subcategory inactive
+        //subCategoryService.hide(id);
 
 //        List<SubCategoryEntity> subCategories = subCategoryRepository.findAllByCategoryEntityId(id);
 //        for(SubCategoryEntity subCategory : subCategories){
@@ -191,5 +183,18 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         return categoryDTOS;
+    }
+    //check name category can not similar in shop
+    public boolean checkNameInShop(CategoryDTO categoryDTO){
+        boolean check = false;
+        List<CategoryEntity> categories = categoryRepository.findAllByShopEntityId(categoryDTO.getShopId());
+
+        for(CategoryEntity category : categories){
+            if(category.getName().equals(categoryDTO.getName())){
+                check = true;
+                break;
+            }
+        }
+        return check;
     }
 }

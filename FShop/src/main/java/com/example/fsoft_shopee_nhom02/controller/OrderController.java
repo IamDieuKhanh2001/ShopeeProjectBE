@@ -1,6 +1,5 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
-import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
 import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.model.OrderDetailsEntity;
 import com.example.fsoft_shopee_nhom02.model.OrderEntity;
@@ -19,8 +18,7 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static com.example.fsoft_shopee_nhom02.config.GlobalVariable.datetimeFormat;
-import static com.example.fsoft_shopee_nhom02.config.GlobalVariable.ORDER_STATUS;
+import static com.example.fsoft_shopee_nhom02.config.GlobalVariable.*;
 
 @RestController
 @RequestMapping("/order")
@@ -45,7 +43,13 @@ public class OrderController {
 
     @GetMapping("/all")
     public Object getAllOrder() {
-        return orderService.getAll();
+        List<OrderEntity> orderEntityList = orderService.getAll();
+
+        for (OrderEntity i : orderEntityList) {
+            System.out.println(i.getCreatedDate());
+        }
+
+        return orderEntityList;
     }
 
     @GetMapping("/detail/all")
@@ -60,7 +64,7 @@ public class OrderController {
 
     @GetMapping("/pending/{id}")
     public Object getAllOrderByUserId(@PathVariable String id) {
-        return orderService.getAllPendingOrderByUserId(Long.parseLong(id), ORDER_STATUS.DONE.toString());
+        return orderService.getAllPendingOrderByUserId(Long.parseLong(id), ORDER_STATUS.PENDING.toString());
     }
 
     @GetMapping("/history/{id}")
@@ -106,8 +110,8 @@ public class OrderController {
         long CardId = cartService.findByUserId(user.getId()).getId();
 
         // calculate for order Entity
-        Timestamp created_date = GlobalVariable.getCurrentDateTime();
-        String status = "Waiting for confirm";
+        Timestamp created_date = getCurrentDateTime();
+        String status = ORDER_STATUS.PENDING.toString();
         AtomicLong total_cost = new AtomicLong();
 
         // analyze order Product data
@@ -178,7 +182,7 @@ public class OrderController {
     public Object UpdateOrder(@RequestBody Map<String, String> req, @PathVariable String id) throws ParseException {
         OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
 
-        orderEntity.setModifiedDate(GlobalVariable.getCurrentDateTime());
+        orderEntity.setModifiedDate(getCurrentDateTime());
 
         for (Map.Entry<String, String> i : req.entrySet()) {
             System.out.println(i.getKey());

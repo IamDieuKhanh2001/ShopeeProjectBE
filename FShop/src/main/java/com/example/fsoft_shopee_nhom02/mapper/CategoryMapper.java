@@ -21,6 +21,7 @@ public class CategoryMapper {
         category.setName(categoryDTO.getName());
         category.setImage(categoryDTO.getImage());
         category.setStatus(categoryDTO.getStatus());
+
         return category;
     }
 }

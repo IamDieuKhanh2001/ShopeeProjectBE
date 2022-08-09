@@ -4,12 +4,14 @@ public class SubCategoryDTO {
     private Long id;
     private String name;
     private String image;
+    private String status = "Active";
     private Long categoryId;
 
-    public SubCategoryDTO(Long id, String name, String image, Long categoryId) {
+    public SubCategoryDTO(Long id, String name, String image, String status, Long categoryId) {
         this.id = id;
         this.name = name;
         this.image = image;
+        this.status = status;
         this.categoryId = categoryId;
     }
 
@@ -38,6 +40,14 @@ public class SubCategoryDTO {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Long getCategoryId() {

@@ -5,11 +5,11 @@ import com.example.fsoft_shopee_nhom02.exception.BadRequest;
 import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.SubCategoryMapper;
 import com.example.fsoft_shopee_nhom02.model.CategoryEntity;
+import com.example.fsoft_shopee_nhom02.model.ProductEntity;
 import com.example.fsoft_shopee_nhom02.model.ShopEntity;
 import com.example.fsoft_shopee_nhom02.model.SubCategoryEntity;
-import com.example.fsoft_shopee_nhom02.repository.CategoryRepository;
-import com.example.fsoft_shopee_nhom02.repository.ShopRepository;
-import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
+import com.example.fsoft_shopee_nhom02.repository.*;
+import com.example.fsoft_shopee_nhom02.service.CategoryService;
 import com.example.fsoft_shopee_nhom02.service.SubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,11 +22,12 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     @Autowired
     private SubCategoryRepository subCategoryRepository;
-
     @Autowired
     private CategoryRepository categoryRepository;
     @Autowired
     private ShopRepository shopRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Override
     public SubCategoryDTO save(SubCategoryDTO subCategoryDTO) {
@@ -38,6 +39,16 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                 .orElseThrow(() -> new BadRequest("Not found category with id = "
                         +subCategoryDTO.getCategoryId()));
 
+        //check category is inactive
+        if(category.getStatus().equals("Inactive")){
+            throw new BadRequest("This category is inactive!!");
+        }
+
+        //check name subcategory in 1 category is not similar
+        if(checkNameInCategory(subCategoryDTO)){
+            throw new BadRequest("This name have been used!!");
+        }
+
         SubCategoryEntity subCategory = SubCategoryMapper.toEntity(subCategoryDTO);
         subCategory.setCategoryEntity(category);
         subCategory = subCategoryRepository.save(subCategory);
@@ -46,9 +57,15 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
     @Override
-    public List<SubCategoryDTO> getAllSubCategory() {
+    public List<SubCategoryDTO> getAllSubCategory(boolean active) {
         List<SubCategoryDTO> subCategoryDTOS = new ArrayList<>();
-        List<SubCategoryEntity> subCategories = subCategoryRepository.findAll();
+        List<SubCategoryEntity> subCategories;
+        if(active){
+            subCategories = subCategoryRepository.findAllByStatus("Active");
+        }
+        else {
+            subCategories = subCategoryRepository.findAll();
+        }
         for(SubCategoryEntity subCategory : subCategories){
             subCategoryDTOS.add(SubCategoryMapper.toSubCategoryDto(subCategory));
         }
@@ -67,12 +84,23 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
     @Override
-    public List<SubCategoryDTO> getSubCategoryByCategoryId(long categoryId) {
+    public List<SubCategoryDTO> getSubCategoryByCategoryId(long categoryId, boolean active) {
         CategoryEntity category = categoryRepository.findById(categoryId).orElseThrow(()->
                 new BadRequest("There is no category with id = "+categoryId));
 
+        //check category is inactive
+        if(category.getStatus().equals("Inactive")){
+            throw new BadRequest("This category is inactive!!");
+        }
+
         List<SubCategoryDTO> subCategoryDTOS = new ArrayList<>();
-        List<SubCategoryEntity> subCategories = subCategoryRepository.findAllByCategoryEntityId(categoryId);
+        List<SubCategoryEntity> subCategories;
+        if(active){
+            subCategories = subCategoryRepository.findAllByCategoryEntityIdAndStatus(categoryId,"Active");
+        }
+        else {
+            subCategories = subCategoryRepository.findAllByCategoryEntityId(categoryId);
+        }
         for(SubCategoryEntity subCategory : subCategories){
             subCategoryDTOS.add(SubCategoryMapper.toSubCategoryDto(subCategory));
         }
@@ -85,12 +113,19 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
     @Override
-    public List<SubCategoryDTO> getSubCategoryByShopId(long shopId) {
+    public List<SubCategoryDTO> getSubCategoryByShopId(long shopId, boolean active) {
         ShopEntity shop = shopRepository.findById(shopId).orElseThrow(()
                 -> new BadRequest("There is no shop with id = "+shopId));
 
         List<SubCategoryDTO> subCategoryDTOS = new ArrayList<>();
-        List<SubCategoryEntity> subCategories = subCategoryRepository.findAllByShopEntityId(shopId);
+        List<SubCategoryEntity> subCategories;
+        if(active){
+            subCategories = subCategoryRepository.findAllByShopEntityIdAndStatus(shopId,"Active");
+        }
+        else {
+            subCategories = subCategoryRepository.findAllByShopEntityId(shopId);
+        }
+
         for(SubCategoryEntity subCategory : subCategories){
             subCategoryDTOS.add(SubCategoryMapper.toSubCategoryDto(subCategory));
         }
@@ -103,13 +138,22 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
     @Override
-    public long countSubCategoryByCategoryId(long categoryId) {
-        if(categoryId == 0l){
-            return subCategoryRepository.count();
-        }
+    public long countSubCategoryByCategoryId(long categoryId, boolean active) {
         categoryRepository.findById(categoryId).orElseThrow(() ->
                 new BadRequest("Not found category with id = "+categoryId));
-        return subCategoryRepository.countByCategoryEntityId(categoryId);
+
+        if(active){
+            if(categoryId == 0L) {
+                return subCategoryRepository.countByStatus("Active");
+            }
+            return subCategoryRepository.countByCategoryEntityIdAndStatus(categoryId,"Active");
+        }
+        else{
+            if(categoryId == 0L) {
+                return subCategoryRepository.count();
+            }
+            return subCategoryRepository.countByCategoryEntityId(categoryId);
+        }
     }
 
     @Override
@@ -119,15 +163,26 @@ public class SubCategoryServiceImpl implements SubCategoryService {
             //subCategory = subCategoryRepository.save(subCategory);
         }
 
+        SubCategoryEntity subCategory  = subCategoryRepository.findById(subCategoryDTO.getId())
+                .orElseThrow(() -> new BadRequest("Not found subcategory with id = "+subCategoryDTO.getId()));
+
         CategoryEntity category = categoryRepository.findById(subCategoryDTO.getCategoryId())
                 .orElseThrow(() -> new BadRequest("Not found category with id = "
                         +subCategoryDTO.getCategoryId()));
 
-        SubCategoryEntity subCategory  = subCategoryRepository.findById(subCategoryDTO.getId())
-                .orElseThrow(() -> new BadRequest("Not found subcategory with id = "+subCategoryDTO.getId()));
+        //check category is active
+        if(category.getStatus().equals("Inactive")){
+            throw new BadRequest("This category is inactive!!");
+        }
+
+        //check name subcategory in 1 category is not similar
+        if(checkNameInCategory(subCategoryDTO)){
+            throw new BadRequest("This name have been used!!");
+        }
 
         subCategory.setName(subCategoryDTO.getName());
         subCategory.setImage(subCategoryDTO.getImage());
+        subCategory.setStatus(subCategoryDTO.getStatus());
         subCategory.setCategoryEntity(category);
         subCategory = subCategoryRepository.save(subCategory);
 
@@ -140,5 +195,36 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                 .orElseThrow(() -> new BadRequest("Fail! This subcategory not exist"));
 
         subCategoryRepository.deleteById(id);
+    }
+
+    @Override
+    public void hide(long id) {
+        SubCategoryEntity subCategory  = subCategoryRepository.findById(id)
+                .orElseThrow(() -> new BadRequest("Fail! This subcategory not exist"));
+
+        //set product inactive
+        List<ProductEntity> products = productRepository.findAllBySubCategoryEntityId(id);
+        for(ProductEntity product : products){
+            product.setStatus("Inactive");
+            product = productRepository.save(product);
+        }
+
+        subCategory.setStatus("Inactive");
+        subCategory = subCategoryRepository.save(subCategory);
+    }
+
+    //check name subcategory can not similar in category
+    public boolean checkNameInCategory(SubCategoryDTO subCategoryDTO){
+        boolean check = false;
+        List<SubCategoryEntity> subCategories = subCategoryRepository
+                .findAllByCategoryEntityId(subCategoryDTO.getCategoryId());
+
+        for(SubCategoryEntity subCategory : subCategories){
+            if(subCategory.getName().equals(subCategoryDTO.getName())){
+                check = true;
+                break;
+            }
+        }
+        return check;
     }
 }

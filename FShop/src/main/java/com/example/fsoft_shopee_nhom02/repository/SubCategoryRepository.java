@@ -12,8 +12,15 @@ import java.util.List;
 @EnableJpaRepositories
 public interface SubCategoryRepository extends JpaRepository<SubCategoryEntity,Long> {
     List<SubCategoryEntity> findAllByCategoryEntityId(long categoryId);
+    List<SubCategoryEntity> findAllByCategoryEntityIdAndStatus(long categoryId, String status);
     @Query(value = "SELECT s.* FROM subcategories s, categories c WHERE s.category_id = c.id " +
             "AND c.shop_id = :shopId", nativeQuery = true)
     List<SubCategoryEntity> findAllByShopEntityId(long shopId);
+    @Query(value = "SELECT s.* FROM subcategories s, categories c WHERE s.category_id = c.id " +
+            "AND c.shop_id = :shopId AND s.status = :status", nativeQuery = true)
+    List<SubCategoryEntity> findAllByShopEntityIdAndStatus(long shopId, String status);
+    List<SubCategoryEntity> findAllByStatus(String status);
     long countByCategoryEntityId(long categoryId);
+    long countByStatus(String status);
+    long countByCategoryEntityIdAndStatus(long categoryId, String status);
 }
