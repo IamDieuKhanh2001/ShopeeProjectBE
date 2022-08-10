@@ -12,12 +12,16 @@ public interface UserService {
 
     List<UserDTO> getAllUser();
     UserEntity findByIdUser(Long id);
+    UserEntity findByEmailUser(String email);
     void delete(Long id);
     void deleteUser(String username);
     long countAllUser();
     long countMen();
     long countWomen();
     long countKid();
+    boolean upRole(String email);
+    boolean removeRole(String email);
+    List<UserDTO> findByName(String name);
     UserEntity changeProfile(UserDTO user, String username);
     List<UserEntity> getUsersByEmail(String email);
     UserEntity changeUserPasswordByEmail(String newPassword, String email);

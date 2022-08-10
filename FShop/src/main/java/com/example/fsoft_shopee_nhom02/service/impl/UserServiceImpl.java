@@ -4,7 +4,9 @@ import com.example.fsoft_shopee_nhom02.dto.UserDTO;
 import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
 import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.UserMapper;
+import com.example.fsoft_shopee_nhom02.model.RoleEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
+import com.example.fsoft_shopee_nhom02.repository.RoleRepository;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
 import com.example.fsoft_shopee_nhom02.service.CloudinaryService;
 import com.example.fsoft_shopee_nhom02.service.UserService;
@@ -14,14 +16,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -48,6 +51,13 @@ public class UserServiceImpl implements UserService {
     public UserEntity findByIdUser(Long id) {
         UserEntity foundUser =userRepository.findById(id)
                 .orElseThrow(()->new NotFoundException("Not found user with id = "+id));
+        return foundUser;
+    }
+
+    @Override
+    public UserEntity findByEmailUser(String email) {
+        UserEntity foundUser =userRepository.findByEmail(email)
+                .orElseThrow(()->new NotFoundException("Not found user with id = "+email));
         return foundUser;
     }
 
@@ -99,11 +109,58 @@ public class UserServiceImpl implements UserService {
         List<UserDTO> KidUser = new ArrayList<>();
         List<UserEntity> userEntity = userRepository.findAll();
         for (UserEntity user : userEntity){
-            UserDTO userDTO = UserMapper.toUserDTO(user);
-            if (userDTO.getAge() < 18)
+            Calendar dobCal = Calendar.getInstance();
+            dobCal.setTimeInMillis(user.getDob().getTime());
+            long age = Calendar.getInstance().get(Calendar.YEAR) - dobCal.get(Calendar.YEAR) ;
+            if (age < 18) {
+                UserDTO userDTO = UserMapper.toUserDTO(user);
                 KidUser.add(userDTO);
+            }
         }
         return KidUser.size();
+    }
+
+    @Override
+    public boolean upRole(String email) {
+        Optional<UserEntity> changeRoleUser = userRepository.findByEmail(email);
+        Optional<RoleEntity> roleUserOptional = roleRepository.findById(Long.parseLong("1"));
+        Set<RoleEntity> roleUser = changeRoleUser.get().getRoleEntitySet();
+        if (!roleUser.contains(roleUserOptional.get())) {
+            roleUser.add(roleUserOptional.get());
+            changeRoleUser.get().setRoleEntitySet(roleUser);
+            changeRoleUser.get().setModifiedDate(new Timestamp(System.currentTimeMillis()));
+            userRepository.save(changeRoleUser.get());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean removeRole(String email) {
+        Optional<RoleEntity> roleUserOptional = roleRepository.findById(Long.parseLong("1"));
+        Optional<UserEntity> changeRoleUser = userRepository.findByEmail(email);
+        Set<RoleEntity> roleUser = changeRoleUser.get().getRoleEntitySet();
+        if (roleUser.contains(roleUserOptional.get())) {
+            roleUser.remove(roleUserOptional.get());
+            changeRoleUser.get().setRoleEntitySet(roleUser);
+            changeRoleUser.get().setModifiedDate(new Timestamp(System.currentTimeMillis()));
+            userRepository.save(changeRoleUser.get());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public List<UserDTO> findByName(String name) {
+        List<UserEntity> allUsers = userRepository.findAll();
+        List<UserDTO> findName = new ArrayList<>();
+        for (UserEntity user : allUsers){
+            if (user.getName().toLowerCase().contains(name.toLowerCase())){
+                UserDTO userDTO = UserMapper.toUserDTO(user);
+                findName.add(userDTO);
+            }
+        }
+        return findName;
     }
 
     @Override
