@@ -46,6 +46,7 @@ public class OrderController {
 
     @GetMapping("/sentMessage")
     public void sentMessage(@RequestBody Map<String, String> message) {
+
         simpMessagingTemplate.convertAndSendToUser("hehe", "/client", message.get("message"));
     }
 
