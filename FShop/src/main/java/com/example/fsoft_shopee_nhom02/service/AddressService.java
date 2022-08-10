@@ -77,7 +77,6 @@ public class AddressService {
         }
         AddressEntity currentDefaultAddress = addressRepository
                 .findAddressEntityByAddressDefaultAndUserEntity(true, userEntityOptional.get());
-        System.out.println(currentDefaultAddress.toString());
         currentDefaultAddress.setAddressDefault(false);
         AddressEntity newDefaultAddress = addressRepository.findById(addressId).get();
         newDefaultAddress.setAddressDefault(true);
