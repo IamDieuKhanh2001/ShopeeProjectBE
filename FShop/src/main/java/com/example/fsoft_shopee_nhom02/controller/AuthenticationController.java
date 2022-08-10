@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -71,10 +72,15 @@ public class AuthenticationController {
                         (Set<GrantedAuthority>) userDetails.getAuthorities()));
     }
 
-    @GetMapping("/login/oauth2/code/google")
-    public ResponseEntity<?> googleLoginResponse() {
-        System.out.println(userRepository.findByUsername("user01").get().getAuth_provider());
-        return ResponseEntity.ok("ok");
+    @GetMapping("/")
+    public ResponseEntity<?> home(@RequestParam(value = "jwt") String jwtToken, OAuth2AuthenticationToken oAuth2AuthenticationToken) {
+        String username = jwtTokenUtil.extractUsername(jwtToken);
+        final UserDetails userDetails = applicationUserService
+                .loadUserByUsername(username);
+        return ResponseEntity
+                .ok(new AuthenticationResponse(jwtToken,
+                        userDetails.getUsername(),
+                        (Set<GrantedAuthority>) userDetails.getAuthorities()));
     }
 
 //    //Test api sẽ xóa sau

@@ -57,6 +57,7 @@ public class ApplicationUserService implements UserDetailsService {
         return username;
     }
 
+
     public ResponseEntity<?> save(UserDTO userDTO) {
         Optional<UserEntity> DAOUsernameOptional = userRepository.findByUsername(userDTO.getUsername());
         if(DAOUsernameOptional.isPresent()){
