@@ -23,8 +23,8 @@ public class ShopMapper {
         ShopEntity shop = new ShopEntity();
         shop.setId(shopDTO.getId());
         shop.setName(shopDTO.getName());
-//        shop.setAvatar(shopDTO.getAvatar());
-//        shop.setBackground(shopDTO.getBackground());
+        shop.setAvatar(shopDTO.getAvatar());
+        shop.setBackground(shopDTO.getBackground());
         shop.setDescription(shopDTO.getDescription());
         shop.setStatus(shopDTO.getStatus());
         shop.setTotalProduct(0L);
