@@ -16,6 +16,8 @@ public class AddressEntity {
     private String address;
     private String name;
     private String phoneNumber;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean addressDefault = false;
 
     //  Tạo quan hệ với bảng User
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,6 +46,15 @@ public class AddressEntity {
         this.userEntity = userEntity;
     }
 
+    public AddressEntity(Long id, String address, String name, String phoneNumber, Boolean addressDefault, UserEntity userEntity) {
+        this.id = id;
+        this.address = address;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.addressDefault = addressDefault;
+        this.userEntity = userEntity;
+    }
+
     public String getName() {
         return name;
     }
@@ -64,6 +75,14 @@ public class AddressEntity {
     public AddressEntity(String address, UserEntity userEntity) {
         this.address = address;
         this.userEntity = userEntity;
+    }
+
+    public Boolean getAddressDefault() {
+        return addressDefault;
+    }
+
+    public void setAddressDefault(Boolean addressDefault) {
+        this.addressDefault = addressDefault;
     }
 
     public Long getId() {

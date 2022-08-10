@@ -1,6 +1,6 @@
 package com.example.fsoft_shopee_nhom02.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.fsoft_shopee_nhom02.auth.AuthenticationProvider;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -23,10 +23,11 @@ public class UserEntity extends BaseClassEntity{
     private Timestamp dob;
     private String gender;
     private String avatar;
-    @Column(name="status", columnDefinition="Varchar(255) default 'Active'")
-    private String status;
-    @Column(name="auth_provider", columnDefinition="Varchar(255) default 'LOCAL'")
-    private String auth_provider;
+    @Column(name="status")
+    private String status = "Active";
+    @Enumerated(EnumType.STRING)
+    @Column(name="auth_provider")
+    private AuthenticationProvider auth_provider = AuthenticationProvider.LOCAL;
     // Tạo quan hệ với AddressEntity
     @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -81,7 +82,7 @@ public class UserEntity extends BaseClassEntity{
         this.avatar = avatar;
     }
 
-    public UserEntity(Long id, String name, String username, String password, String phone, String email, Timestamp dob, String gender, String avatar, String status, String auth_provider) {
+    public UserEntity(Long id, String name, String username, String password, String phone, String email, Timestamp dob, String gender, String avatar, AuthenticationProvider auth_provider, List<AddressEntity> addressEntityList, List<OrderEntity> orderEntities, Set<RoleEntity> roleEntitySet, CartEntity cartEntity) {
         this.id = id;
         this.name = name;
         this.username = username;
@@ -91,8 +92,27 @@ public class UserEntity extends BaseClassEntity{
         this.dob = dob;
         this.gender = gender;
         this.avatar = avatar;
-        this.status = status;
         this.auth_provider = auth_provider;
+        this.addressEntityList = addressEntityList;
+        this.orderEntities = orderEntities;
+        this.roleEntitySet = roleEntitySet;
+        this.cartEntity = cartEntity;
+    }
+
+    public AuthenticationProvider getAuth_provider() {
+        return auth_provider;
+    }
+
+    public void setAuth_provider(AuthenticationProvider auth_provider) {
+        this.auth_provider = auth_provider;
+    }
+
+    public List<OrderEntity> getOrderEntities() {
+        return orderEntities;
+    }
+
+    public void setOrderEntities(List<OrderEntity> orderEntities) {
+        this.orderEntities = orderEntities;
     }
 
     public String getStatus() {
@@ -101,14 +121,6 @@ public class UserEntity extends BaseClassEntity{
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public String getAuth_provider() {
-        return auth_provider;
-    }
-
-    public void setAuth_provider(String auth_provider) {
-        this.auth_provider = auth_provider;
     }
 
     public Long getId() {
