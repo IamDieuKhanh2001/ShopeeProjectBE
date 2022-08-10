@@ -56,10 +56,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity findByEmailUser(String email) {
+    public UserProfileDTO findByEmailUser(String email) {
         UserEntity foundUser =userRepository.findByEmail(email)
-                .orElseThrow(()->new NotFoundException("Not found user with id = "+email));
-        return foundUser;
+                .orElseThrow(()->new NotFoundException("Not found user with email = "+email));
+        UserProfileDTO profileDTO = UserMapper.toUserProfileDTO(foundUser);
+        return profileDTO;
     }
 
     @Override
@@ -68,57 +69,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(String username) {
-        UserEntity deleteUser = userRepository.findByUsername(username).orElseThrow(()
-                -> new ResourceNotFoundException("Cannot found user with username = " + username));
+    public void deleteUser(String email) {
+        UserEntity deleteUser = userRepository.findByEmail(email).orElseThrow(()
+                -> new  NotFoundException("Cannot found user with email = " + email));
         userRepository.deleteById(deleteUser.getId());
-    }
-
-    @Override
-    public long countAllUser() {
-        return userRepository.count();
-    }
-
-    @Override
-    public long countMen() {
-        List<UserDTO> MenUser = new ArrayList<>();
-        List<UserEntity> userEntity = userRepository.findAll();
-        for (UserEntity user : userEntity){
-            if (user.getGender().equals("Nam")){
-                UserDTO userDTO = UserMapper.toUserDTO(user);
-                MenUser.add(userDTO);
-            }
-        }
-        return MenUser.size();
-    }
-
-    @Override
-    public long countWomen() {
-        List<UserDTO> WomenUser = new ArrayList<>();
-        List<UserEntity> userEntity = userRepository.findAll();
-        for (UserEntity user : userEntity){
-            if (user.getGender().equals("Nữ")){
-                UserDTO userDTO = UserMapper.toUserDTO(user);
-                WomenUser.add(userDTO);
-            }
-        }
-        return WomenUser.size();
-    }
-
-    @Override
-    public long countKid() {
-        List<UserDTO> KidUser = new ArrayList<>();
-        List<UserEntity> userEntity = userRepository.findAll();
-        for (UserEntity user : userEntity){
-            Calendar dobCal = Calendar.getInstance();
-            dobCal.setTimeInMillis(user.getDob().getTime());
-            long age = Calendar.getInstance().get(Calendar.YEAR) - dobCal.get(Calendar.YEAR) ;
-            if (age < 18) {
-                UserDTO userDTO = UserMapper.toUserDTO(user);
-                KidUser.add(userDTO);
-            }
-        }
-        return KidUser.size();
     }
 
     @Override

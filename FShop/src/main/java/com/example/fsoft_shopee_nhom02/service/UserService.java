@@ -13,13 +13,9 @@ public interface UserService {
 
     List<UserProfileDTO> getAllUser();
     UserEntity findByIdUser(Long id);
-    UserEntity findByEmailUser(String email);
+    UserProfileDTO findByEmailUser(String email);
     void delete(Long id);
-    void deleteUser(String username);
-    long countAllUser();
-    long countMen();
-    long countWomen();
-    long countKid();
+    void deleteUser(String email);
     boolean upRole(String email);
     boolean removeRole(String email);
     List<UserDTO> findByName(String name);

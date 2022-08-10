@@ -30,21 +30,8 @@ public class UserController {
     }
 
     @GetMapping("/admin/users/infoUser")
-    ResponseEntity<?> findByIDUser(@RequestParam(value = "email", required = false) String email) {
+    ResponseEntity<?> findByEmailUser(@RequestParam(value = "email", required = false) String email) {
         return ResponseEntity.ok(userService.findByEmailUser(email));
-    }
-
-    @GetMapping("/admin/users/count")
-    ResponseEntity<?> countAllUser(){
-        if(userService.countAllUser() == 0L){
-            return ResponseEntity.ok("Empty!!");
-        }
-        long all = userService.countAllUser();
-        long kid = userService.countKid();
-        long men = userService.countMen();
-        long women = userService.countWomen();
-        return ResponseEntity.ok("Total user: "+all+", Men user: "+men+
-                ", Women user: "+women+", Kid user: "+kid);
     }
 
     @GetMapping("/admin/users/searchName")
@@ -71,9 +58,9 @@ public class UserController {
         }
         return ResponseEntity.ok("User "+username+" is having basic user role!!!");
     }
-    @DeleteMapping("/admin/users/{username}")
-    ResponseEntity<?> delete(@PathVariable String username){
-        userService.deleteUser(username);
+    @DeleteMapping("/admin/users")
+    ResponseEntity<?> delete(@RequestParam(value = "email", required = false) String email){
+        userService.deleteUser(email);
         return ResponseEntity.ok("Delete Success");
     }
 
