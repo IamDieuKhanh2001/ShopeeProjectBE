@@ -9,8 +9,6 @@ import com.example.fsoft_shopee_nhom02.repository.ShopRepository;
 import com.example.fsoft_shopee_nhom02.service.CloudinaryService;
 import com.example.fsoft_shopee_nhom02.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -120,13 +118,13 @@ public class ShopServiceImpl implements ShopService {
         String bgUrl = cloudinaryService.uploadFile(avatar,"background",
                 "ShopeeProject" + "/" + "Shop" + "/" + shop.getName());
 
-        if(avatarUrl == "-1"){
+        if(avatarUrl.equals("-1")){
             shop.setAvatar(avatarUrl);
         }
         else {
             shop.setAvatar("");
         }
-        if(bgUrl == "-1"){
+        if(bgUrl.equals("-1")){
             shop.setBackground(bgUrl);
         }
         else {
