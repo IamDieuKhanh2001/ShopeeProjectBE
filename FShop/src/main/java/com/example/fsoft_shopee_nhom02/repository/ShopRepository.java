@@ -15,4 +15,8 @@ public interface ShopRepository extends JpaRepository<ShopEntity,Long> {
     ShopEntity findOneByName(String name);
     @Query(value = "SELECT * FROM shops WHERE name = :name AND id <> :id",nativeQuery = true)
     ShopEntity findByNameExceptCurrentName(long id, String name);
+    @Query(value = "SELECT sum(t.quantity) FROM CategoryEntity c, SubCategoryEntity s, ProductEntity p, TypeEntity t" +
+            " WHERE p.id = t.productEntity.id AND s.id = p.subCategoryEntity.id AND c.id = s.categoryEntity.id " +
+            "AND c.shopEntity.id = :shopId AND p.status = 'Active' AND c.status = 'Active' AND s.status = 'Active'")
+    long countTotalProduct(long shopId);
 }

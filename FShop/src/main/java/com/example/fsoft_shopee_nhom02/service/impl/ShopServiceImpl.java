@@ -53,7 +53,7 @@ public class ShopServiceImpl implements ShopService {
         shop.setBackground(shopDTO.getBackground());
         shop.setDescription(shopDTO.getDescription());
         shop.setStatus(shopDTO.getStatus());
-        shop.setTotalProduct(shopDTO.getTotalProduct());
+        shop.setTotalProduct(shopRepository.countTotalProduct(shopDTO.getId()));
 
         shop = shopRepository.save(shop);
 
@@ -84,6 +84,10 @@ public class ShopServiceImpl implements ShopService {
     public ShopDTO findShopById(long id) {
         ShopEntity shop = shopRepository.findById(id).orElseThrow(()
         -> new BadRequest("Not found shop with id = "+id));
+
+        shop.setTotalProduct(shopRepository.countTotalProduct(id));
+        shopRepository.save(shop);
+
         return ShopMapper.toShopDto(shop);
     }
 
