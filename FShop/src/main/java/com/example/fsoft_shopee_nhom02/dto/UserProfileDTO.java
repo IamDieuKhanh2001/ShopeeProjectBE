@@ -19,13 +19,14 @@ public class UserProfileDTO extends BaseClassEntity{
     @JsonFormat(pattern="yyyy-MM-dd")
     private Timestamp dob;
     private String avatar;
+    private Set<RoleEntity> roleEntitySet;
     private List<AddressEntity> addressEntityList;
     private List<OrderEntity> orderEntities;
 
     public UserProfileDTO() {
     }
 
-    public UserProfileDTO(String username, String name, String email, String phone, String gender, Timestamp dob, String avatar, List<AddressEntity> addressEntityList, List<OrderEntity> orderEntities) {
+    public UserProfileDTO(String username, String name, String email, String phone, String gender, Timestamp dob, String avatar, Set<RoleEntity> roleEntitySet, List<AddressEntity> addressEntityList, List<OrderEntity> orderEntities) {
         this.username = username;
         this.name = name;
         this.email = email;
@@ -33,8 +34,17 @@ public class UserProfileDTO extends BaseClassEntity{
         this.gender = gender;
         this.dob = dob;
         this.avatar = avatar;
+        this.roleEntitySet = roleEntitySet;
         this.addressEntityList = addressEntityList;
         this.orderEntities = orderEntities;
+    }
+
+    public Set<RoleEntity> getRoleEntitySet() {
+        return roleEntitySet;
+    }
+
+    public void setRoleEntitySet(Set<RoleEntity> roleEntitySet) {
+        this.roleEntitySet = roleEntitySet;
     }
 
     public String getUsername() {

@@ -106,13 +106,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDTO> findByName(String name) {
+    public List<UserProfileDTO> findByName(String name) {
         List<UserEntity> allUsers = userRepository.findAll();
-        List<UserDTO> findName = new ArrayList<>();
+        List<UserProfileDTO> findName = new ArrayList<>();
         for (UserEntity user : allUsers){
             if (user.getName().toLowerCase().contains(name.toLowerCase())){
-                UserDTO userDTO = UserMapper.toUserDTO(user);
-                findName.add(userDTO);
+                UserProfileDTO userProfileDTO = UserMapper.toUserProfileDTO(user);
+                findName.add(userProfileDTO);
             }
         }
         return findName;
