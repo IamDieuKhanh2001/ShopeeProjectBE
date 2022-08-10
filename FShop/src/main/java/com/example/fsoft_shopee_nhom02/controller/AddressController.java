@@ -82,9 +82,9 @@ public class AddressController {
 
         if(addressService.setDefaultAddress(addressId)) {
             return ResponseEntity.ok(
-                    new SuccessResponseDTO(HttpStatus.OK, "Update address for user success")
+                    new SuccessResponseDTO(HttpStatus.OK, "Set default address for user success")
             );
         }
-        return ResponseEntity.badRequest().body("Update address for user fail");
+        return ResponseEntity.badRequest().body("Set default address for user fail");
     }
 }

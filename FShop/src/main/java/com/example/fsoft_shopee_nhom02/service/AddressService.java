@@ -75,11 +75,17 @@ public class AddressService {
         if(!userEntityOptional.isPresent()) {
             throw new IllegalStateException("Username " + usernameLogin + " not found");
         }
+        Optional<AddressEntity> addressOptional = addressRepository.findById(addressId);
+        if(!addressOptional.isPresent()) {
+            return false;
+        }
+        AddressEntity newDefaultAddress = addressOptional.get();
+        newDefaultAddress.setAddressDefault(true);
+
         AddressEntity currentDefaultAddress = addressRepository
                 .findAddressEntityByAddressDefaultAndUserEntity(true, userEntityOptional.get());
         currentDefaultAddress.setAddressDefault(false);
-        AddressEntity newDefaultAddress = addressRepository.findById(addressId).get();
-        newDefaultAddress.setAddressDefault(true);
+
         try {
             addressRepository.save(currentDefaultAddress);
             addressRepository.save(newDefaultAddress);
