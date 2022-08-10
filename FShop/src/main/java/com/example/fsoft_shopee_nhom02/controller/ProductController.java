@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@CrossOrigin
 public class ProductController {
     @Autowired
     private ProductService productService;
@@ -76,8 +77,10 @@ public class ProductController {
         String minPrice = requestParams.get("minPrice");
         String maxPrice = requestParams.get("maxPrice");
         String subCate = requestParams.get("sub");
+        String cat = requestParams.get("cat");
 
-        return productService.search(page, limit, keyword, minPrice, maxPrice, subCate);
+        return productService.search(page, limit, keyword, minPrice,
+                maxPrice, subCate, cat);
     }
 
     @PostMapping("/users/products/{proId}/comments")
