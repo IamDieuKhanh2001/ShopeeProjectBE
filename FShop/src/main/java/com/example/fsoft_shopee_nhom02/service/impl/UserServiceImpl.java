@@ -1,6 +1,7 @@
 package com.example.fsoft_shopee_nhom02.service.impl;
 
 import com.example.fsoft_shopee_nhom02.dto.UserDTO;
+import com.example.fsoft_shopee_nhom02.dto.UserProfileDTO;
 import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
 import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.UserMapper;
@@ -33,13 +34,13 @@ public class UserServiceImpl implements UserService {
     private CloudinaryService cloudinaryService;
 
     @Override
-    public List<UserDTO> getAllUser() {
-        List<UserDTO> allUserDTO = new ArrayList<>();
+    public List<UserProfileDTO> getAllUser() {
+        List<UserProfileDTO> allUserDTO = new ArrayList<>();
         List<UserEntity> allUsers = userRepository.findAll();
         if (allUsers.size()>0) {
             for (UserEntity user : allUsers){
-                UserDTO userDTO = UserMapper.toUserDTO(user);
-                allUserDTO.add(userDTO);
+                UserProfileDTO userProfileDTO = UserMapper.toUserProfileDTO(user);
+                allUserDTO.add(userProfileDTO);
             }
             return allUserDTO;
         }else {
@@ -200,13 +201,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity findByUsername(String username) {
+    public UserProfileDTO findByUsername(String username) {
         Optional<UserEntity> user = userRepository.findByUsername(username);
         if(!user.isPresent()){
             throw new IllegalStateException("Khong tim thay username "+username);
         }
-
-        return user.get();
+        UserProfileDTO userProfile = UserMapper.toUserProfileDTO(user.get());
+        return userProfile;
     }
 
     @Override

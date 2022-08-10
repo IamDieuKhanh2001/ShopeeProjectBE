@@ -1,6 +1,7 @@
 package com.example.fsoft_shopee_nhom02.mapper;
 
 import com.example.fsoft_shopee_nhom02.dto.UserDTO;
+import com.example.fsoft_shopee_nhom02.dto.UserProfileDTO;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 
 public class UserMapper {
@@ -37,5 +38,23 @@ public class UserMapper {
         userDTO.setRoleEntitySet(userEntity.getRoleEntitySet());
 
         return userDTO;
+    }
+
+    public static UserProfileDTO toUserProfileDTO(UserEntity userEntity){
+        UserProfileDTO userProfileDTO = new UserProfileDTO();
+
+        userProfileDTO.setUsername(userEntity.getUsername());
+        userProfileDTO.setPhone(userEntity.getPhone());
+        userProfileDTO.setName(userEntity.getName());
+        userProfileDTO.setGender(userEntity.getGender());
+        userProfileDTO.setEmail(userEntity.getEmail());
+        userProfileDTO.setDob(userEntity.getDob());
+        userProfileDTO.setAvatar(userEntity.getAvatar());
+        userProfileDTO.setAddressEntityList(userEntity.getAddressEntityList());
+        userProfileDTO.setOrderEntities(userEntity.getOrderEntities());
+        userProfileDTO.setCreatedDate(userEntity.getCreatedDate());
+        userProfileDTO.setModifiedDate(userEntity.getModifiedDate());
+
+        return userProfileDTO;
     }
 }

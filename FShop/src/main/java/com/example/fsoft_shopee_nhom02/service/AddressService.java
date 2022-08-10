@@ -47,11 +47,29 @@ public class AddressService {
     }
 
     public boolean deleteAddressByAddressId(Long addressId) {
+        Optional<AddressEntity> address = addressRepository.findById(addressId);
+        if (address.get().getAddressDefault()){                     //Kiểm tra xem địa chỉ bị xóa có phải default không
+            try {
+                String username = address.get().getUserEntity().getUsername();
+                addressRepository.deleteById(addressId);
+                List<AddressEntity> listaddress = addressRepository.findAddressEntitiesByUserEntityUsername(username);  //Load lại danh sách địa chỉ sau khi bị xóa
+                if (listaddress.size()>0) {
+                    long id = listaddress.get(0).getId();
+                    Optional<AddressEntity> newDefault = addressRepository.findById(id);        //Lấy địa chỉ đầu danh sách
+                    newDefault.get().setAddressDefault(true);                                   //Gán thành địa chỉ Default
+                    addressRepository.save(newDefault.get());
+                }
+                return true;
+            } catch (Exception ex) {
+                return false;
+            }
+        }
         try {
             addressRepository.deleteById(addressId);
         } catch (Exception ex) {
             return false;
         }
+
         return true;
     }
 

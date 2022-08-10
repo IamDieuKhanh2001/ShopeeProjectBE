@@ -25,11 +25,12 @@ public class UserEntity extends BaseClassEntity{
     private Timestamp dob;
     private String gender;
     private String avatar;
-    @Column(name="status", columnDefinition="Varchar(255) default 'Active'")
+    @Column(name="status")
     private String status = "Active";
     @Enumerated(EnumType.STRING)
-    @Column(name="auth_provider", columnDefinition="Varchar(255) default 'LOCAL'")
+    @Column(name="auth_provider")
     private AuthenticationProvider auth_provider = AuthenticationProvider.LOCAL;
+
     // Tạo quan hệ với AddressEntity
     @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -72,15 +73,6 @@ public class UserEntity extends BaseClassEntity{
     public UserEntity() {
     }
 
-    public UserEntity(String name, String username, String email, String avatar, AuthenticationProvider auth_provider, Timestamp createdDate) {
-        this.name = name;
-        this.username = username;
-        this.email = email;
-        this.avatar = avatar;
-        this.auth_provider = auth_provider;
-        this.setCreatedDate(createdDate);
-    }
-
     public UserEntity(Long id, String name, String username, String password, String phone, String email, Timestamp dob, String gender, String avatar) {
         this.id = id;
         this.name = name;
@@ -93,7 +85,7 @@ public class UserEntity extends BaseClassEntity{
         this.avatar = avatar;
     }
 
-    public UserEntity(Long id, String name, String username, String password, String phone, String email, Timestamp dob, String gender, String avatar, String status, AuthenticationProvider auth_provider) {
+    public UserEntity(Long id, String name, String username, String password, String phone, String email, Timestamp dob, String gender, String avatar, AuthenticationProvider auth_provider, List<AddressEntity> addressEntityList, List<OrderEntity> orderEntities, Set<RoleEntity> roleEntitySet, CartEntity cartEntity) {
         this.id = id;
         this.name = name;
         this.username = username;
@@ -103,8 +95,12 @@ public class UserEntity extends BaseClassEntity{
         this.dob = dob;
         this.gender = gender;
         this.avatar = avatar;
-        this.status = status;
         this.auth_provider = auth_provider;
+        this.addressEntityList = addressEntityList;
+        this.orderEntities = orderEntities;
+        this.roleEntitySet = roleEntitySet;
+        this.cartEntity = cartEntity;
+
     }
 
     public String getStatus() {
