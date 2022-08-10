@@ -34,9 +34,9 @@ public class GoogleOauth2User implements OAuth2User {
     }
 
     public String getEmail() {
-        for (Object item: this.getAttributes().keySet()) {
-            System.out.println((String) item);
-        }
+//        for (Object item: this.getAttributes().keySet()) {
+//            System.out.println((String) item);
+//        }
         return (String) oAuth2User.getAttributes().get("email");
     }
 

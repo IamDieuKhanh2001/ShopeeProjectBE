@@ -70,6 +70,15 @@ public class UserEntity extends BaseClassEntity{
     public UserEntity() {
     }
 
+    public UserEntity(String name, String username, String email, String avatar, AuthenticationProvider auth_provider, Timestamp createdDate) {
+        this.name = name;
+        this.username = username;
+        this.email = email;
+        this.avatar = avatar;
+        this.auth_provider = auth_provider;
+        this.setCreatedDate(createdDate);
+    }
+
     public UserEntity(Long id, String name, String username, String password, String phone, String email, Timestamp dob, String gender, String avatar) {
         this.id = id;
         this.name = name;
