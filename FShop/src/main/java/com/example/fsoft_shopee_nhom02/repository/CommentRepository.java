@@ -8,13 +8,15 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
-    List<CommentEntity> findAllByProductEntityId(long id, Pageable pageable);
+    List<CommentEntity> findAllByProductEntityIdAndStatus(long id, Pageable pageable,
+                                                          String status);
 
-    List<CommentEntity> findAllByProductEntityIdAndRating(long id, long rating, Pageable pageable);
+    List<CommentEntity> findAllByProductEntityIdAndRating(long id, long rating,
+                                                          Pageable pageable, String status);
 
-    long countAllByProductEntityId(long id);
+    long countAllByProductEntityIdAndStatus(long id, String status);
 
-    long countAllByProductEntityIdAndRating(long id, long rating);
+    long countAllByProductEntityIdAndRatingAndStatus(long id, long rating, String status);
 
     @Query("SELECT sum(c.rating) FROM CommentEntity c WHERE c.productEntity.id = ?1")
     Long sumProductReview(long id);

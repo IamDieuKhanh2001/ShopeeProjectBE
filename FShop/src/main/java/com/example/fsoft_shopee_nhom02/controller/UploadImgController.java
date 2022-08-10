@@ -1,16 +1,12 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUserService;
-import com.example.fsoft_shopee_nhom02.dto.CommentDTO;
-import com.example.fsoft_shopee_nhom02.dto.ProductDTO;
-import com.example.fsoft_shopee_nhom02.dto.SuccessResponseDTO;
+import com.example.fsoft_shopee_nhom02.dto.*;
 import com.example.fsoft_shopee_nhom02.model.ProductEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
-import com.example.fsoft_shopee_nhom02.service.CloudinaryService;
-import com.example.fsoft_shopee_nhom02.service.ProductService;
-import com.example.fsoft_shopee_nhom02.service.UserService;
+import com.example.fsoft_shopee_nhom02.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +24,10 @@ public class UploadImgController {
 
     @Autowired
     private ProductService productService;
+    @Autowired
+    private SubCategoryService subCategoryService;
+    @Autowired
+    private ShopService shopService;
 
     @PostMapping("/users/avatar")
     public ResponseEntity<?> uploadAvatar(
@@ -79,5 +79,21 @@ public class UploadImgController {
         }
 
         return productService.postCommentImg(id, img, username);
+    }
+
+    @PostMapping("/admin/subcategory/{id}/image")
+    public SubCategoryDTO uploadSubcategoryImg(@PathVariable long id,
+                                           @RequestParam MultipartFile image) {
+
+        return subCategoryService.uploadImage(id,image);
+
+    }
+
+    @PostMapping("/admin/shop/{id}/image")
+    public ShopDTO uploadShopImg(@PathVariable long id,
+                                 @RequestParam MultipartFile avatar,
+                                 @RequestParam MultipartFile background) {
+
+        return shopService.uploadImage(id,avatar,background);
     }
 }

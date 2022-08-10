@@ -10,9 +10,11 @@ import com.example.fsoft_shopee_nhom02.model.ShopEntity;
 import com.example.fsoft_shopee_nhom02.model.SubCategoryEntity;
 import com.example.fsoft_shopee_nhom02.repository.*;
 import com.example.fsoft_shopee_nhom02.service.CategoryService;
+import com.example.fsoft_shopee_nhom02.service.CloudinaryService;
 import com.example.fsoft_shopee_nhom02.service.SubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,8 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     private ShopRepository shopRepository;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public SubCategoryDTO save(SubCategoryDTO subCategoryDTO) {
@@ -211,6 +215,24 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
         subCategory.setStatus("Inactive");
         subCategory = subCategoryRepository.save(subCategory);
+    }
+
+    @Override
+    public SubCategoryDTO uploadImage(long id,MultipartFile image) {
+        SubCategoryEntity subCategory = subCategoryRepository.findById(id)
+                .orElseThrow(() -> new BadRequest("Not found subcategory with id = "+id));
+
+        String imageUrl = cloudinaryService.uploadFile(image,String.valueOf(id),
+                "ShopeeProject"+ "/" + "Subcategory");
+
+        if(imageUrl == "-1"){
+            subCategory.setImage("");
+        }
+        else {
+            subCategory.setImage(imageUrl);
+        }
+        subCategoryRepository.save(subCategory);
+        return SubCategoryMapper.toSubCategoryDto(subCategory);
     }
 
     //check name subcategory can not similar in category

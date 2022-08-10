@@ -2,6 +2,7 @@ package com.example.fsoft_shopee_nhom02.service;
 
 import com.example.fsoft_shopee_nhom02.dto.SubCategoryDTO;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,4 +17,5 @@ public interface SubCategoryService {
     SubCategoryDTO update (SubCategoryDTO subCategoryDTO);
     void delete (long id);
     void hide (long id);
+    SubCategoryDTO uploadImage(long id,MultipartFile image);
 }

@@ -123,6 +123,7 @@ public class ProductService {
             product = ProductMapper.toProductEntity(productDTO);
             product.setSold(0L);
             product.setTotalView(0L);
+            product.setStatus("Active");
         }
         SubCategoryEntity subCategoryEntity = subCategoryRepository.findById(productDTO.getSubCategoryId())
                 .orElse(null);
@@ -152,7 +153,8 @@ public class ProductService {
         }
         // Tinh trung binh neu khac null
         else {
-            long totalCmt = commentRepository.countAllByProductEntityId(product.getId());
+            long totalCmt = commentRepository.countAllByProductEntityIdAndStatus(
+                    product.getId(), "Active");
             // Tinh trung binh va lam tron 1 so sau dau phay
             double avgRating = (double) sumRating / totalCmt;
             double roundAvgRating = (double) Math.round(avgRating * 10.0) / 10.0;
@@ -191,7 +193,7 @@ public class ProductService {
 
     public ResponseEntity<ListOutputResult> getAllProducts(String page, String limit) {
         ListOutputResult result = new ListOutputResult();
-        long productsNumber = productRepository.count();
+        long productsNumber = productRepository.countAllByStatus("Active");
 
         limit = (limit == null || limit.equals("")
                 || !isNumber(limit) || Long.parseLong(limit) < 0) ? "12" : limit;
@@ -202,7 +204,7 @@ public class ProductService {
 
         Pageable pageable = PageRequest.of((Integer.parseInt(page) - 1), Integer.parseInt(limit));
 
-        List<ProductEntity> products = productRepository.findAll(pageable).getContent();
+        List<ProductEntity> products = productRepository.findAllByStatus("Active", pageable);
 
         for (ProductEntity product : products) {
             ProductDTO productDTO = dtoHandler(product);
@@ -225,7 +227,7 @@ public class ProductService {
         ProductEntity product = productRepository.findById(id)
                 .orElse(null);
 
-        if(product == null) {
+        if(product == null || product.getStatus().equals("Inactive")) {
             return new ResponseEntity<>("Cannot found product id " + id, HttpStatus.BAD_REQUEST);
         }
 
@@ -244,9 +246,18 @@ public class ProductService {
             return new ResponseEntity<>("Cannot found product id " + id, HttpStatus.BAD_REQUEST);
         }
 
-        productRepository.delete(product);
-        typeRepository.deleteAllByProductEntityId(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//        productRepository.delete(product);
+//        typeRepository.deleteAllByProductEntityId(id);
+
+        if(product.getStatus().equals("Active")) {
+            product.setStatus("Inactive");
+        }
+        else
+            product.setStatus("Active");
+
+        productRepository.save(product);
+
+        return new ResponseEntity<>("State changed!", HttpStatus.OK);
     }
 
 //endregion
@@ -341,14 +352,15 @@ public class ProductService {
 //                : productRepository.findAllBySearchQuery(keyword);
             if(keyword == null) {
                 if(sub != null && isNumber(sub) && !sub.equals("")) {
-                    productEntities = productRepository.findAllBySubCategoryEntityId(Long.parseLong(sub));
+                    productEntities = productRepository.
+                            findAllBySubCategoryEntityIdAndStatus(Long.parseLong(sub), "Active");
                 }
                 else
-                    productEntities = productRepository.findAll();
+                    productEntities = productRepository.findAllByStatus("Active");
             }
             else {
                 if(sub != null && isNumber(sub) && !sub.equals("")) {
-                    productEntities = productRepository.findAllBySearchAndSubCate(keyword,
+                    productEntities = productRepository.findAllBySearchAndSubCateAndStatus(keyword,
                             Long.parseLong(sub));
                 }
                 else
@@ -404,19 +416,21 @@ public class ProductService {
 
             if(keyword == null) {
                 if(sub != null && isNumber(sub) && !sub.equals("")) {
-                    productEntities = productRepository.findAllBySubCategoryEntityId(Long.parseLong(sub), pageable);
+                    productEntities = productRepository.findAllBySubCategoryEntityIdAndStatus(
+                            Long.parseLong(sub), pageable, "Active");
                     productsNumber = productRepository.countAllBySubCate(Long.parseLong(sub));
                 }
                 else {
-                    productEntities = productRepository.findAll(pageable).getContent();
-                    productsNumber = productRepository.count();
+                    productEntities = productRepository.findAllByStatus("Active", pageable);
+                    productsNumber = productRepository.countAllByStatus("Active");
                 }
             }
             else {
                 if(sub != null && isNumber(sub) && !sub.equals("")) {
-                    productEntities = productRepository.findAllBySearchAndSubCate(keyword,
+                    productEntities = productRepository.findAllBySearchAndSubCateAndStatus(keyword,
                             Long.parseLong(sub), pageable);
-                    productsNumber = productRepository.countAllBySearchAndSubCate(keyword, Long.parseLong(sub));
+                    productsNumber = productRepository.countAllBySearchAndSubCateAndStatus(keyword,
+                            Long.parseLong(sub));
                 }
                 else {
                     productEntities = productRepository.findAllBySearchQuery(keyword, pageable);
@@ -558,15 +572,17 @@ public class ProductService {
             if(Long.parseLong(rating) < 1)
                 rating = "1";
 
-            commentEntities = commentRepository.
-                    findAllByProductEntityIdAndRating(id, Long.parseLong(rating), pageable);
+            commentEntities = commentRepository.findAllByProductEntityIdAndRating(id,
+                    Long.parseLong(rating), pageable, "Active");
 
-            res.setItemsNumber(commentRepository.countAllByProductEntityIdAndRating(id, Long.parseLong(rating)));
+            res.setItemsNumber(commentRepository.countAllByProductEntityIdAndRatingAndStatus(id,
+                    Long.parseLong(rating), "Active"));
         }
         // Default get comments
         else {
-            commentEntities = commentRepository.findAllByProductEntityId(id, pageable);
-            res.setItemsNumber(commentRepository.countAllByProductEntityId(id));
+            commentEntities = commentRepository.findAllByProductEntityIdAndStatus(id,
+                    pageable, "Active");
+            res.setItemsNumber(commentRepository.countAllByProductEntityIdAndStatus(id, "Active"));
         }
 
         if(commentEntities.size() == 0) {
@@ -586,6 +602,26 @@ public class ProductService {
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
+    public ResponseEntity<?> banComment(long id) {
+        CommentEntity comment = commentRepository.findById(id).orElse(null);
+
+        if(comment == null) {
+            return new ResponseEntity<>("Not found comment id " + id,
+                    HttpStatus.BAD_REQUEST);
+        }
+
+        if(comment.getStatus().equals("Active")) {
+            comment.setStatus("Inactive");
+        }
+        else
+            comment.setStatus("Active");
+
+        commentRepository.save(comment);
+
+        return new ResponseEntity<>("State changed!", HttpStatus.OK);
+    }
+
 
 //endregion
 
