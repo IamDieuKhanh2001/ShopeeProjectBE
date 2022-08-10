@@ -6,19 +6,22 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import static com.example.fsoft_shopee_nhom02.Notification.NotificationVar.*;
+
 @Configuration
 @EnableWebSocketMessageBroker
 public class NotificationConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/NotificationService").setAllowedOriginPatterns("http://localhost:3000/").withSockJS();
+        registry.addEndpoint(endpoint).setAllowedOriginPatterns("*").withSockJS();
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        // config for client sent
-        registry.setApplicationDestinationPrefixes("/message");
-        // config for subscribe
-        registry.setUserDestinationPrefix("/user");
+        // client send
+        registry.setApplicationDestinationPrefixes(sendPrefix);
+        // server push
+        registry.enableSimpleBroker(pushPrefix);
     }
 }
+
