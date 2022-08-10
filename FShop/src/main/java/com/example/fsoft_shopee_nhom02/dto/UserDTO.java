@@ -4,6 +4,7 @@ import com.example.fsoft_shopee_nhom02.model.BaseClassEntity;
 import com.example.fsoft_shopee_nhom02.model.RoleEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import javax.persistence.Transient;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Set;

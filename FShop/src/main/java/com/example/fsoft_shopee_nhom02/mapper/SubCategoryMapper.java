@@ -19,7 +19,7 @@ public class SubCategoryMapper {
         SubCategoryEntity subCategory = new SubCategoryEntity();
         subCategory.setId(subCategoryDTO.getId());
         subCategory.setName(subCategoryDTO.getName());
-        subCategory.setImage(subCategoryDTO.getImage());
+        //subCategory.setImage(subCategoryDTO.getImage());
         subCategory.setStatus(subCategoryDTO.getStatus());
 
         return subCategory;

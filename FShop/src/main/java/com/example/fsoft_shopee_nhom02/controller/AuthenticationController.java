@@ -1,18 +1,16 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
-import com.example.fsoft_shopee_nhom02.auth.ApplicationUser;
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUserService;
 import com.example.fsoft_shopee_nhom02.auth.JwtUtil;
 import com.example.fsoft_shopee_nhom02.dto.AuthenticationRequest;
 import com.example.fsoft_shopee_nhom02.dto.AuthenticationResponse;
 import com.example.fsoft_shopee_nhom02.dto.SuccessResponseDTO;
 import com.example.fsoft_shopee_nhom02.dto.UserDTO;
-import com.example.fsoft_shopee_nhom02.service.EmailSenderService;
+import com.example.fsoft_shopee_nhom02.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
+@CrossOrigin
+@RequestMapping("")
 public class AuthenticationController {
 
     @Autowired
@@ -31,6 +31,9 @@ public class AuthenticationController {
 
     @Autowired
     private JwtUtil jwtTokenUtil;
+
+    @Autowired
+    private UserRepository userRepository;
 
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -45,12 +48,17 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception{
+    public Object authenticationToken(@RequestBody AuthenticationRequest authenticationRequest) throws Exception{
+        System.out.println(authenticationRequest.getUsername());
+        System.out.println(authenticationRequest.getPassword());
+        System.out.println();
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword())
+                            new UsernamePasswordAuthenticationToken
+                                    (authenticationRequest.getUsername(), authenticationRequest.getPassword())
             );
-        } catch (BadCredentialsException exception) {
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
             return ResponseEntity.badRequest().body("Username or password is invalid");
         }
         final UserDetails userDetails = applicationUserService
@@ -63,6 +71,11 @@ public class AuthenticationController {
                         (Set<GrantedAuthority>) userDetails.getAuthorities()));
     }
 
+    @GetMapping("/login/oauth2/code/google")
+    public ResponseEntity<?> googleLoginResponse() {
+        System.out.println(userRepository.findByUsername("user01").get().getAuth_provider());
+        return ResponseEntity.ok("ok");
+    }
 
 //    //Test api sẽ xóa sau
 //    @GetMapping("/test")

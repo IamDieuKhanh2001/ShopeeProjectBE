@@ -1,5 +1,6 @@
 package com.example.fsoft_shopee_nhom02.service;
 
+import com.example.fsoft_shopee_nhom02.auth.ApplicationUserService;
 import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.model.AddressEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
@@ -35,6 +36,9 @@ public class AddressService {
                 addressDTO.getName(),
                 addressDTO.getPhone(),
                 userEntityOptional.get());
+        if(userEntityOptional.get().getAddressEntityList().size() == 0) {
+            newUserAddress.setAddressDefault(true);
+        }
         addressRepository.save(newUserAddress);
         return true;
     }
@@ -59,6 +63,32 @@ public class AddressService {
         addressEntity.setPhoneNumber(addressDTO.getPhone());
         try {
             addressRepository.save(addressEntity);
+        } catch (Exception ex) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean setDefaultAddress(Long addressId) {
+        String usernameLogin = ApplicationUserService.GetUsernameLoggedIn();
+        Optional<UserEntity> userEntityOptional = userRepository.findByUsername(usernameLogin);
+        if(!userEntityOptional.isPresent()) {
+            throw new IllegalStateException("Username " + usernameLogin + " not found");
+        }
+        Optional<AddressEntity> addressOptional = addressRepository.findById(addressId);
+        if(!addressOptional.isPresent()) {
+            return false;
+        }
+        AddressEntity newDefaultAddress = addressOptional.get();
+        newDefaultAddress.setAddressDefault(true);
+
+        AddressEntity currentDefaultAddress = addressRepository
+                .findAddressEntityByAddressDefaultAndUserEntity(true, userEntityOptional.get());
+        currentDefaultAddress.setAddressDefault(false);
+
+        try {
+            addressRepository.save(currentDefaultAddress);
+            addressRepository.save(newDefaultAddress);
         } catch (Exception ex) {
             return false;
         }

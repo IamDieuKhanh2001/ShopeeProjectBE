@@ -73,8 +73,8 @@ public class ProductController {
         String page = requestParams.get("page");
         String limit = requestParams.get("limit");
         String keyword = requestParams.get("keyword");
-        String minPrice = requestParams.get("min-price");
-        String maxPrice = requestParams.get("max-price");
+        String minPrice = requestParams.get("minPrice");
+        String maxPrice = requestParams.get("maxPrice");
         String subCate = requestParams.get("sub");
 
         return productService.search(page, limit, keyword, minPrice, maxPrice, subCate);
@@ -92,5 +92,10 @@ public class ProductController {
         String rating = requestParams.get("rating");
 
         return productService.getAllComments(id, page, limit, rating);
+    }
+
+    @DeleteMapping("admin/products/comments/{id}")
+    ResponseEntity<?> deleteComment(@PathVariable long id) {
+        return productService.banComment(id);
     }
 }

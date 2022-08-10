@@ -72,4 +72,19 @@ public class AddressController {
         }
         return ResponseEntity.badRequest().body("Update address for user fail");
     }
+
+    @PutMapping("/address/setDefault")
+    public ResponseEntity<?> setDefaultUserAddress(@RequestParam Map<String, String> requestParams) {
+        if(requestParams.get("addressId") == null) {
+            throw new IllegalStateException("Set default address for user fail! UPDATE need ?addressId= param");
+        }
+        Long addressId = Long.parseLong(requestParams.get("addressId"));
+
+        if(addressService.setDefaultAddress(addressId)) {
+            return ResponseEntity.ok(
+                    new SuccessResponseDTO(HttpStatus.OK, "Set default address for user success")
+            );
+        }
+        return ResponseEntity.badRequest().body("Set default address for user fail");
+    }
 }

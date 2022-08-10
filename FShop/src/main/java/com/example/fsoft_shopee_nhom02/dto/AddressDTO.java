@@ -5,6 +5,15 @@ public class AddressDTO {
     private String address;
     private String name;
     private String phone;
+    private Boolean addressDefault;
+
+    public Boolean getAddressDefault() {
+        return addressDefault;
+    }
+
+    public void setAddressDefault(Boolean addressDefault) {
+        this.addressDefault = addressDefault;
+    }
 
     public AddressDTO(String address, String name, String phone) {
         this.address = address;
