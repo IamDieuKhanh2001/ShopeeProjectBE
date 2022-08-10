@@ -36,6 +36,15 @@ public class UserEntity extends BaseClassEntity{
     @JsonManagedReference
     private List<AddressEntity> addressEntityList =new ArrayList<>();
 
+    public UserEntity(String name, String username, String email, String avatar, AuthenticationProvider auth_provider, Timestamp create_date) {
+        this.name = name;
+        this.username = username;
+        this.email = email;
+        this.avatar = avatar;
+        this.auth_provider = auth_provider;
+        this.setCreatedDate(create_date);
+    }
+
     public List<AddressEntity> getAddressEntityList() {
         return addressEntityList;
     }
