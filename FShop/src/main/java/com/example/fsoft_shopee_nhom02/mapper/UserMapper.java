@@ -24,7 +24,6 @@ public class UserMapper {
     public static UserDTO toUserDTO(UserEntity userEntity){
         UserDTO userDTO = new UserDTO();
 
-        userDTO.setId(userEntity.getId());
         userDTO.setUsername(userEntity.getUsername());
         userDTO.setPassword(userEntity.getPassword());
         userDTO.setPhone(userEntity.getPhone());

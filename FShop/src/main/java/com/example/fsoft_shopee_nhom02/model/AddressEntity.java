@@ -16,6 +16,11 @@ public class AddressEntity {
     private String address;
     private String name;
     private String phoneNumber;
+    private String ward;
+    private String city;
+    private String district;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean addressDefault = false;
 
     //  Tạo quan hệ với bảng User
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,6 +49,15 @@ public class AddressEntity {
         this.userEntity = userEntity;
     }
 
+    public AddressEntity(Long id, String address, String name, String phoneNumber, Boolean addressDefault, UserEntity userEntity) {
+        this.id = id;
+        this.address = address;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.addressDefault = addressDefault;
+        this.userEntity = userEntity;
+    }
+
     public String getName() {
         return name;
     }
@@ -66,6 +80,14 @@ public class AddressEntity {
         this.userEntity = userEntity;
     }
 
+    public Boolean getAddressDefault() {
+        return addressDefault;
+    }
+
+    public void setAddressDefault(Boolean addressDefault) {
+        this.addressDefault = addressDefault;
+    }
+
     public Long getId() {
         return id;
     }
@@ -80,6 +102,40 @@ public class AddressEntity {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public AddressEntity(String address, String name, String phoneNumber, String ward, String city, String district, UserEntity userEntity) {
+        this.address = address;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.ward = ward;
+        this.city = city;
+        this.district = district;
+        this.userEntity = userEntity;
+    }
+
+    public String getWard() {
+        return ward;
+    }
+
+    public void setWard(String ward) {
+        this.ward = ward;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
     }
 
     @Override

@@ -9,6 +9,7 @@ public class CommentMapper {
     public static CommentEntity toCommentEntity(CommentDTO commentDTO, CommentEntity comment) {
         comment.setRating(commentDTO.getRating());
         comment.setComment(commentDTO.getComment());
+        comment.setStatus("Active");
         comment.setCreatedDate(new Timestamp(System.currentTimeMillis()));
 
         return comment;
