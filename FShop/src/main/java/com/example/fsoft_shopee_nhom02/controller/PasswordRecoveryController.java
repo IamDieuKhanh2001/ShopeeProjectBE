@@ -5,6 +5,7 @@ import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
 import com.example.fsoft_shopee_nhom02.dto.OtpSendMailResponseDTO;
 import com.example.fsoft_shopee_nhom02.dto.RecoveryPasswordDTO;
 import com.example.fsoft_shopee_nhom02.dto.SuccessResponseDTO;
+import com.example.fsoft_shopee_nhom02.exception.BadRequest;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.service.EmailSenderService;
 import com.example.fsoft_shopee_nhom02.service.UserService;
@@ -28,7 +29,7 @@ public class PasswordRecoveryController {
     @GetMapping(path = "/getOtp")
     public OtpSendMailResponseDTO sendOtpRecoveryCodeToUserEmail(@RequestParam Map<String, String> requestParams) {
         if(requestParams.get("email") == null) {
-            throw new IllegalStateException("change password by address for user fail! need ?email= param");
+            throw new BadRequest("change password by address for user fail! need ?email= param");
         }
         String emailRecovery = (requestParams.get("email"));
         UserEntity user = userService.getUsersByEmail(emailRecovery).get(0); //Kiem tra user voi email khoi phuc
@@ -36,7 +37,7 @@ public class PasswordRecoveryController {
         try {
             sendRecoveryEmail(emailRecovery, user.getUsername(), otpCode);
         } catch (MessagingException e) {
-            throw new IllegalStateException("gmail gửi thất bại");
+            throw new BadRequest("gmail gửi thất bại");
         }
 
         return new OtpSendMailResponseDTO("Valid", otpCode);
@@ -53,7 +54,7 @@ public class PasswordRecoveryController {
     @PutMapping(path = "/recovery")
     public SuccessResponseDTO recoveryPassword(@RequestBody RecoveryPasswordDTO userChangePassword, @RequestParam Map<String, String> requestParams) {
         if(requestParams.get("email") == null) {
-            throw new IllegalStateException("change password by address for user fail! need ?email= param");
+            throw new BadRequest("change password by address for user fail! need ?email= param");
         }
         System.out.println(userChangePassword.getPassword());
         String userEmail = (requestParams.get("email"));
