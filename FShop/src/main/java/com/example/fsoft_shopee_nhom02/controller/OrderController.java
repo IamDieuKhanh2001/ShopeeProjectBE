@@ -6,6 +6,7 @@ import com.example.fsoft_shopee_nhom02.model.OrderEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
@@ -30,21 +31,27 @@ public class OrderController {
     private final AddressService addressService;
     private final CartService cartService;
     private final CartProductService cartProductService;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
     @Autowired
-    public OrderController(OrderDetailService orderDetailService, OrderService orderService, UserService userService, AddressService addressService, CartService cartService, CartProductService cartProductService) {
+    public OrderController(OrderDetailService orderDetailService, OrderService orderService, UserService userService, AddressService addressService, CartService cartService, CartProductService cartProductService, SimpMessagingTemplate simpMessagingTemplate) {
         this.orderDetailService = orderDetailService;
         this.orderService = orderService;
         this.userService = userService;
         this.addressService = addressService;
         this.cartService = cartService;
         this.cartProductService = cartProductService;
+        this.simpMessagingTemplate = simpMessagingTemplate;
+    }
+
+    @GetMapping("sentMessage")
+    public void sentMessage(@RequestBody Map<String, String> message) {
+        simpMessagingTemplate.convertAndSendToUser("hehe", "/client", message.get("message"));
     }
 
     @GetMapping("/all")
     public Object getAllOrder() {
         List<OrderEntity> orderEntityList = orderService.getAll();
-
         for (OrderEntity i : orderEntityList) {
             System.out.println(i.getCreatedDate());
         }
