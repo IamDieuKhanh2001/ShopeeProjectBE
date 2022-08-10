@@ -1,6 +1,6 @@
 package com.example.fsoft_shopee_nhom02.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
@@ -20,6 +20,7 @@ public class UserEntity extends BaseClassEntity{
     private String password;
     private String phone;
     private String email;
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Timestamp dob;
     private String gender;
     private String avatar;
