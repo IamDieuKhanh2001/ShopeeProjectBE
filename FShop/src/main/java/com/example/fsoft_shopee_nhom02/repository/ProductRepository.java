@@ -90,8 +90,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     @Query(value = "SELECT pro FROM ProductEntity pro JOIN " +
             "pro.subCategoryEntity sub JOIN " +
             "sub.categoryEntity cat " +
-            "WHERE cat.id = ?1 " +
-            "AND pro.name LIKE %?2%" +
+            "WHERE cat.id = ?2 " +
+            "AND pro.name LIKE %?1% " +
             "AND pro.status = 'Active'")
     List<ProductEntity> findAllBySearchAndByCatIdAndStatus(String search, long id);
 
@@ -99,7 +99,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
             "pro.subCategoryEntity sub JOIN " +
             "sub.categoryEntity cat " +
             "WHERE cat.id = ?2 " +
-            "AND pro.name LIKE %?1%" +
+            "AND pro.name LIKE %?1% " +
             "AND pro.status = 'Active'")
     List<ProductEntity> findAllBySearchAndByCatIdAndStatus(String search, long id, Pageable pageable);
 
@@ -107,7 +107,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
             "pro.subCategoryEntity sub JOIN " +
             "sub.categoryEntity cat " +
             "WHERE cat.id = ?2 " +
-            "AND pro.name LIKE %?1%" +
+            "AND pro.name LIKE %?1% " +
             "AND pro.status = 'Active'")
     long countAllBySearchAndByCatIdAndStatus(String search, long id);
 
@@ -139,7 +139,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     @Query(value = "SELECT pro FROM ProductEntity pro JOIN " +
             "pro.subCategoryEntity sub JOIN " +
             "sub.categoryEntity cat " +
-            "WHERE pro.name LIKE %?1%" +
+            "WHERE pro.name LIKE %?1% " +
             "AND cat.id = ?2 " +
             "AND sub.id = ?3 " +
             "AND pro.status = 'Active'")
@@ -149,7 +149,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     @Query(value = "SELECT pro FROM ProductEntity pro JOIN " +
             "pro.subCategoryEntity sub JOIN " +
             "sub.categoryEntity cat " +
-            "WHERE pro.name LIKE %?1%" +
+            "WHERE pro.name LIKE %?1% " +
             "AND cat.id = ?2 " +
             "AND sub.id = ?3 " +
             "AND pro.status = 'Active'")
@@ -159,7 +159,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     @Query(value = "SELECT count(pro) FROM ProductEntity pro JOIN " +
             "pro.subCategoryEntity sub JOIN " +
             "sub.categoryEntity cat " +
-            "WHERE pro.name LIKE %?1%" +
+            "WHERE pro.name LIKE %?1% " +
             "AND cat.id = ?2 " +
             "AND sub.id = ?3 " +
             "AND pro.status = 'Active'")
