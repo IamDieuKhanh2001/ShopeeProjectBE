@@ -10,7 +10,6 @@ import java.util.Set;
 
 public class UserDTO extends BaseClassEntity {
 
-    private long id;
     private String username;
     private String password;
     private String phone;
@@ -19,7 +18,6 @@ public class UserDTO extends BaseClassEntity {
     private String email;
     @JsonFormat(pattern="yyyy-MM-dd")
     private Timestamp dob;
-    private int age;
     private String avatar;
     private Set<RoleEntity> roleEntitySet;
 
@@ -74,8 +72,7 @@ public class UserDTO extends BaseClassEntity {
         this.avatar = avatar;
     }
 
-    public UserDTO(long id, String username, String password, String phone, String name, String gender, String email, Timestamp dob, String avatar, Set<RoleEntity> roleEntitySet) {
-        this.id = id;
+    public UserDTO(String username, String password, String phone, String name, String gender, String email, Timestamp dob, String avatar, Set<RoleEntity> roleEntitySet) {
         this.username = username;
         this.password = password;
         this.phone = phone;
@@ -85,14 +82,6 @@ public class UserDTO extends BaseClassEntity {
         this.dob = dob;
         this.avatar = avatar;
         this.roleEntitySet = roleEntitySet;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public UserDTO(String username) {
@@ -171,13 +160,4 @@ public class UserDTO extends BaseClassEntity {
         this.roleEntitySet = roleEntitySet;
     }
 
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public int getAge(){
-        Calendar dobCal = Calendar.getInstance();
-        dobCal.setTimeInMillis(dob.getTime());
-        return Calendar.getInstance().get(Calendar.YEAR) - dobCal.get(Calendar.YEAR) ;
-    }
 }

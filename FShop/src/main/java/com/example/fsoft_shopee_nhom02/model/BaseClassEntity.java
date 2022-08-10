@@ -7,9 +7,9 @@ import java.sql.Timestamp;
 
 @MappedSuperclass
 public abstract class BaseClassEntity {
-    @JsonFormat(timezone="Asia/Jakarta")
+    @JsonFormat(timezone="Asia/Jakarta", pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp createdDate;
-    @JsonFormat(timezone="Asia/Jakarta")
+    @JsonFormat(timezone="Asia/Jakarta", pattern = "yyyy-MM-dd HH:mm:ss")
     private Timestamp modifiedDate;
 
     public Timestamp getCreatedDate() {

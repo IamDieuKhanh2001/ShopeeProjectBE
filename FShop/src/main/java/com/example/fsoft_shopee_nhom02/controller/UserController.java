@@ -29,9 +29,9 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUser());
     }
 
-    @GetMapping("/admin/users/{id}")
-    ResponseEntity<?> findByIDUser(@PathVariable Long id) {
-        return ResponseEntity.ok(userService.findByIdUser(id));
+    @GetMapping("/admin/users/infoUser")
+    ResponseEntity<?> findByIDUser(@RequestParam(value = "email", required = false) String email) {
+        return ResponseEntity.ok(userService.findByEmailUser(email));
     }
 
     @GetMapping("/admin/users/count")
@@ -39,10 +39,38 @@ public class UserController {
         if(userService.countAllUser() == 0L){
             return ResponseEntity.ok("Empty!!");
         }
-        return ResponseEntity.ok("Total user: "+userService.countAllUser()+", Men user: "+userService.countMen()+
-                ", Women user: "+userService.countWomen()+", Kid user: "+userService.countKid());
+        long all = userService.countAllUser();
+        long kid = userService.countKid();
+        long men = userService.countMen();
+        long women = userService.countWomen();
+        return ResponseEntity.ok("Total user: "+all+", Men user: "+men+
+                ", Women user: "+women+", Kid user: "+kid);
     }
 
+    @GetMapping("/admin/users/searchName")
+    ResponseEntity<?> findByName(@RequestParam(value = "name", required = false) String name){
+        if (name.isEmpty())
+            return ResponseEntity.ok(userService.getAllUser());
+        return ResponseEntity.ok(userService.findByName(name));
+    }
+
+    @PostMapping("/admin/users/role")
+    ResponseEntity<?> upRoleUser(@RequestParam(value = "email", required = false) String email){
+        String username = userService.findByEmailUser(email).getUsername();
+        if (userService.upRole(email)){
+            return ResponseEntity.ok("Update Role User "+username+" Success");
+        }
+        return ResponseEntity.ok("User "+username+" already have this role!!!");
+    }
+
+    @DeleteMapping("/admin/users/role")
+    ResponseEntity<?> removeRoleUser(@RequestParam(value = "email", required = false) String email){
+        String username = userService.findByEmailUser(email).getUsername();
+        if (userService.removeRole(email)){
+            return ResponseEntity.ok("Remove User "+username+"'s ROLE_ADMIN Success");
+        }
+        return ResponseEntity.ok("User "+username+" is having basic user role!!!");
+    }
     @DeleteMapping("/admin/users/{username}")
     ResponseEntity<?> delete(@PathVariable String username){
         userService.deleteUser(username);
