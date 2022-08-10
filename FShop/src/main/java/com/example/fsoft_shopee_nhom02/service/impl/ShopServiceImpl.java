@@ -6,11 +6,13 @@ import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.ShopMapper;
 import com.example.fsoft_shopee_nhom02.model.ShopEntity;
 import com.example.fsoft_shopee_nhom02.repository.ShopRepository;
+import com.example.fsoft_shopee_nhom02.service.CloudinaryService;
 import com.example.fsoft_shopee_nhom02.service.ShopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,9 @@ public class ShopServiceImpl implements ShopService {
 
     @Autowired
     private ShopRepository shopRepository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public ShopDTO save(ShopDTO shopDTO) {
@@ -98,5 +103,34 @@ public class ShopServiceImpl implements ShopService {
             throw  new BadRequest("Not found shop name "+keyword);
         }
         return shopDTOS.get(0);
+    }
+
+    @Override
+    public ShopDTO uploadImage(long id, MultipartFile avatar, MultipartFile background) {
+        ShopEntity shop = shopRepository.findById(id)
+                        .orElseThrow(() -> new BadRequest("Not found shop with id ="+id));
+
+        String avatarUrl = cloudinaryService.uploadFile(avatar,"avatar",
+                "ShopeeProject" + "/" + "Shop" + "/" + shop.getName());
+
+        String bgUrl = cloudinaryService.uploadFile(avatar,"background",
+                "ShopeeProject" + "/" + "Shop" + "/" + shop.getName());
+
+        if(avatarUrl == "-1"){
+            shop.setAvatar(avatarUrl);
+        }
+        else {
+            shop.setAvatar("");
+        }
+        if(bgUrl == "-1"){
+            shop.setBackground(bgUrl);
+        }
+        else {
+            shop.setBackground("");
+        }
+
+        shopRepository.save(shop);
+
+        return ShopMapper.toShopDto(shop);
     }
 }
