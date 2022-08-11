@@ -6,6 +6,7 @@ import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.CategoryMapper;
 import com.example.fsoft_shopee_nhom02.model.CategoryEntity;
 import com.example.fsoft_shopee_nhom02.model.ShopEntity;
+import com.example.fsoft_shopee_nhom02.model.SubCategoryEntity;
 import com.example.fsoft_shopee_nhom02.repository.CategoryRepository;
 import com.example.fsoft_shopee_nhom02.repository.ShopRepository;
 import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
@@ -19,8 +20,6 @@ import java.util.List;
 
 @Component
 public class CategoryServiceImpl implements CategoryService {
-    @Autowired
-    private SubCategoryService subCategoryService;
 
     @Autowired
     private ShopRepository shopRepository;
@@ -40,13 +39,30 @@ public class CategoryServiceImpl implements CategoryService {
 
         ShopEntity shopEntity = shopRepository.findById(categoryDTO.getShopId()).orElseThrow(()
                 -> new BadRequest("Not found shop with id = " + categoryDTO.getShopId()));
+        //update
+        if(categoryDTO.getId() !=null){
+            category = categoryRepository.findById(categoryDTO.getId()).orElseThrow(()
+                    -> new BadRequest("Not found category with id = "+categoryDTO.getId()));
 
-        //check name category in 1 shop is not similar
-        if(checkNameInShop(categoryDTO)){
-            throw new BadRequest("This name have been used!!");
+            if(categoryRepository.findByNameAndShopIdExceptOldName(categoryDTO.getId(),
+                    categoryDTO.getShopId(),categoryDTO.getName()) != null){
+                throw new BadRequest("This name have been used!!");
+            }
+
+            category.setName(categoryDTO.getName());
+            category.setImage(categoryDTO.getImage());
+            category.setStatus(categoryDTO.getStatus());
+        }
+        else { //create
+            //check name category in 1 shop is not similar
+            if (categoryRepository.findOneByShopEntityIdAndName(categoryDTO.getShopId(),
+                    categoryDTO.getName()) != null) {
+                throw new BadRequest("This name have been used!!");
+            }
+
+            category = CategoryMapper.toEntity(categoryDTO);
         }
 
-        category = CategoryMapper.toEntity(categoryDTO);
         category.setShopEntity(shopEntity);
 
         category = categoryRepository.save(category);
@@ -65,8 +81,8 @@ public class CategoryServiceImpl implements CategoryService {
         CategoryEntity category = categoryRepository.findById(categoryDTO.getId()).orElseThrow(()
                 -> new BadRequest("Not found category with id = "+categoryDTO.getId()));
 
-        //check name category in 1 shop is not similar
-        if(checkNameInShop(categoryDTO)){
+        if(categoryRepository.findByNameAndShopIdExceptOldName(categoryDTO.getId(),
+                categoryDTO.getShopId(),categoryDTO.getName()) != null){
             throw new BadRequest("This name have been used!!");
         }
 
@@ -159,13 +175,12 @@ public class CategoryServiceImpl implements CategoryService {
                 -> new BadRequest("Fail!This category not exist"));
 
         //set subcategory inactive
-        //subCategoryService.hide(id);
 
-//        List<SubCategoryEntity> subCategories = subCategoryRepository.findAllByCategoryEntityId(id);
-//        for(SubCategoryEntity subCategory : subCategories){
-//            subCategory.setStatus("Inactive");
-//            subCategory = subCategoryRepository.save(subCategory);
-//        }
+        List<SubCategoryEntity> subCategories = subCategoryRepository.findAllByCategoryEntityId(id);
+        for(SubCategoryEntity subCategory : subCategories){
+            subCategory.setStatus("Inactive");
+            subCategory = subCategoryRepository.save(subCategory);
+        }
 
         category.setStatus("Inactive");
 
@@ -184,17 +199,5 @@ public class CategoryServiceImpl implements CategoryService {
 
         return categoryDTOS;
     }
-    //check name category can not similar in shop
-    public boolean checkNameInShop(CategoryDTO categoryDTO){
-        boolean check = false;
-        List<CategoryEntity> categories = categoryRepository.findAllByShopEntityId(categoryDTO.getShopId());
 
-        for(CategoryEntity category : categories){
-            if(category.getName().equals(categoryDTO.getName())){
-                check = true;
-                break;
-            }
-        }
-        return check;
-    }
 }

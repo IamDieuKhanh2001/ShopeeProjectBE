@@ -73,7 +73,7 @@ public class CategoryController {
     @PutMapping("/admin/category/{id}")
     public ResponseEntity<?> updateCategory(@PathVariable long id, @RequestBody CategoryDTO model){
         model.setId(id);
-        return ResponseEntity.ok(categoryService.update(model));
+        return ResponseEntity.ok(categoryService.save(model));
     }
 
     @DeleteMapping("/admin/category/{id}")

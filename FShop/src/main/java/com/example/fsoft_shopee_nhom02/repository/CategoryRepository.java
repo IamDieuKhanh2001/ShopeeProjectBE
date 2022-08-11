@@ -14,6 +14,10 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity,Long> {
     long countByShopEntityId(long shopId);
     long countByStatus(String status);
     long countByShopEntityIdAndStatus(long shopId,String status);
+    CategoryEntity findOneByShopEntityIdAndName(long shopId, String name);
+    @Query(value = "SELECT c FROM CategoryEntity c WHERE c.id <> :id " +
+            "AND c.shopEntity.id = :shopId AND c.name = :name")
+    CategoryEntity findByNameAndShopIdExceptOldName(long id, long shopId, String name);
     List<CategoryEntity> findAllByShopEntityId(long shopId);
     List<CategoryEntity> findAllByStatus(String status);
     List<CategoryEntity> findAllByShopEntityIdAndStatus(long shopId,String status);
