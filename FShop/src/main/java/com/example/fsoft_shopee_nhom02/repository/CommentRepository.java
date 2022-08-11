@@ -8,8 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
-    List<CommentEntity> findAllByProductEntityIdAndStatus(long id, Pageable pageable,
-                                                          String status);
+    List<CommentEntity> findAllByProductEntityIdAndStatus(long id, String status);
 
     List<CommentEntity> findAllByProductEntityIdAndRating(long id, long rating,
                                                           Pageable pageable, String status);

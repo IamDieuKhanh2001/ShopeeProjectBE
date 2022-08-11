@@ -374,8 +374,25 @@ public class ProductService {
         }
     }
 
+    void paginationDTOSHandler(int size, String page, String limit,
+                    ListOutputResult res, List<?> dtos) {
+        page = checkTotalPage(size, Long.parseLong(limit), Long.parseLong(page));
+
+        // Start index and end index
+        int startIndex = (Integer.parseInt(page) - 1) * Integer.parseInt(limit);
+        int endIndex = (Integer.parseInt(limit) < size)
+                ? Integer.parseInt(page) * Integer.parseInt(limit)
+                : Integer.parseInt(page) * size;
+
+        if(endIndex > size - 1) {
+            endIndex = size;
+        }
+        res.setItemsNumber(size);
+        res.setList(dtos.subList(startIndex, endIndex));
+    }
+
     public ResponseEntity<ListOutputResult> search(String page, String limit, String keyword,
-                                   String minPrice, String maxPrice, String sub, String cat) {
+                                                   String minPrice, String maxPrice, String sub, String cat) {
         ListOutputResult result = new ListOutputResult();
 
         if(typeRepository.findMaxPrice() == null) {
@@ -421,28 +438,15 @@ public class ProductService {
         // Search by Category
         productDTOS = filterByCate(cat, productDTOS);
 
-        // Pagination code below after filter the price range
-        page = checkTotalPage(productDTOS.size(), Long.parseLong(limit), Long.parseLong(page));
-
         if(productDTOS.isEmpty()) {
             return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
                     HttpStatus.NOT_FOUND);
         }
-        // Start index and end index
-        int startIndex = (Integer.parseInt(page) - 1) * Integer.parseInt(limit);
-        int endIndex = (Integer.parseInt(limit) < productDTOS.size())
-                ? Integer.parseInt(page) * Integer.parseInt(limit) : Integer.parseInt(page) * productDTOS.size();
 
-        if(endIndex > productDTOS.size() - 1) {
-            endIndex = productDTOS.size();
-        }
-
-        result.setItemsNumber(productDTOS.size());
-        result.setList(productDTOS.subList(startIndex, endIndex));
+        paginationDTOSHandler(productDTOS.size(), page, limit, result, productDTOS);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
-
 //endregion
 
 
@@ -537,6 +541,26 @@ public class ProductService {
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
+    List<CommentDTO> filterByRating(String rating, List<CommentDTO> commentDTOS) {
+        if(rating != null && !rating.equals("") && isNumber(rating)) {
+            rating = (Long.parseLong(rating) > 5) ? "5" : rating;
+            rating = (Long.parseLong(rating) < 1) ? "1" : rating;
+
+            List<CommentDTO> ratingFilter = new ArrayList<>();
+
+            for(CommentDTO commentDTO : commentDTOS) {
+                if(commentDTO.getRating() == Long.parseLong(rating)) {
+                    ratingFilter.add(commentDTO);
+                }
+            }
+
+            return ratingFilter;
+        }
+        else {
+            return commentDTOS;
+        }
+    }
+
     public ResponseEntity<ListOutputResult> getAllComments(long id, String page, String limit, String rating) {
         page = (!isValidPage(page)) ? "1" : page;
 
@@ -544,39 +568,12 @@ public class ProductService {
                 !isNumber(limit) || Long.parseLong(limit) < 0) ? "12" : limit;
 
         List<CommentDTO> commentDTOS = new ArrayList<>();
-        List<CommentEntity> commentEntities;
+        List<CommentEntity> commentEntities = commentRepository.
+                findAllByProductEntityIdAndStatus(id, "Active");
         ListOutputResult res = new ListOutputResult();
-
-        Pageable pageable = PageRequest.of((Integer.parseInt(page) - 1), Integer.parseInt(limit));
-
-        // if rating param, filter the comment by rating
 
         // Check if rating not a number or empty string set it to null
         rating = (!isNumber(rating) || rating.equals("")) ? null : rating;
-
-        if(rating != null) {
-            if(Long.parseLong(rating) > 5)
-                rating = "5";
-            if(Long.parseLong(rating) < 1)
-                rating = "1";
-
-            commentEntities = commentRepository.findAllByProductEntityIdAndRating(id,
-                    Long.parseLong(rating), pageable, "Active");
-
-            res.setItemsNumber(commentRepository.countAllByProductEntityIdAndRatingAndStatus(id,
-                    Long.parseLong(rating), "Active"));
-        }
-        // Default get comments
-        else {
-            commentEntities = commentRepository.findAllByProductEntityIdAndStatus(id,
-                    pageable, "Active");
-            res.setItemsNumber(commentRepository.countAllByProductEntityIdAndStatus(id, "Active"));
-        }
-
-        if(commentEntities.size() == 0) {
-            return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
-                    HttpStatus.NOT_FOUND);
-        }
 
         // Trans to DTO
         for(CommentEntity comment : commentEntities) {
@@ -586,7 +583,15 @@ public class ProductService {
             commentDTOS.add(commentDTO);
         }
 
-        res.setList(commentDTOS);
+        commentDTOS = filterByRating(rating, commentDTOS);
+
+        if(commentEntities.size() == 0 || commentDTOS.size() == 0) {
+            return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
+                    HttpStatus.NOT_FOUND);
+        }
+
+        // Call pagination function for DTOs
+        paginationDTOSHandler(commentDTOS.size(), page, limit, res, commentDTOS);
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
