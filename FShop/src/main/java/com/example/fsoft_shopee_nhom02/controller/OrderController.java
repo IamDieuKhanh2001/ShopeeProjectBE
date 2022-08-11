@@ -1,6 +1,5 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
-import com.example.fsoft_shopee_nhom02.Notification.NotificationConfig;
 import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.model.OrderDetailsEntity;
 import com.example.fsoft_shopee_nhom02.model.OrderEntity;
@@ -48,18 +47,15 @@ public class OrderController {
 
     @GetMapping("/sentMessage")
     public void sentMessage(@RequestBody Map<String, String> message) {
+        // more config
 
-        simpMessagingTemplate.convertAndSendToUser("hehe", destination, message.get("message"));
+        //
+        simpMessagingTemplate.convertAndSendToUser(message.get("UserId"), destination, message.get("message"));
     }
 
     @GetMapping("/all")
     public Object getAllOrder() {
-        List<OrderEntity> orderEntityList = orderService.getAll();
-        for (OrderEntity i : orderEntityList) {
-            System.out.println(i.getCreatedDate());
-        }
-
-        return orderEntityList;
+        return orderService.getAll();
     }
 
     @GetMapping("/detail/all")
@@ -102,8 +98,6 @@ public class OrderController {
 
     @PostMapping("/create_order")
     public Object CreateOrder(@RequestBody List<Object> req) throws ParseException {
-        long startTime = System.currentTimeMillis();
-
         // get request data
         List<Map<String, String>> orderDetailsEntityList_req = (List<Map<String, String>>) req.get(0);
         Map<String, String> orderInformation = (Map<String, String>) req.get(1);
@@ -182,10 +176,7 @@ public class OrderController {
         // delete cartProduct from DB
         cartProductService.deleteListOfCartProduct(productEntity_idList, CardId, typeList);
 
-        long endTime = System.currentTimeMillis();
-        long totalTime = endTime - startTime;
-
-        return "created order at " + datetimeFormat.format(new Date()) + " with duration: " + totalTime + "ms";
+        return "created order";
     }
 
     @PostMapping("/update_order/{id}")
@@ -194,37 +185,36 @@ public class OrderController {
 
         orderEntity.setModifiedDate(getCurrentDateTime());
 
-        for (Map.Entry<String, String> i : req.entrySet()) {
-            System.out.println(i.getKey());
-            switch (i.getKey()) {
+        req.forEach((key, value) -> {
+            switch (key) {
                 case "address":
-                    orderEntity.setAddress(i.getValue());
+                    orderEntity.setAddress(value);
                     break;
                 case "note":
-                    orderEntity.setNote(i.getValue());
+                    orderEntity.setNote(value);
                     break;
                 case "payment":
-                    orderEntity.setPayment(i.getValue());
+                    orderEntity.setPayment(value);
                     break;
                 case "phone":
-                    orderEntity.setPhone(i.getValue());
+                    orderEntity.setPhone(value);
                     break;
                 case "shipping_fee":
-                    orderEntity.setShippingFee(Long.parseLong(i.getValue()));
+                    orderEntity.setShippingFee(Long.parseLong(value));
                     break;
                 case "status":
-                    orderEntity.setStatus(i.getValue());
+                    orderEntity.setStatus(value);
                     break;
                 case "total_price":
-                    orderEntity.setTotalPrice(Long.parseLong(i.getValue()));
+                    orderEntity.setTotalPrice(Long.parseLong(value));
                     break;
                 case "username":
-                    orderEntity.setUserName(i.getValue());
+                    orderEntity.setUserName(value);
                     break;
                 default:
                     break;
             }
-        }
+        });
 
         orderService.updateOrder(orderEntity);
         return "updated order";
@@ -241,7 +231,7 @@ public class OrderController {
 
     @GetMapping("/get_shipping_fee")
     public Object get_shipping_fee(@RequestParam String f, @RequestParam String t, @RequestParam String w) {
-        String httpRequest = "Exception";
+        String httpRequest = "Can't get Shipping fee, Server Busy";
 
         try {
             URL url = new URL("http://www.vnpost.vn/vi-vn/tra-cuu-gia-cuoc?from=" + f + "&to=" + t + "&weight=" + w);
@@ -257,7 +247,7 @@ public class OrderController {
             bufferedReader.close();
             httpRequest = res_html.toString();
         } catch (Exception e) {
-            System.out.println("Exception");
+            System.out.println(httpRequest);
         }
 
         return httpRequest;
