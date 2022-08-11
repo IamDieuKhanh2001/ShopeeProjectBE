@@ -20,6 +20,10 @@ public interface SubCategoryRepository extends JpaRepository<SubCategoryEntity,L
             "AND c.shop_id = :shopId AND s.status = :status", nativeQuery = true)
     List<SubCategoryEntity> findAllByShopEntityIdAndStatus(long shopId, String status);
     List<SubCategoryEntity> findAllByStatus(String status);
+    SubCategoryEntity findOneByCategoryEntityIdAndName(long categoryId, String name);
+    @Query(value = "SELECT s FROM SubCategoryEntity s WHERE s.id <> :id" +
+            " AND s.categoryEntity.id = :categoryId AND s.name = :name")
+    SubCategoryEntity findByNameAndCategoryIdExceptOldName(long id, long categoryId, String name);
     long countByCategoryEntityId(long categoryId);
     long countByStatus(String status);
     long countByCategoryEntityIdAndStatus(long categoryId, String status);

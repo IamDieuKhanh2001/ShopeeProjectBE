@@ -48,12 +48,32 @@ public class SubCategoryServiceImpl implements SubCategoryService {
             throw new BadRequest("This category is inactive!!");
         }
 
-        //check name subcategory in 1 category is not similar
-        if(checkNameInCategory(subCategoryDTO)){
-            throw new BadRequest("This name have been used!!");
+        SubCategoryEntity subCategory;
+
+        if(subCategoryDTO.getId() == null) {
+            //create
+            //check name subcategory in 1 category is not similar
+            if (subCategoryRepository.findOneByCategoryEntityIdAndName(subCategoryDTO.getCategoryId()
+                    , subCategoryDTO.getName()) != null) {
+                throw new BadRequest("This name have been used!!");
+            }
+            subCategory = SubCategoryMapper.toEntity(subCategoryDTO);
+
+        }
+        else{ //update
+            subCategory  = subCategoryRepository.findById(subCategoryDTO.getId())
+                    .orElseThrow(() -> new BadRequest("Not found subcategory with id = "+subCategoryDTO.getId()));
+
+            if(subCategoryRepository.findByNameAndCategoryIdExceptOldName(subCategoryDTO.getId(),
+                    subCategoryDTO.getCategoryId(),subCategoryDTO.getName()) != null){
+                throw new BadRequest("This name have been used!!");
+            }
+
+            subCategory.setName(subCategoryDTO.getName());
+            subCategory.setImage(subCategoryDTO.getImage());
+            subCategory.setStatus(subCategoryDTO.getStatus());
         }
 
-        SubCategoryEntity subCategory = SubCategoryMapper.toEntity(subCategoryDTO);
         subCategory.setCategoryEntity(category);
         subCategory = subCategoryRepository.save(subCategory);
 
@@ -180,7 +200,8 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         }
 
         //check name subcategory in 1 category is not similar
-        if(checkNameInCategory(subCategoryDTO)){
+        if(subCategoryRepository.findByNameAndCategoryIdExceptOldName(subCategoryDTO.getId(),
+                subCategoryDTO.getCategoryId(),subCategoryDTO.getName()) != null){
             throw new BadRequest("This name have been used!!");
         }
 
@@ -207,11 +228,11 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                 .orElseThrow(() -> new BadRequest("Fail! This subcategory not exist"));
 
         //set product inactive
-        List<ProductEntity> products = productRepository.findAllBySubCategoryEntityId(id);
-        for(ProductEntity product : products){
-            product.setStatus("Inactive");
-            product = productRepository.save(product);
-        }
+//        List<ProductEntity> products = productRepository.findAllBySubCategoryEntityId(id);
+//        for(ProductEntity product : products){
+//            product.setStatus("Inactive");
+//            product = productRepository.save(product);
+//        }
 
         subCategory.setStatus("Inactive");
         subCategory = subCategoryRepository.save(subCategory);
@@ -225,7 +246,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         String imageUrl = cloudinaryService.uploadFile(image,String.valueOf(id),
                 "ShopeeProject"+ "/" + "Subcategory");
 
-        if(imageUrl == "-1"){
+        if(imageUrl.equals("-1")){
             subCategory.setImage("");
         }
         else {

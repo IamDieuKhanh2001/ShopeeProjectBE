@@ -85,18 +85,18 @@ public class SubCategoryController {
     @PutMapping("/admin/subcategory/{id}")
     public ResponseEntity<?> updateSubCategory(@PathVariable long id, @RequestBody SubCategoryDTO model){
         model.setId(id);
-        return ResponseEntity.ok(subCategoryService.update(model));
+        return ResponseEntity.ok(subCategoryService.save(model));
     }
 
     @DeleteMapping("/admin/subcategory/{id}")
-    public SuccessResponseDTO deleteSubCategory(@PathVariable long id) throws ParseException{
+    public SuccessResponseDTO deleteSubCategory(@PathVariable long id){
         subCategoryService.delete(id);
         return new SuccessResponseDTO(HttpStatus.OK,"Delete success");
     }
 
     //delete by just set status = Inactive
     @DeleteMapping("/admin/subcategory/hide/{id}")
-    public SuccessResponseDTO hideSubCategory(@PathVariable long id) throws ParseException{
+    public SuccessResponseDTO hideSubCategory(@PathVariable long id){
         subCategoryService.hide(id);
         return new SuccessResponseDTO(HttpStatus.OK,"Delete success");
     }
