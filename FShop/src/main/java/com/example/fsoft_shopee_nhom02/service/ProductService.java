@@ -204,7 +204,7 @@ public class ProductService {
 
         Pageable pageable = PageRequest.of((Integer.parseInt(page) - 1), Integer.parseInt(limit));
 
-        List<ProductEntity> products = productRepository.findAllByStatus("Active", pageable);
+        List<ProductEntity> products = productRepository.findAllWithCatIdAndSubCatIdAndStatus(pageable);
 
         for (ProductEntity product : products) {
             ProductDTO productDTO = dtoHandler(product);

@@ -75,6 +75,12 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     @Query(value = "SELECT pro FROM ProductEntity pro JOIN " +
             "pro.subCategoryEntity sub JOIN " +
             "sub.categoryEntity cat " +
+            "WHERE pro.status = 'Active'")
+    List<ProductEntity> findAllWithCatIdAndSubCatIdAndStatus(Pageable pageable);
+
+    @Query(value = "SELECT pro FROM ProductEntity pro JOIN " +
+            "pro.subCategoryEntity sub JOIN " +
+            "sub.categoryEntity cat " +
             "WHERE pro.name LIKE %?1% " +
             "AND pro.status = 'Active'")
     List<ProductEntity> findAllBySearchWithCatIdAndSubCatIdAndStatus(String search);
