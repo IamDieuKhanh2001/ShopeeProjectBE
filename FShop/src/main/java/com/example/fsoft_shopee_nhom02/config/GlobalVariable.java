@@ -5,7 +5,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
-import java.util.TimeZone;
 
 public class GlobalVariable {
     public static final SimpleDateFormat datetimeFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -18,7 +17,7 @@ public class GlobalVariable {
         return String.format("%06d", new Random().nextInt(999999));
     }
 
-    public static String GetRandom3DigitNumber() {
+    public static String GetRandom4DigitNumber() {
         return String.format("%04d", new Random().nextInt(9999));
     }
     public enum ORDER_STATUS {

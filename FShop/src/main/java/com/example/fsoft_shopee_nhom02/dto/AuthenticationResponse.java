@@ -7,6 +7,7 @@ import java.util.Set;
 public class AuthenticationResponse {
 
     private String jwt;
+    private Long id;
     private String username;
     private Set<GrantedAuthority> role;
 
@@ -18,10 +19,19 @@ public class AuthenticationResponse {
         this.role = role;
     }
 
-    public AuthenticationResponse(String jwt, String username, Set<GrantedAuthority> role) {
+    public AuthenticationResponse(String jwt, Long id, String username, Set<GrantedAuthority> role) {
         this.jwt = jwt;
+        this.id = id;
         this.username = username;
         this.role = role;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setJwt(String jwt) {

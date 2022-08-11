@@ -6,7 +6,9 @@ import com.example.fsoft_shopee_nhom02.dto.AuthenticationRequest;
 import com.example.fsoft_shopee_nhom02.dto.AuthenticationResponse;
 import com.example.fsoft_shopee_nhom02.dto.SuccessResponseDTO;
 import com.example.fsoft_shopee_nhom02.dto.UserDTO;
+import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
+import com.example.fsoft_shopee_nhom02.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +36,7 @@ public class AuthenticationController {
     private JwtUtil jwtTokenUtil;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
@@ -64,10 +66,11 @@ public class AuthenticationController {
         }
         final UserDetails userDetails = applicationUserService
                 .loadUserByUsername(authenticationRequest.getUsername());
-
+        UserEntity user = userService.findFirstByUsername(authenticationRequest.getUsername());
         final String jwt = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity
                 .ok(new AuthenticationResponse(jwt,
+                        user.getId(),
                         authenticationRequest.getUsername(),
                         (Set<GrantedAuthority>) userDetails.getAuthorities()));
     }
@@ -77,8 +80,10 @@ public class AuthenticationController {
         String username = jwtTokenUtil.extractUsername(jwtToken);
         final UserDetails userDetails = applicationUserService
                 .loadUserByUsername(username);
+        UserEntity user = userService.findFirstByUsername(userDetails.getUsername());
         return ResponseEntity
                 .ok(new AuthenticationResponse(jwtToken,
+                        user.getId(),
                         userDetails.getUsername(),
                         (Set<GrantedAuthority>) userDetails.getAuthorities()));
     }

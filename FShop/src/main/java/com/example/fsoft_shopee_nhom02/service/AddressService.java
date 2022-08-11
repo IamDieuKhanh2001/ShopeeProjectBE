@@ -48,6 +48,9 @@ public class AddressService {
 
     public boolean deleteAddressByAddressId(Long addressId) {
         Optional<AddressEntity> address = addressRepository.findById(addressId);
+        if(!address.isPresent()) {
+            return false;
+        }
         if (address.get().getAddressDefault()){                     //Kiểm tra xem địa chỉ bị xóa có phải default không
             try {
                 String username = address.get().getUserEntity().getUsername();
@@ -69,7 +72,6 @@ public class AddressService {
         } catch (Exception ex) {
             return false;
         }
-
         return true;
     }
 

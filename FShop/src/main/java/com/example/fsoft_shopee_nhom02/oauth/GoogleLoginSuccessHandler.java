@@ -53,10 +53,9 @@ public class GoogleLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 //        System.out.println(emailUsername);
 //        System.out.println(googleUser.getAvatarPicture());
         Optional<UserEntity> userEntityOptional = userRepository.findByEmail(googleUser.getEmail());
-
         if(!userEntityOptional.isPresent()) { //Lần đầu đăng nhap google
             String[] splitEmail = googleUser.getEmail().split("@"); //Tạo random username cho google account
-            String randomUsername = splitEmail[0] + "#" + GlobalVariable.GetRandom3DigitNumber();
+            String randomUsername = splitEmail[0] + "#" + GlobalVariable.GetRandom4DigitNumber();
             UserEntity googleUserRegister =
                     new UserEntity(
                             googleUser.getFullName(),

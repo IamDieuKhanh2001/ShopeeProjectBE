@@ -24,4 +24,5 @@ public interface UserService {
     UserEntity changeUserPasswordByEmail(String newPassword, String email);
     UserProfileDTO findByUsername(String username);
     Boolean uploadUserAvatar(MultipartFile avatar, String username);
+    UserEntity findFirstByUsername(String username);
 }

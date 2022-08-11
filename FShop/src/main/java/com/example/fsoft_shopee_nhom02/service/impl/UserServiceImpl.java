@@ -184,4 +184,9 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userLogin);
         return true;
     }
+
+    @Override
+    public UserEntity findFirstByUsername(String username) {
+        return userRepository.findFirstByUsername(username);
+    }
 }

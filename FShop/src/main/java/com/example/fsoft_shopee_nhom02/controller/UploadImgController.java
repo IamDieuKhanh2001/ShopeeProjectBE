@@ -29,7 +29,7 @@ public class UploadImgController {
     @Autowired
     private ShopService shopService;
 
-    @PostMapping("/users/avatar")
+    @PostMapping("/user/avatar")
     public ResponseEntity<?> uploadAvatar(
             @RequestParam(value = "avatar", required = false) MultipartFile avatar
     ){
@@ -45,7 +45,7 @@ public class UploadImgController {
             return ResponseEntity.badRequest().body("Update avatar user: " + username + " that bai");
         }
     }
-    @DeleteMapping("/users/avatar")
+    @DeleteMapping("/user/avatar")
     public ResponseEntity<?> deleteAva(
             @RequestParam(value = "avatar", required = false) MultipartFile avatar
     ){

@@ -48,7 +48,6 @@ public class JwtUtil {
     private String createToken(Map<String, Object> claims, String subject) {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, jwtConfig.getTokenExpirationAfterDays());
-        System.out.println(jwtConfig.getTokenExpirationAfterDays());
         Date expDate = c.getTime();
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(expDate)
