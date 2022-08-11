@@ -9,8 +9,17 @@ public class CartProductDTO {
 
     private Long productId;
 
+    private Long userId;
+
     private Long cartId;
 
+    public Long getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Long cartId) {
+        this.cartId = cartId;
+    }
 
     public Long getProductId() {
         return productId;
@@ -20,13 +29,12 @@ public class CartProductDTO {
         this.productId = productId;
     }
 
-    public Long getCartId() {
-        return cartId;
+    public Long getUserId() {
+        return userId;
     }
 
-
-    public void setCartId(Long cartId) {
-        this.cartId = cartId;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Long getId() {

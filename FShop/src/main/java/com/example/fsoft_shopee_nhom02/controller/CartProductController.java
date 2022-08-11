@@ -21,12 +21,6 @@ public class CartProductController {
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody CartProductDTO cartProductDTO) {
         try {
-
-          /*  String keys[] = {"productId", "cartId","type", "quantity"};
-            long productId = Long.parseLong(addCartRequest.get("productId"));
-            long cartId = Long.parseLong(addCartRequest.get("cartId"));
-            String type = (addCartRequest.get("type"));
-            long quantity = Long.parseLong(addCartRequest.get("quantity"));*/
             return  ResponseEntity.ok(cartProductService.addCart(cartProductDTO));
         } catch (Exception e) {
             e.printStackTrace();
@@ -53,11 +47,9 @@ public class CartProductController {
         return ResponseEntity.ok("xoá thành công");
     }
 
-    @GetMapping("")
-    public ResponseEntity<?>getCart(@RequestBody HashMap<String, String> bodyRes){
-        String keys[] = {"cartId"};
-        long cartId = Long.parseLong(bodyRes.get("cartId"));
-        return ResponseEntity.ok(cartProductService.getAllCart(cartId));
+    @GetMapping("/{userId}")
+    public ResponseEntity<?>getCart(@PathVariable long userId){
+        return ResponseEntity.ok(cartProductService.getAllCart(userId));
     }
     @GetMapping("/test")
 

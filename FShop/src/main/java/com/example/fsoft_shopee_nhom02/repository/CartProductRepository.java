@@ -41,10 +41,6 @@ public interface CartProductRepository extends JpaRepository<CartProductEntity, 
     @Transactional
     void removeAllByProductEntityIdInAndCartEntityIdAndTypeIn(Collection<Long> productEntity_id, Long cartEntity_id, Collection<String> type);
 
-   @Query(" select product.name , type.type  , type.price,cart_product.quantity  ,product.image1 " +
-            "from CartProductEntity cart_product, TypeEntity  type , ProductEntity  product" +
-            " where product.id =cart_product.id and type.type = cart_product.type and cart_product.cartEntity.id =:cart_id")
-   List<HashMap<Object,Object>> getCartDetail(@Param("cart_id")Long cart_id);
     @Query(" select c from CartProductEntity c where c.cartEntity.id =:cart_id")
     List<CartProductEntity> getCart(@Param("cart_id")Long cart_id);
 }

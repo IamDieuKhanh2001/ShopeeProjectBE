@@ -5,10 +5,7 @@ import com.example.fsoft_shopee_nhom02.dto.CartDetailDTO;
 import com.example.fsoft_shopee_nhom02.dto.CartProductDTO;
 import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.CartProductMapper;
-import com.example.fsoft_shopee_nhom02.model.CartEntity;
-import com.example.fsoft_shopee_nhom02.model.CartProductEntity;
-import com.example.fsoft_shopee_nhom02.model.ProductEntity;
-import com.example.fsoft_shopee_nhom02.model.TypeEntity;
+import com.example.fsoft_shopee_nhom02.model.*;
 import com.example.fsoft_shopee_nhom02.repository.CartProductRepository;
 import com.example.fsoft_shopee_nhom02.repository.CartRepository;
 import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
@@ -16,6 +13,7 @@ import com.example.fsoft_shopee_nhom02.repository.TypeRepository;
 import com.example.fsoft_shopee_nhom02.service.CartProductService;
 import com.example.fsoft_shopee_nhom02.service.CartService;
 import com.example.fsoft_shopee_nhom02.service.ProductService;
+import com.example.fsoft_shopee_nhom02.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,10 +39,15 @@ public class CartProductServiceImpl implements CartProductService {
     @Autowired
     CartService cartService;
 
+    @Autowired
+    UserService userService;
 
+    UserEntity user;
     @Override
     public CartProductDTO addCart(CartProductDTO cartProductDTO) throws Exception {
-        long cartId = cartProductDTO.getCartId();
+        long userId = cartProductDTO.getUserId();
+        user = userService.findByIdUser(userId);
+        long cartId = user.getCartEntity().getId();
         long qty = cartProductDTO.getQuantity();
         long productId = cartProductDTO.getProductId();
         String type = cartProductDTO.getType();
@@ -70,8 +73,11 @@ public class CartProductServiceImpl implements CartProductService {
 
     @Override
     public CartProductDTO update(CartProductDTO cartProductDTO) {
+        long userId = cartProductDTO.getUserId();
+        user = userService.findByIdUser(userId);
+        long cartId = user.getCartEntity().getId();
         CartProductEntity obj =
-                cartProductRepository.getCartByProductIdAnduserId(cartProductDTO.getCartId()
+                cartProductRepository.getCartByProductIdAnduserId(cartId
                         , cartProductDTO.getProductId(), cartProductDTO.getType());
         obj.setQuantity(cartProductDTO.getQuantity());
         cartProductRepository.save(obj);
@@ -82,7 +88,9 @@ public class CartProductServiceImpl implements CartProductService {
 
     @Override
     public void delete(CartProductDTO cartProductDTO) {
-        Long cartId = cartProductDTO.getCartId();
+        long userId = cartProductDTO.getUserId();
+        user = userService.findByIdUser(userId);
+        long cartId = user.getCartEntity().getId();
         Long productId = cartProductDTO.getProductId();
         String type = cartProductDTO.getType();
         cartProductRepository.deleteProduct(productId, cartId, type);
@@ -94,7 +102,9 @@ public class CartProductServiceImpl implements CartProductService {
     }
 
     @Override
-    public List<CartDetailDTO> getAllCart(long cartId) {
+    public List<CartDetailDTO> getAllCart(long userId) {
+        user = userService.findByIdUser(userId);
+        Long cartId = user.getCartEntity().getId();
         List<CartProductEntity> cartProductEntities = cartProductRepository.getCart(cartId);
         List<CartDetailDTO> cartDetailDTOS = new ArrayList<>();
         List<Integer> test = new ArrayList<>();
