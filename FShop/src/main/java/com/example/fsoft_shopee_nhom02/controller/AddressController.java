@@ -44,13 +44,9 @@ public class AddressController {
 
     }
 
-    @DeleteMapping("/address")
-    public ResponseEntity<?> deleteUserAddress(@RequestParam Map<String, String> requestParams) {
-        if(requestParams.get("addressId") == null) {
-            throw new IllegalStateException("Delete address for user fail! DELETE need ?addressId= param");
-        }
-        Long addressId = Long.parseLong(requestParams.get("addressId"));
-        if(addressService.deleteAddressByAddressId(addressId)) {
+    @DeleteMapping("/address/{id}")
+    public ResponseEntity<?> deleteUserAddress(@PathVariable long id) {
+        if(addressService.deleteAddressByAddressId(id)) {
             return ResponseEntity.ok(
                     new SuccessResponseDTO(HttpStatus.OK, "Delete address for user success")
             );
@@ -58,14 +54,10 @@ public class AddressController {
         return ResponseEntity.badRequest().body("Delete address for user fail");
     }
 
-    @PutMapping("/address")
-    public ResponseEntity<?> updateUserAddress(@RequestBody AddressDTO addressDTO, @RequestParam Map<String, String> requestParams) {
-        if(requestParams.get("addressId") == null) {
-            throw new IllegalStateException("Update address for user fail! UPDATE need ?addressId= param");
-        }
-        Long addressId = Long.parseLong(requestParams.get("addressId"));
+    @PutMapping("/address/{id}")
+    public ResponseEntity<?> updateUserAddress(@RequestBody AddressDTO addressDTO, @PathVariable long id) {
 
-        if(addressService.updateAddress(addressId, addressDTO)) {
+        if(addressService.updateAddress(id, addressDTO)) {
             return ResponseEntity.ok(
                     new SuccessResponseDTO(HttpStatus.OK, "Update address for user success")
             );
@@ -73,14 +65,9 @@ public class AddressController {
         return ResponseEntity.badRequest().body("Update address for user fail");
     }
 
-    @PutMapping("/address/setDefault")
-    public ResponseEntity<?> setDefaultUserAddress(@RequestParam Map<String, String> requestParams) {
-        if(requestParams.get("addressId") == null) {
-            throw new IllegalStateException("Set default address for user fail! UPDATE need ?addressId= param");
-        }
-        Long addressId = Long.parseLong(requestParams.get("addressId"));
-
-        if(addressService.setDefaultAddress(addressId)) {
+    @PutMapping("/address/setDefault/{id}")
+    public ResponseEntity<?> setDefaultUserAddress(@PathVariable long id) {
+        if(addressService.setDefaultAddress(id)) {
             return ResponseEntity.ok(
                     new SuccessResponseDTO(HttpStatus.OK, "Set default address for user success")
             );
