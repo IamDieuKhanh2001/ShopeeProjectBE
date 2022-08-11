@@ -1,5 +1,6 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
+import com.example.fsoft_shopee_nhom02.Notification.NotificationConfig;
 import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.model.OrderDetailsEntity;
 import com.example.fsoft_shopee_nhom02.model.OrderEntity;
@@ -19,6 +20,7 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static com.example.fsoft_shopee_nhom02.Notification.NotificationVar.*;
 import static com.example.fsoft_shopee_nhom02.config.GlobalVariable.*;
 
 @RestController
@@ -47,7 +49,7 @@ public class OrderController {
     @GetMapping("/sentMessage")
     public void sentMessage(@RequestBody Map<String, String> message) {
 
-        simpMessagingTemplate.convertAndSendToUser("hehe", "/client", message.get("message"));
+        simpMessagingTemplate.convertAndSendToUser("hehe", destination, message.get("message"));
     }
 
     @GetMapping("/all")

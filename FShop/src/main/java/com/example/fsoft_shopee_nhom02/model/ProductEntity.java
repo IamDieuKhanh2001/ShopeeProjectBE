@@ -42,7 +42,7 @@ public class ProductEntity {
     // Tạo quan hệ với SubCategoryEntity
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "subCategoryId", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "sub_category_id", nullable = false, referencedColumnName = "id")
     private SubCategoryEntity subCategoryEntity;
 
     // Tạo quan hệ với TypeEntity

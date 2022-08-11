@@ -51,6 +51,7 @@ public class UserMapper {
         userProfileDTO.setDob(userEntity.getDob());
         userProfileDTO.setAvatar(userEntity.getAvatar());
         userProfileDTO.setAddressEntityList(userEntity.getAddressEntityList());
+        userProfileDTO.setRoleEntitySet(userEntity.getRoleEntitySet());
         userProfileDTO.setOrderEntities(userEntity.getOrderEntities());
         userProfileDTO.setCreatedDate(userEntity.getCreatedDate());
         userProfileDTO.setModifiedDate(userEntity.getModifiedDate());

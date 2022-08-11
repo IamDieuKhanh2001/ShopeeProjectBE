@@ -321,7 +321,7 @@ public class ProductService {
 
      */
     public ResponseEntity<ListOutputResult> search(String page, String limit, String keyword,
-                                   String minPrice, String maxPrice, String sub) {
+                                   String minPrice, String maxPrice, String sub, String cat) {
         ListOutputResult result = new ListOutputResult();
 
         if(typeRepository.findMaxPrice() == null) {
@@ -347,24 +347,48 @@ public class ProductService {
         // Search by Price range
         if(Long.parseLong(minPrice) < Long.parseLong(maxPrice) && Long.parseLong(minPrice) >= 0
             || Long.parseLong(maxPrice) <= defaultMaxPrice - 1) {
-
-//            productEntities = (keyword == null) ? productRepository.findAll()
-//                : productRepository.findAllBySearchQuery(keyword);
             if(keyword == null) {
                 if(sub != null && isNumber(sub) && !sub.equals("")) {
-                    productEntities = productRepository.
-                            findAllBySubCategoryEntityIdAndStatus(Long.parseLong(sub), "Active");
+                    if(cat != null && isNumber(cat) && !cat.equals("")) {
+                        productEntities = productRepository.findAllByCatIdAndSubCatIdAndStatus(
+                                Long.parseLong(cat), Long.parseLong(sub));
+                    }
+                    else {
+                        productEntities = productRepository.
+                                findAllBySubCategoryEntityIdAndStatus(Long.parseLong(sub),
+                                        "Active");
+                    }
                 }
-                else
-                    productEntities = productRepository.findAllByStatus("Active");
+                else {
+                    if(cat != null && isNumber(cat) && !cat.equals("")) {
+                        productEntities = productRepository.findAllByCatIdAndStatus(
+                                Long.parseLong(cat));
+                    }
+                    else {
+                        productEntities = productRepository.findAllByStatus("Active");
+                    }
+                }
             }
             else {
                 if(sub != null && isNumber(sub) && !sub.equals("")) {
-                    productEntities = productRepository.findAllBySearchAndSubCateAndStatus(keyword,
-                            Long.parseLong(sub));
+                    if(cat != null && isNumber(cat) && !cat.equals("")) {
+                        productEntities = productRepository.findAllBySearchAndCatIdAndSubCatIdAndStatus(keyword,
+                                Long.parseLong(cat), Long.parseLong(sub));
+                    }
+                    else {
+                        productEntities = productRepository.findAllBySearchAndSubCateAndStatus(keyword,
+                                Long.parseLong(sub));
+                    }
                 }
-                else
-                    productEntities = productRepository.findAllBySearchQuery(keyword);
+                else {
+                    if(cat != null && isNumber(cat) && !cat.equals("")) {
+                        productEntities = productRepository.findAllBySearchAndByCatIdAndStatus(keyword,
+                                Long.parseLong(cat));
+                    }
+                    else {
+                        productEntities = productRepository.findAllBySearchQuery(keyword);
+                    }
+                }
             }
 
             List<ProductDTO> priceFilterDTOS = new ArrayList<>();
@@ -416,25 +440,57 @@ public class ProductService {
 
             if(keyword == null) {
                 if(sub != null && isNumber(sub) && !sub.equals("")) {
-                    productEntities = productRepository.findAllBySubCategoryEntityIdAndStatus(
-                            Long.parseLong(sub), pageable, "Active");
-                    productsNumber = productRepository.countAllBySubCate(Long.parseLong(sub));
+                    if(cat != null && isNumber(cat) && !cat.equals("")) {
+                        productEntities = productRepository.findAllByCatIdAndSubCatIdAndStatus(
+                                Long.parseLong(cat), Long.parseLong(sub), pageable);
+                        productsNumber = productRepository.countAllByCatIdAndSubCatIdAndStatus(
+                                Long.parseLong(cat), Long.parseLong(sub));
+                    }
+                    else {
+                        productEntities = productRepository.findAllBySubCategoryEntityIdAndStatus(
+                                Long.parseLong(sub), pageable, "Active");
+                        productsNumber = productRepository.countAllBySubCate(Long.parseLong(sub));
+                    }
                 }
                 else {
-                    productEntities = productRepository.findAllByStatus("Active", pageable);
-                    productsNumber = productRepository.countAllByStatus("Active");
+                    if(cat != null && isNumber(cat) && !cat.equals("")) {
+                        productEntities = productRepository.findAllByCatIdAndStatus(
+                                Long.parseLong(cat), pageable);
+                        productsNumber = productRepository.countAllByCatIdAndStatus(
+                                Long.parseLong(cat));
+                    }
+                    else {
+                        productEntities = productRepository.findAllByStatus("Active", pageable);
+                        productsNumber = productRepository.countAllByStatus("Active");
+                    }
                 }
             }
             else {
                 if(sub != null && isNumber(sub) && !sub.equals("")) {
-                    productEntities = productRepository.findAllBySearchAndSubCateAndStatus(keyword,
-                            Long.parseLong(sub), pageable);
-                    productsNumber = productRepository.countAllBySearchAndSubCateAndStatus(keyword,
-                            Long.parseLong(sub));
+                    if(cat != null && isNumber(cat) && !cat.equals("")) {
+                        productEntities = productRepository.findAllBySearchAndCatIdAndSubCatIdAndStatus(
+                                keyword, Long.parseLong(cat), Long.parseLong(sub), pageable);
+                        productsNumber = productRepository.countAllBySearchAndCatIdAndSubCatIdAndStatus(
+                                keyword, Long.parseLong(cat), Long.parseLong(sub));
+                    }
+                    else {
+                        productEntities = productRepository.findAllBySearchAndSubCateAndStatus(keyword,
+                                Long.parseLong(sub), pageable);
+                        productsNumber = productRepository.countAllBySearchAndSubCateAndStatus(keyword,
+                                Long.parseLong(sub));
+                    }
                 }
                 else {
-                    productEntities = productRepository.findAllBySearchQuery(keyword, pageable);
-                    productsNumber = productRepository.countAllBySearchQuery(keyword);
+                    if(cat != null && isNumber(cat) && !cat.equals("")) {
+                        productEntities = productRepository.findAllBySearchAndByCatIdAndStatus(
+                                keyword, Long.parseLong(cat), pageable);
+                        productsNumber = productRepository.countAllBySearchAndByCatIdAndStatus(
+                                keyword, Long.parseLong(cat));
+                    }
+                    else {
+                        productEntities = productRepository.findAllBySearchQuery(keyword, pageable);
+                        productsNumber = productRepository.countAllBySearchQuery(keyword);
+                    }
                 }
             }
 

@@ -20,7 +20,7 @@ public class SubCategoryEntity {
     // Tạo quan hệ với CategoryEntity
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "categoryId", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "category_id", nullable = false, referencedColumnName = "id")
     private CategoryEntity categoryEntity;
 
     // Tạo quan hệ với ProductEntity

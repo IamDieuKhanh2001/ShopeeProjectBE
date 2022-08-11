@@ -18,7 +18,7 @@ public interface UserService {
     void deleteUser(String email);
     boolean upRole(String email);
     boolean removeRole(String email);
-    List<UserDTO> findByName(String name);
+    List<UserProfileDTO> findByName(String name);
     UserEntity changeProfile(UserDTO user, String username);
     List<UserEntity> getUsersByEmail(String email);
     UserEntity changeUserPasswordByEmail(String newPassword, String email);
