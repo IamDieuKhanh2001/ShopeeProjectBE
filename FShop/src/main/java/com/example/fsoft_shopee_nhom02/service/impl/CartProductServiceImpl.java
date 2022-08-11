@@ -118,6 +118,7 @@ public class CartProductServiceImpl implements CartProductService {
             //set name and image
             cartDetailDTO.setName(product.getName());
             cartDetailDTO.setImage(product.getImageProduct());
+            cartDetailDTO.setProductId(product.getId());
 
             //get type
             TypeEntity type = typeRepository.findProductByType(cartProduct.getProductEntity().getId(), cartProduct.getType());

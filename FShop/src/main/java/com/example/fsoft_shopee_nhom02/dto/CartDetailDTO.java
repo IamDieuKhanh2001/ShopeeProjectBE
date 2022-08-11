@@ -8,6 +8,16 @@ public class CartDetailDTO {
     private Long quantity;
     private Long totalPrice;
 
+    private Long productId;
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
     private String image;
 
 
