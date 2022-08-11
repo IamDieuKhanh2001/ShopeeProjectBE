@@ -26,15 +26,33 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public ShopDTO save(ShopDTO shopDTO) {
-        ShopEntity shop = shopRepository.findOneByName(shopDTO.getName());
-        if(shop != null){
-            throw new BadRequest(shopDTO.getName()+" have been used");
+        ShopEntity shop;
+        //update
+        if(shopDTO.getId() != null){
+            shop = shopRepository.findById(shopDTO.getId()).orElseThrow(()
+                    -> new BadRequest("Not found shop with id ="+shopDTO.getId()));
+
+            if(shopRepository.findByNameExceptCurrentName(shopDTO.getId(),shopDTO.getName()) != null){
+                throw new BadRequest(shopDTO.getName()+" have been used");
+            }
+
+            shop.setName(shopDTO.getName());
+            shop.setAvatar(shopDTO.getAvatar());
+            shop.setBackground(shopDTO.getBackground());
+            shop.setDescription(shopDTO.getDescription());
+            shop.setStatus(shopDTO.getStatus());
+            shop.setTotalProduct(shopRepository.countTotalProduct(shopDTO.getId()));
         }
-        else {
+        else{ //create
+            if(shopRepository.findOneByName(shopDTO.getName()) != null){
+                throw new BadRequest(shopDTO.getName()+" have been used");
+            }
+
             shop = ShopMapper.toEntity(shopDTO);
-            shop = shopRepository.save(shop);
-            return ShopMapper.toShopDto(shop);
         }
+        shop = shopRepository.save(shop);
+        return ShopMapper.toShopDto(shop);
+
     }
 
     @Override
