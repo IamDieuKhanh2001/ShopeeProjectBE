@@ -20,6 +20,7 @@ public class ProductMapper {
         productDTO.setSold((productEntity.getSold() == null) ? 0 : productEntity.getSold());
         productDTO.setTotalView((productEntity.getTotalView() == null) ? 0 : productEntity.getTotalView());
         productDTO.setSubCategoryId(productEntity.getSubCategoryId());
+        productDTO.setCatId(productEntity.getCatId());
 
         return productDTO;
     }

@@ -69,100 +69,14 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     @Query(value = "SELECT pro FROM ProductEntity pro JOIN " +
             "pro.subCategoryEntity sub JOIN " +
             "sub.categoryEntity cat " +
-            "WHERE cat.id = ?1 " +
-            "AND pro.status = 'Active'")
-    List<ProductEntity> findAllByCatIdAndStatus(long id, Pageable pageable);
-
-    @Query(value = "SELECT pro FROM ProductEntity pro JOIN " +
-            "pro.subCategoryEntity sub JOIN " +
-            "sub.categoryEntity cat " +
-            "WHERE cat.id = ?1 " +
-            "AND pro.status = 'Active'")
-    List<ProductEntity> findAllByCatIdAndStatus(long id);
-
-    @Query(value = "SELECT count(pro) FROM ProductEntity pro JOIN " +
-            "pro.subCategoryEntity sub JOIN " +
-            "sub.categoryEntity cat " +
-            "WHERE cat.id = ?1 " +
-            "AND pro.status = 'Active'")
-    long countAllByCatIdAndStatus(long id);
-
-    @Query(value = "SELECT pro FROM ProductEntity pro JOIN " +
-            "pro.subCategoryEntity sub JOIN " +
-            "sub.categoryEntity cat " +
-            "WHERE cat.id = ?2 " +
-            "AND pro.name LIKE %?1% " +
-            "AND pro.status = 'Active'")
-    List<ProductEntity> findAllBySearchAndByCatIdAndStatus(String search, long id);
-
-    @Query(value = "SELECT pro FROM ProductEntity pro JOIN " +
-            "pro.subCategoryEntity sub JOIN " +
-            "sub.categoryEntity cat " +
-            "WHERE cat.id = ?2 " +
-            "AND pro.name LIKE %?1% " +
-            "AND pro.status = 'Active'")
-    List<ProductEntity> findAllBySearchAndByCatIdAndStatus(String search, long id, Pageable pageable);
-
-    @Query(value = "SELECT count(pro) FROM ProductEntity pro JOIN " +
-            "pro.subCategoryEntity sub JOIN " +
-            "sub.categoryEntity cat " +
-            "WHERE cat.id = ?2 " +
-            "AND pro.name LIKE %?1% " +
-            "AND pro.status = 'Active'")
-    long countAllBySearchAndByCatIdAndStatus(String search, long id);
-
-    @Query(value = "SELECT pro FROM ProductEntity pro JOIN " +
-            "pro.subCategoryEntity sub JOIN " +
-            "sub.categoryEntity cat " +
-            "WHERE cat.id = ?1 " +
-            "AND sub.id = ?2 " +
-            "AND pro.status = 'Active'")
-    List<ProductEntity> findAllByCatIdAndSubCatIdAndStatus(long id, long subId);
-
-    @Query(value = "SELECT count(pro) FROM ProductEntity pro JOIN " +
-            "pro.subCategoryEntity sub JOIN " +
-            "sub.categoryEntity cat " +
-            "WHERE cat.id = ?1 " +
-            "AND sub.id = ?2 " +
-            "AND pro.status = 'Active'")
-    long countAllByCatIdAndSubCatIdAndStatus(long id, long subId);
-
-    @Query(value = "SELECT pro FROM ProductEntity pro JOIN " +
-            "pro.subCategoryEntity sub JOIN " +
-            "sub.categoryEntity cat " +
-            "WHERE cat.id = ?1 " +
-            "AND sub.id = ?2 " +
-            "AND pro.status = 'Active'")
-    List<ProductEntity> findAllByCatIdAndSubCatIdAndStatus(long id, long subId,
-                                                           Pageable pageable);
+            "WHERE pro.status = 'Active'")
+    List<ProductEntity> findAllWithCatIdAndSubCatIdAndStatus();
 
     @Query(value = "SELECT pro FROM ProductEntity pro JOIN " +
             "pro.subCategoryEntity sub JOIN " +
             "sub.categoryEntity cat " +
             "WHERE pro.name LIKE %?1% " +
-            "AND cat.id = ?2 " +
-            "AND sub.id = ?3 " +
             "AND pro.status = 'Active'")
-    List<ProductEntity> findAllBySearchAndCatIdAndSubCatIdAndStatus(String search, long id,
-                                                                    long subId, Pageable pageable);
-
-    @Query(value = "SELECT pro FROM ProductEntity pro JOIN " +
-            "pro.subCategoryEntity sub JOIN " +
-            "sub.categoryEntity cat " +
-            "WHERE pro.name LIKE %?1% " +
-            "AND cat.id = ?2 " +
-            "AND sub.id = ?3 " +
-            "AND pro.status = 'Active'")
-    List<ProductEntity> findAllBySearchAndCatIdAndSubCatIdAndStatus(String search, long id,
-                                                                    long subId);
-
-    @Query(value = "SELECT count(pro) FROM ProductEntity pro JOIN " +
-            "pro.subCategoryEntity sub JOIN " +
-            "sub.categoryEntity cat " +
-            "WHERE pro.name LIKE %?1% " +
-            "AND cat.id = ?2 " +
-            "AND sub.id = ?3 " +
-            "AND pro.status = 'Active'")
-    long countAllBySearchAndCatIdAndSubCatIdAndStatus(String search, long id, long subId);
+    List<ProductEntity> findAllBySearchWithCatIdAndSubCatIdAndStatus(String search);
 }
 

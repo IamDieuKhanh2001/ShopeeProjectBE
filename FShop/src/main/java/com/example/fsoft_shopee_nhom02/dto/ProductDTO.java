@@ -20,6 +20,7 @@ public class ProductDTO {
     private long sold;
     private long totalView;
     private long subCategoryId;
+    private long catId;
 
     public ProductDTO() {
     }
@@ -142,5 +143,13 @@ public class ProductDTO {
 
     public void setSubCategoryId(long subCategoryId) {
         this.subCategoryId = subCategoryId;
+    }
+
+    public long getCatId() {
+        return catId;
+    }
+
+    public void setCatId(long catId) {
+        this.catId = catId;
     }
 }

@@ -312,6 +312,7 @@ public class ProductService {
 
         return new ResponseEntity<>(updatedTypesList, HttpStatus.OK);
     }
+
     /*
         Search truyen 3 params: page, limit, keyword
         - Page, limit de phan trang.
@@ -320,6 +321,59 @@ public class ProductService {
           va list san pham.
 
      */
+    List<ProductDTO> filterByPriceRange(String minPrice, String maxPrice, long defaultMaxPrice,
+                                        List<ProductDTO> productDTOS) {
+        if(Long.parseLong(minPrice) < Long.parseLong(maxPrice) && Long.parseLong(minPrice) >= 0
+                || Long.parseLong(maxPrice) <= defaultMaxPrice - 1) {
+
+            List<ProductDTO> priceFilter = new ArrayList<>();
+            // Push the Product DTO that has valid price range to a new list
+            for (ProductDTO productDTO : productDTOS) {
+                if (productDTO.getPrice() > Long.parseLong(minPrice) - 1 &&
+                        productDTO.getPrice() < Long.parseLong(maxPrice) + 1) {
+
+                    priceFilter.add(productDTO);
+                }
+            }
+            return priceFilter;
+        }
+        else {
+            return productDTOS;
+        }
+    }
+
+    List<ProductDTO> filterBySubCate(String sub, List<ProductDTO> productDTOS) {
+        if(sub != null && isNumber(sub) && !sub.equals("")) {
+            List<ProductDTO> subFilter = new ArrayList<>();
+
+            for (ProductDTO productDTO : productDTOS) {
+                if (Long.parseLong(sub) == productDTO.getSubCategoryId()) {
+                    subFilter.add(productDTO);
+                }
+            }
+            return subFilter;
+        }
+        else {
+            return productDTOS;
+        }
+    }
+
+    List<ProductDTO> filterByCate(String cat, List<ProductDTO> productDTOS) {
+        if(cat != null && isNumber(cat) && !cat.equals("")) {
+            List<ProductDTO> catFilter = new ArrayList<>();
+
+            for (ProductDTO productDTO : productDTOS) {
+                if (Long.parseLong(cat) == productDTO.getCatId()) {
+                    catFilter.add(productDTO);
+                }
+            }
+            return catFilter;
+        }
+        else {
+            return productDTOS;
+        }
+    }
+
     public ResponseEntity<ListOutputResult> search(String page, String limit, String keyword,
                                    String minPrice, String maxPrice, String sub, String cat) {
         ListOutputResult result = new ListOutputResult();
@@ -342,171 +396,49 @@ public class ProductService {
                 ? String.valueOf(defaultMaxPrice) : maxPrice;
 
         List<ProductEntity> productEntities;
+
+        if(keyword == null) {
+            productEntities = productRepository.findAllWithCatIdAndSubCatIdAndStatus();
+        }
+        else {
+            productEntities = productRepository.findAllBySearchWithCatIdAndSubCatIdAndStatus(keyword);
+        }
+
         List<ProductDTO> productDTOS = new ArrayList<>();
 
+        for (ProductEntity product : productEntities) {
+            ProductDTO productDTO = dtoHandler(product);
+
+            productDTOS.add(productDTO);
+        }
+
         // Search by Price range
-        if(Long.parseLong(minPrice) < Long.parseLong(maxPrice) && Long.parseLong(minPrice) >= 0
-            || Long.parseLong(maxPrice) <= defaultMaxPrice - 1) {
-            if(keyword == null) {
-                if(sub != null && isNumber(sub) && !sub.equals("")) {
-                    if(cat != null && isNumber(cat) && !cat.equals("")) {
-                        productEntities = productRepository.findAllByCatIdAndSubCatIdAndStatus(
-                                Long.parseLong(cat), Long.parseLong(sub));
-                    }
-                    else {
-                        productEntities = productRepository.
-                                findAllBySubCategoryEntityIdAndStatus(Long.parseLong(sub),
-                                        "Active");
-                    }
-                }
-                else {
-                    if(cat != null && isNumber(cat) && !cat.equals("")) {
-                        productEntities = productRepository.findAllByCatIdAndStatus(
-                                Long.parseLong(cat));
-                    }
-                    else {
-                        productEntities = productRepository.findAllByStatus("Active");
-                    }
-                }
-            }
-            else {
-                if(sub != null && isNumber(sub) && !sub.equals("")) {
-                    if(cat != null && isNumber(cat) && !cat.equals("")) {
-                        productEntities = productRepository.findAllBySearchAndCatIdAndSubCatIdAndStatus(keyword,
-                                Long.parseLong(cat), Long.parseLong(sub));
-                    }
-                    else {
-                        productEntities = productRepository.findAllBySearchAndSubCateAndStatus(keyword,
-                                Long.parseLong(sub));
-                    }
-                }
-                else {
-                    if(cat != null && isNumber(cat) && !cat.equals("")) {
-                        productEntities = productRepository.findAllBySearchAndByCatIdAndStatus(keyword,
-                                Long.parseLong(cat));
-                    }
-                    else {
-                        productEntities = productRepository.findAllBySearchQuery(keyword);
-                    }
-                }
-            }
+        productDTOS = filterByPriceRange(minPrice, maxPrice, defaultMaxPrice, productDTOS);
 
-            List<ProductDTO> priceFilterDTOS = new ArrayList<>();
+        // Search by Sub category
+        productDTOS = filterBySubCate(sub, productDTOS);
 
-            for (ProductEntity product : productEntities) {
-                ProductDTO productDTO = dtoHandler(product);
+        // Search by Category
+        productDTOS = filterByCate(cat, productDTOS);
 
-                productDTOS.add(productDTO);
-            }
+        // Pagination code below after filter the price range
+        page = checkTotalPage(productDTOS.size(), Long.parseLong(limit), Long.parseLong(page));
 
-            // Push the Product DTO that has valid price range to a new list
-            for(ProductDTO productDTO : productDTOS) {
-                if (productDTO.getPrice() > Long.parseLong(minPrice) - 1 &&
-                        productDTO.getPrice() < Long.parseLong(maxPrice) + 1) {
-
-                    priceFilterDTOS.add(productDTO);
-                }
-            }
-
-            // Pagination code below after filter the price range
-            page = checkTotalPage(priceFilterDTOS.size(), Long.parseLong(limit), Long.parseLong(page));
-
-            if(priceFilterDTOS.isEmpty()) {
-                return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
-                        HttpStatus.NOT_FOUND);
-            }
-
-            // Start index and end index
-            int startIndex = (Integer.parseInt(page) - 1) * Integer.parseInt(limit);
-            int endIndex = (Integer.parseInt(limit) < priceFilterDTOS.size())
-                        ? Integer.parseInt(page) * Integer.parseInt(limit) : Integer.parseInt(page) * priceFilterDTOS.size();
-
-            if(endIndex > priceFilterDTOS.size() - 1) {
-                endIndex = priceFilterDTOS.size();
-            }
-
-            result.setItemsNumber(priceFilterDTOS.size());
-            result.setList(priceFilterDTOS.subList(startIndex, endIndex));
+        if(productDTOS.isEmpty()) {
+            return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
+                    HttpStatus.NOT_FOUND);
         }
-        // Default search if price range equal to null or not valid min max
-        else {
-            Pageable pageable = PageRequest.of((Integer.parseInt(page) - 1), Integer.parseInt(limit));
-//            productEntities = (keyword == null) ? productRepository.findAll(pageable).getContent()
-//                   : productRepository.findAllBySearchQuery(keyword, pageable);
-//            long productsNumber = (keyword == null) ? productRepository.count()
-//                    : productRepository.countAllBySearchQuery(keyword);
+        // Start index and end index
+        int startIndex = (Integer.parseInt(page) - 1) * Integer.parseInt(limit);
+        int endIndex = (Integer.parseInt(limit) < productDTOS.size())
+                ? Integer.parseInt(page) * Integer.parseInt(limit) : Integer.parseInt(page) * productDTOS.size();
 
-            long productsNumber;
-
-            if(keyword == null) {
-                if(sub != null && isNumber(sub) && !sub.equals("")) {
-                    if(cat != null && isNumber(cat) && !cat.equals("")) {
-                        productEntities = productRepository.findAllByCatIdAndSubCatIdAndStatus(
-                                Long.parseLong(cat), Long.parseLong(sub), pageable);
-                        productsNumber = productRepository.countAllByCatIdAndSubCatIdAndStatus(
-                                Long.parseLong(cat), Long.parseLong(sub));
-                    }
-                    else {
-                        productEntities = productRepository.findAllBySubCategoryEntityIdAndStatus(
-                                Long.parseLong(sub), pageable, "Active");
-                        productsNumber = productRepository.countAllBySubCate(Long.parseLong(sub));
-                    }
-                }
-                else {
-                    if(cat != null && isNumber(cat) && !cat.equals("")) {
-                        productEntities = productRepository.findAllByCatIdAndStatus(
-                                Long.parseLong(cat), pageable);
-                        productsNumber = productRepository.countAllByCatIdAndStatus(
-                                Long.parseLong(cat));
-                    }
-                    else {
-                        productEntities = productRepository.findAllByStatus("Active", pageable);
-                        productsNumber = productRepository.countAllByStatus("Active");
-                    }
-                }
-            }
-            else {
-                if(sub != null && isNumber(sub) && !sub.equals("")) {
-                    if(cat != null && isNumber(cat) && !cat.equals("")) {
-                        productEntities = productRepository.findAllBySearchAndCatIdAndSubCatIdAndStatus(
-                                keyword, Long.parseLong(cat), Long.parseLong(sub), pageable);
-                        productsNumber = productRepository.countAllBySearchAndCatIdAndSubCatIdAndStatus(
-                                keyword, Long.parseLong(cat), Long.parseLong(sub));
-                    }
-                    else {
-                        productEntities = productRepository.findAllBySearchAndSubCateAndStatus(keyword,
-                                Long.parseLong(sub), pageable);
-                        productsNumber = productRepository.countAllBySearchAndSubCateAndStatus(keyword,
-                                Long.parseLong(sub));
-                    }
-                }
-                else {
-                    if(cat != null && isNumber(cat) && !cat.equals("")) {
-                        productEntities = productRepository.findAllBySearchAndByCatIdAndStatus(
-                                keyword, Long.parseLong(cat), pageable);
-                        productsNumber = productRepository.countAllBySearchAndByCatIdAndStatus(
-                                keyword, Long.parseLong(cat));
-                    }
-                    else {
-                        productEntities = productRepository.findAllBySearchQuery(keyword, pageable);
-                        productsNumber = productRepository.countAllBySearchQuery(keyword);
-                    }
-                }
-            }
-
-            if(productEntities.isEmpty()) {
-                return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
-                        HttpStatus.NOT_FOUND);
-            }
-
-            for (ProductEntity product : productEntities) {
-                ProductDTO productDTO = dtoHandler(product);
-
-                productDTOS.add(productDTO);
-            }
-            result.setItemsNumber(productsNumber);
-            result.setList(productDTOS);
+        if(endIndex > productDTOS.size() - 1) {
+            endIndex = productDTOS.size();
         }
+
+        result.setItemsNumber(productDTOS.size());
+        result.setList(productDTOS.subList(startIndex, endIndex));
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

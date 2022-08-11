@@ -200,6 +200,10 @@ public class ProductEntity {
         return subCategoryEntity.getId();
     }
 
+    public long getCatId() {
+        return subCategoryEntity.getCategoryEntity().getId();
+    }
+
     public List<TypeEntity> getTypeEntities() {
         return typeEntities;
     }
