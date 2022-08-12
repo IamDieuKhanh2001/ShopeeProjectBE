@@ -1,6 +1,7 @@
 package com.example.fsoft_shopee_nhom02.security;
 
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUserService;
+import com.example.fsoft_shopee_nhom02.exception.BadRequest;
 import com.example.fsoft_shopee_nhom02.filters.CORSFilter;
 import com.example.fsoft_shopee_nhom02.filters.JwtRequestFilter;
 import com.example.fsoft_shopee_nhom02.oauth.GoogleLoginSuccessHandler;

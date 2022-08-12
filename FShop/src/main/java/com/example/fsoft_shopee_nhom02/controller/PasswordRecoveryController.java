@@ -51,14 +51,9 @@ public class PasswordRecoveryController {
         );
     }
 
-    @PutMapping(path = "/recovery")
-    public SuccessResponseDTO recoveryPassword(@RequestBody RecoveryPasswordDTO userChangePassword, @RequestParam Map<String, String> requestParams) {
-        if(requestParams.get("email") == null) {
-            throw new BadRequest("change password by address for user fail! need ?email= param");
-        }
-        System.out.println(userChangePassword.getPassword());
-        String userEmail = (requestParams.get("email"));
-        userService.changeUserPasswordByEmail(userChangePassword.getPassword(), userEmail);
+    @PutMapping(path = "/recovery/{email}")
+    public SuccessResponseDTO recoveryPassword(@PathVariable String email,@RequestBody RecoveryPasswordDTO userChangePassword) {
+        userService.changeUserPasswordByEmail(userChangePassword.getPassword(), email);
         return new SuccessResponseDTO(HttpStatus.OK, "Đã thay đổi mật khẩu thành công");
     }
 }

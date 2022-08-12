@@ -92,6 +92,7 @@ public class ApplicationUserService implements UserDetailsService {
         newUser.setModifiedDate(new Timestamp(System.currentTimeMillis()));     //Lúc tạo mới thời gian đăng ký bằng thời gian chỉnh sửa
 
         newUser.setName("Unname#" + GlobalVariable.GetOTP());
+        newUser.setGender("3"); //Gender Khác
         userRepository.save(newUser);
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
