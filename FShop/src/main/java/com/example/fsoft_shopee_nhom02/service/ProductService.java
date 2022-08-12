@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +48,7 @@ public class ProductService {
 
     // Use for Upload image controller
     public ProductDTO saveProductImage(long id, MultipartFile imageProduct, MultipartFile image1, MultipartFile image2,
-    MultipartFile image3, MultipartFile image4) {
+                                       MultipartFile image3, MultipartFile image4) {
         ProductEntity product = productRepository.findById(id).get();
 
         // ImageProduct url
@@ -79,22 +80,22 @@ public class ProductService {
         product.setImageProduct(imgProUrl);
 
         // Condition check if not have img (Not optimize)
-        if(!imgOneUrl.equals("-1"))
+        if (!imgOneUrl.equals("-1"))
             product.setImage1(imgOneUrl);
         else
             product.setImage1("");
 
-        if(!imgTwoUrl.equals("-1"))
+        if (!imgTwoUrl.equals("-1"))
             product.setImage2(imgTwoUrl);
         else
             product.setImage2("");
 
-        if(!imgThreeUrl.equals("-1"))
+        if (!imgThreeUrl.equals("-1"))
             product.setImage3(imgThreeUrl);
         else
             product.setImage3("");
 
-        if(!imgFourUrl.equals("-1"))
+        if (!imgFourUrl.equals("-1"))
             product.setImage4(imgFourUrl);
         else
             product.setImage4("");
@@ -107,18 +108,17 @@ public class ProductService {
     public ResponseEntity<?> save(ProductDTO productDTO) {
         ProductEntity product;
 
-        if(productDTO.getId() != 0) {
+        if (productDTO.getId() != 0) {
             // UPDATE
             product = productRepository.findById(productDTO.getId())
                     .orElse(null);
 
-            if(product == null) {
+            if (product == null) {
                 return new ResponseEntity<>("Not found product id " + productDTO.getId(),
                         HttpStatus.BAD_REQUEST);
             }
             ProductMapper.toProductEntity(product, productDTO);
-        }
-        else {
+        } else {
             // CREATE
             product = ProductMapper.toProductEntity(productDTO);
             product.setSold(0L);
@@ -128,7 +128,7 @@ public class ProductService {
         SubCategoryEntity subCategoryEntity = subCategoryRepository.findById(productDTO.getSubCategoryId())
                 .orElse(null);
 
-        if(subCategoryEntity == null) {
+        if (subCategoryEntity == null) {
             return new ResponseEntity<>("Not found sub category id " + productDTO.getSubCategoryId(),
                     HttpStatus.BAD_REQUEST);
         }
@@ -148,7 +148,7 @@ public class ProductService {
         Long sumRating = commentRepository.sumProductReview(product.getId());
 
         // If condition de check neu sum = null thi cho danh gia tb = 0
-        if(sumRating == null) {
+        if (sumRating == null) {
             productDTO.setAvgRating(0);
         }
         // Tinh trung binh neu khac null
@@ -181,8 +181,7 @@ public class ProductService {
         try {
             Long.parseLong(s);
             return true;
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             return false;
         }
     }
@@ -212,7 +211,7 @@ public class ProductService {
             productDTOS.add(productDTO);
         }
 
-        if(products.isEmpty()) {
+        if (products.isEmpty()) {
             return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
                     HttpStatus.NOT_FOUND);
         }
@@ -227,7 +226,7 @@ public class ProductService {
         ProductEntity product = productRepository.findById(id)
                 .orElse(null);
 
-        if(product == null || product.getStatus().equals("Inactive")) {
+        if (product == null || product.getStatus().equals("Inactive")) {
             return new ResponseEntity<>("Cannot found product id " + id, HttpStatus.BAD_REQUEST);
         }
 
@@ -242,17 +241,16 @@ public class ProductService {
         ProductEntity product = productRepository.findById(id)
                 .orElse(null);
 
-        if(product == null) {
+        if (product == null) {
             return new ResponseEntity<>("Cannot found product id " + id, HttpStatus.BAD_REQUEST);
         }
 
 //        productRepository.delete(product);
 //        typeRepository.deleteAllByProductEntityId(id);
 
-        if(product.getStatus().equals("Active")) {
+        if (product.getStatus().equals("Active")) {
             product.setStatus("Inactive");
-        }
-        else
+        } else
             product.setStatus("Active");
 
         productRepository.save(product);
@@ -266,7 +264,7 @@ public class ProductService {
 //region-------------------------Functions for Types Crud APIs, Search Function---------------------------
 
     public ResponseEntity<?> getTypes(long id) {
-        if(typeRepository.findAllByProductEntityId(id).size() > 0) {
+        if (typeRepository.findAllByProductEntityId(id).size() > 0) {
             return new ResponseEntity<>(typeRepository.findAllByProductEntityId(id), HttpStatus.OK);
         }
         return new ResponseEntity<>("Not found product id " + id, HttpStatus.BAD_REQUEST);
@@ -276,11 +274,11 @@ public class ProductService {
         ProductEntity productEntity = productRepository.findById(id)
                 .orElse(null);
 
-        if(productEntity == null) {
+        if (productEntity == null) {
             return new ResponseEntity<>("Cannot found product id " + id, HttpStatus.BAD_REQUEST);
         }
 
-        for(TypeEntity type : types) {
+        for (TypeEntity type : types) {
             type.setProductEntity(productEntity);
             typeRepository.save(type);
         }
@@ -292,7 +290,7 @@ public class ProductService {
         ProductEntity productEntity = productRepository.findById(id)
                 .orElse(null);
 
-        if(productEntity == null) {
+        if (productEntity == null) {
             return new ResponseEntity<>("Cannot found product id " + id, HttpStatus.BAD_REQUEST);
         }
 
@@ -323,7 +321,7 @@ public class ProductService {
      */
     List<ProductDTO> filterByPriceRange(String minPrice, String maxPrice, long defaultMaxPrice,
                                         List<ProductDTO> productDTOS) {
-        if(Long.parseLong(minPrice) < Long.parseLong(maxPrice) && Long.parseLong(minPrice) >= 0
+        if (Long.parseLong(minPrice) < Long.parseLong(maxPrice) && Long.parseLong(minPrice) >= 0
                 || Long.parseLong(maxPrice) <= defaultMaxPrice - 1) {
 
             List<ProductDTO> priceFilter = new ArrayList<>();
@@ -336,14 +334,13 @@ public class ProductService {
                 }
             }
             return priceFilter;
-        }
-        else {
+        } else {
             return productDTOS;
         }
     }
 
     List<ProductDTO> filterBySubCate(String sub, List<ProductDTO> productDTOS) {
-        if(sub != null && isNumber(sub) && !sub.equals("")) {
+        if (sub != null && isNumber(sub) && !sub.equals("")) {
             List<ProductDTO> subFilter = new ArrayList<>();
 
             for (ProductDTO productDTO : productDTOS) {
@@ -352,14 +349,13 @@ public class ProductService {
                 }
             }
             return subFilter;
-        }
-        else {
+        } else {
             return productDTOS;
         }
     }
 
     List<ProductDTO> filterByCate(String cat, List<ProductDTO> productDTOS) {
-        if(cat != null && isNumber(cat) && !cat.equals("")) {
+        if (cat != null && isNumber(cat) && !cat.equals("")) {
             List<ProductDTO> catFilter = new ArrayList<>();
 
             for (ProductDTO productDTO : productDTOS) {
@@ -368,14 +364,13 @@ public class ProductService {
                 }
             }
             return catFilter;
-        }
-        else {
+        } else {
             return productDTOS;
         }
     }
 
     void paginationDTOSHandler(int size, String page, String limit,
-                    ListOutputResult res, List<?> dtos) {
+                               ListOutputResult res, List<?> dtos) {
         page = checkTotalPage(size, Long.parseLong(limit), Long.parseLong(page));
 
         // Start index and end index
@@ -384,7 +379,7 @@ public class ProductService {
                 ? Integer.parseInt(page) * Integer.parseInt(limit)
                 : Integer.parseInt(page) * size;
 
-        if(endIndex > size - 1) {
+        if (endIndex > size - 1) {
             endIndex = size;
         }
         res.setItemsNumber(size);
@@ -395,7 +390,7 @@ public class ProductService {
                                                    String minPrice, String maxPrice, String sub, String cat) {
         ListOutputResult result = new ListOutputResult();
 
-        if(typeRepository.findMaxPrice() == null) {
+        if (typeRepository.findMaxPrice() == null) {
             return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
                     HttpStatus.NOT_FOUND);
         }
@@ -414,10 +409,9 @@ public class ProductService {
 
         List<ProductEntity> productEntities;
 
-        if(keyword == null) {
+        if (keyword == null) {
             productEntities = productRepository.findAllWithCatIdAndSubCatIdAndStatus();
-        }
-        else {
+        } else {
             productEntities = productRepository.findAllBySearchWithCatIdAndSubCatIdAndStatus(keyword);
         }
 
@@ -438,7 +432,7 @@ public class ProductService {
         // Search by Category
         productDTOS = filterByCate(cat, productDTOS);
 
-        if(productDTOS.isEmpty()) {
+        if (productDTOS.isEmpty()) {
             return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
                     HttpStatus.NOT_FOUND);
         }
@@ -464,21 +458,21 @@ public class ProductService {
         CommentEntity comment = commentRepository.findById(id)
                 .orElse(null);
 
-        if(comment == null) {
+        if (comment == null) {
             return new ResponseEntity<>("Not found comment id " + id, HttpStatus.BAD_REQUEST);
         }
 
 
         Optional<UserEntity> usersOptional = userRepository.findByUsername(username);
 
-        if(!usersOptional.isPresent()) {
+        if (!usersOptional.isPresent()) {
             return new ResponseEntity<>("Not found username " + username, HttpStatus.BAD_REQUEST);
         }
 
         UserEntity userLogin = usersOptional.get();
 
         // Check user login id and comment id
-        if(!userLogin.getId().equals(comment.getUserid())) {
+        if (!userLogin.getId().equals(comment.getUserid())) {
             return new ResponseEntity<>("Username " + username + " is not allowed to do this action!",
                     HttpStatus.BAD_REQUEST);
         }
@@ -488,7 +482,7 @@ public class ProductService {
                 String.valueOf(comment.getId()),
                 "ShopeeProject" + "/" + "Comment");
 
-        if(!imgCommentUrl.equals("-1"))
+        if (!imgCommentUrl.equals("-1"))
             comment.setImage(imgCommentUrl);
 
         commentRepository.save(comment);
@@ -507,16 +501,16 @@ public class ProductService {
         ProductEntity productEntity = productRepository.findById(id)
                 .orElse(null);
 
-        if(productEntity == null) {
+        if (productEntity == null) {
             return new ResponseEntity<>("Not found product id " + id, HttpStatus.BAD_REQUEST);
         }
 
         // Limit the max rating
-        if(commentDTO.getRating() > 5)
+        if (commentDTO.getRating() > 5)
             commentDTO.setRating(5);
 
         // Limit the min rating
-        if(commentDTO.getRating() < 1)
+        if (commentDTO.getRating() < 1)
             commentDTO.setRating(1);
 
         comment.setProductEntity(productEntity);
@@ -524,9 +518,8 @@ public class ProductService {
 
         // GET Login username to get id
         if (principal instanceof ApplicationUser) {
-            username = ((ApplicationUser)principal).getUsername();
-        }
-        else {
+            username = ((ApplicationUser) principal).getUsername();
+        } else {
             username = principal.toString();
         }
 
@@ -542,21 +535,20 @@ public class ProductService {
     }
 
     List<CommentDTO> filterByRating(String rating, List<CommentDTO> commentDTOS) {
-        if(rating != null && !rating.equals("") && isNumber(rating)) {
+        if (rating != null && !rating.equals("") && isNumber(rating)) {
             rating = (Long.parseLong(rating) > 5) ? "5" : rating;
             rating = (Long.parseLong(rating) < 1) ? "1" : rating;
 
             List<CommentDTO> ratingFilter = new ArrayList<>();
 
-            for(CommentDTO commentDTO : commentDTOS) {
-                if(commentDTO.getRating() == Long.parseLong(rating)) {
+            for (CommentDTO commentDTO : commentDTOS) {
+                if (commentDTO.getRating() == Long.parseLong(rating)) {
                     ratingFilter.add(commentDTO);
                 }
             }
 
             return ratingFilter;
-        }
-        else {
+        } else {
             return commentDTOS;
         }
     }
@@ -576,7 +568,7 @@ public class ProductService {
         rating = (!isNumber(rating) || rating.equals("")) ? null : rating;
 
         // Trans to DTO
-        for(CommentEntity comment : commentEntities) {
+        for (CommentEntity comment : commentEntities) {
             CommentDTO commentDTO = new CommentDTO();
 
             commentDTOHandler(comment, commentDTO);
@@ -585,7 +577,7 @@ public class ProductService {
 
         commentDTOS = filterByRating(rating, commentDTOS);
 
-        if(commentEntities.size() == 0 || commentDTOS.size() == 0) {
+        if (commentEntities.size() == 0 || commentDTOS.size() == 0) {
             return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
                     HttpStatus.NOT_FOUND);
         }
@@ -599,15 +591,14 @@ public class ProductService {
     public ResponseEntity<?> banComment(long id) {
         CommentEntity comment = commentRepository.findById(id).orElse(null);
 
-        if(comment == null) {
+        if (comment == null) {
             return new ResponseEntity<>("Not found comment id " + id,
                     HttpStatus.BAD_REQUEST);
         }
 
-        if(comment.getStatus().equals("Active")) {
+        if (comment.getStatus().equals("Active")) {
             comment.setStatus("Inactive");
-        }
-        else
+        } else
             comment.setStatus("Active");
 
         commentRepository.save(comment);
@@ -620,6 +611,11 @@ public class ProductService {
 
     // Loc's Function
     public ProductEntity getProductsById(long productId) throws Exception {
-        return productRepository.findById(productId).orElseThrow(() ->new Exception("Product is not found"));}
+        return productRepository.findById(productId).orElseThrow(() -> new Exception("Product is not found"));
+    }
+
+    public List<ProductEntity> getAllByProIdList(Collection<Long> IdList) {
+        return productRepository.findAllByIdIn(IdList);
+    }
 }
 

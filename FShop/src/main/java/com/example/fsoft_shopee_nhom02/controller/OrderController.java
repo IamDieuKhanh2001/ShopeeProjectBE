@@ -4,10 +4,10 @@ import com.example.fsoft_shopee_nhom02.Notification.NotificationService;
 import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.model.OrderDetailsEntity;
 import com.example.fsoft_shopee_nhom02.model.OrderEntity;
+import com.example.fsoft_shopee_nhom02.model.ProductEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
@@ -19,7 +19,9 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.example.fsoft_shopee_nhom02.config.GlobalVariable.*;
 
@@ -34,9 +36,10 @@ public class OrderController {
     private final CartService cartService;
     private final CartProductService cartProductService;
     private final NotificationService notificationService;
+    private final ProductService productService;
 
     @Autowired
-    public OrderController(OrderDetailService orderDetailService, OrderService orderService, UserService userService, AddressService addressService, CartService cartService, CartProductService cartProductService, SimpMessagingTemplate simpMessagingTemplate, NotificationService notificationService) {
+    public OrderController(OrderDetailService orderDetailService, OrderService orderService, UserService userService, AddressService addressService, CartService cartService, CartProductService cartProductService, NotificationService notificationService, ProductService productService) {
         this.orderDetailService = orderDetailService;
         this.orderService = orderService;
         this.userService = userService;
@@ -44,6 +47,7 @@ public class OrderController {
         this.cartService = cartService;
         this.cartProductService = cartProductService;
         this.notificationService = notificationService;
+        this.productService = productService;
     }
 
     @GetMapping("/sentMessage")
@@ -51,7 +55,7 @@ public class OrderController {
         // more config
 
         //
-        notificationService.sendNotification(message.get("message"),message.get("userId"));
+        notificationService.sendNotification(message.get("message"), message.get("userId"));
     }
 
     @GetMapping("/all")
@@ -70,7 +74,7 @@ public class OrderController {
     }
 
     @GetMapping("/pending/{id}")
-    public Object getAllOrderByUserId(@PathVariable String id) {
+    public Object getAllPendingOrderByUserId(@PathVariable String id) {
         return orderService.getAllPendingOrderByUserId(Long.parseLong(id), ORDER_STATUS.PENDING.toString());
     }
 
@@ -82,11 +86,19 @@ public class OrderController {
     @GetMapping("/detail/{id}")
     public Object getOrderDetailByOrderId(@PathVariable String id) {
         List<OrderDetailsEntity> orderDetailsEntityList = orderDetailService.findAllByOrderEntityId(Long.parseLong(id));
+
+        List<String> productEntityImageList = productService.getAllByProIdList(orderDetailsEntityList.stream()
+                .map(OrderDetailsEntity::getProductId).collect(Collectors.toList())).stream()
+                .map(ProductEntity::getImageProduct).collect(Collectors.toList());
+
         OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
 
         Map<String, Object> res = new HashMap<>();
 
         res.put("orderDetailsList", orderDetailsEntityList);
+
+        res.put("orderDetailsImageList",productEntityImageList);
+
         res.put("orderInfo", orderEntity);
 
         return res;

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -20,6 +21,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     List<ProductEntity> findAllByStatus(String status, Pageable pageable);
 
     List<ProductEntity> findAllByStatus(String status);
+
+    List<ProductEntity> findAllByIdIn(Collection<Long> id);
 
     @Query(value = "SELECT pro FROM ProductEntity pro WHERE " +
             "pro.name LIKE %?1% " +
