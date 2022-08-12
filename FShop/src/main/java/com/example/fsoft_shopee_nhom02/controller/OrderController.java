@@ -87,15 +87,21 @@ public class OrderController {
     public Object getOrderDetailByOrderId(@PathVariable String id) {
         List<OrderDetailsEntity> orderDetailsEntityList = orderDetailService.findAllByOrderEntityId(Long.parseLong(id));
 
-        List<String> productEntityImageList = productService.getAllByProIdList(orderDetailsEntityList.stream()
-                .map(OrderDetailsEntity::getProductId).collect(Collectors.toList())).stream()
-                .map(ProductEntity::getImageProduct).collect(Collectors.toList());
+        List<Long> productIdList = orderDetailsEntityList.stream().map(OrderDetailsEntity::getProductId).collect(Collectors.toList());
+
+        List<ProductEntity> productEntityList=productService.getAllByProIdList(productIdList);
+
+        List<String> productEntityImageList = productEntityList.stream().map(ProductEntity::getImageProduct).collect(Collectors.toList());
+
+        List<String> productNameList=productEntityList.stream().map(ProductEntity::getName).collect(Collectors.toList());
 
         OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
 
         Map<String, Object> res = new HashMap<>();
 
         res.put("orderDetailsList", orderDetailsEntityList);
+
+        res.put("productNameList",productNameList);
 
         res.put("orderDetailsImageList",productEntityImageList);
 
