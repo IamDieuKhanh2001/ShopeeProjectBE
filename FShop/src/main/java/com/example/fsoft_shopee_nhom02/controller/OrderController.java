@@ -17,7 +17,8 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static com.example.fsoft_shopee_nhom02.Notification.NotificationVar.*;
 import static com.example.fsoft_shopee_nhom02.config.GlobalVariable.*;
@@ -104,9 +105,9 @@ public class OrderController {
 
         // create variable for usage
         OrderEntity orderEntity = new OrderEntity();
-        List<OrderDetailsEntity> orderDetailsEntityList = new ArrayList<>();
-        Collection<Long> productEntity_idList = new ArrayList<>();
-        Collection<String> typeList = new ArrayList<>();
+        List<OrderDetailsEntity> orderDetailsEntityList;
+        Collection<Long> productEntity_idList;
+        Collection<String> typeList;
 
         // get user information
         UserEntity user = userService.findByIdUser(Long.parseLong(orderInformation.get("user_id")));
@@ -116,19 +117,20 @@ public class OrderController {
         // calculate for order Entity
         Timestamp created_date = getCurrentDateTime();
         String status = ORDER_STATUS.PENDING.toString();
-        AtomicLong total_cost = new AtomicLong();
+        AtomicReference<Long> total_cost = new AtomicReference<>((long) 0);
 
         // analyze order Product data
-        orderDetailsEntityList_req.forEach(i -> {
-            OrderDetailsEntity orderDetailsEntity = new OrderDetailsEntity();
-            orderDetailsEntity.setQuantity(Long.parseLong(i.get("quantity")));
-            orderDetailsEntity.setUnitPrice(Long.parseLong(i.get("unit_price")));
-            orderDetailsEntity.setProductEntityID(Long.parseLong(i.get("product_id")));
-            orderDetailsEntity.setType(i.get("type"));
+        orderDetailsEntityList = orderDetailsEntityList_req.stream()
+                .map(orderEntity_req -> {
+                    OrderDetailsEntity orderDetailsEntity = new OrderDetailsEntity();
+                    orderDetailsEntity.setQuantity(Long.parseLong(orderEntity_req.get("quantity")));
+                    orderDetailsEntity.setUnitPrice(Long.parseLong(orderEntity_req.get("unit_price")));
+                    orderDetailsEntity.setProductEntityID(Long.parseLong(orderEntity_req.get("product_id")));
+                    orderDetailsEntity.setType(orderEntity_req.get("type"));
 
-            total_cost.addAndGet(Long.parseLong(i.get("unit_price")) * Long.parseLong(i.get("quantity")));
-            orderDetailsEntityList.add(orderDetailsEntity);
-        });
+                    total_cost.updateAndGet(v -> v + (Long.parseLong(orderEntity_req.get("unit_price")) * Long.parseLong(orderEntity_req.get("quantity"))));
+                    return orderDetailsEntity;
+                }).collect(Collectors.toList());
 
         // map value for orderEntity
         orderEntity.setCreatedDate(created_date);
@@ -159,16 +161,13 @@ public class OrderController {
 
         // insert orderId for orderDetails
         long newOrderEntityID = orderEntity.getId();
-        orderDetailsEntityList.forEach(
-                (orderDetailsEntity) -> {
-                    // set id for order Detail
-                    orderDetailsEntity.setOrderEntityID(newOrderEntityID);
 
-                    // set attribute for delete cartProduct func
-                    productEntity_idList.add(orderDetailsEntity.getProductId());
-                    typeList.add(orderDetailsEntity.getType());
-                }
-        );
+        // set attribute for delete cartProduct func
+        productEntity_idList = orderDetailsEntityList.stream().map(OrderDetailsEntity::getProductId).collect(Collectors.toList());
+        typeList = orderDetailsEntityList.stream().map(OrderDetailsEntity::getType).collect(Collectors.toList());
+
+        // set id for order Detail
+        orderDetailsEntityList.forEach(orderDetailsEntity -> orderDetailsEntity.setOrderEntityID(newOrderEntityID));
 
         // insert order detail to DB
         orderDetailService.addNewOrderDetails(orderDetailsEntityList);
