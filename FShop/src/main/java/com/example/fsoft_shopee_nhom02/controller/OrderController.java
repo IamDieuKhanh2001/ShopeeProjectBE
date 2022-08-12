@@ -50,7 +50,7 @@ public class OrderController {
         this.productService = productService;
     }
 
-    @GetMapping("/sentMessage")
+    @PostMapping("/sentMessage")
     public void sentMessage(@RequestBody Map<String, String> message) {
         // more config
 
