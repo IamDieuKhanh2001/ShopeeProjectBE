@@ -2,7 +2,7 @@ package com.example.fsoft_shopee_nhom02.security;
 
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUserService;
 import com.example.fsoft_shopee_nhom02.exception.BadRequest;
-import com.example.fsoft_shopee_nhom02.filters.CORSFilter;
+//import com.example.fsoft_shopee_nhom02.filters.CORSFilter;
 import com.example.fsoft_shopee_nhom02.filters.JwtRequestFilter;
 import com.example.fsoft_shopee_nhom02.oauth.GoogleLoginSuccessHandler;
 import com.example.fsoft_shopee_nhom02.oauth.GoogleOauth2UserService;
@@ -74,7 +74,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class);
+
+        http.cors();
+//        http.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class);
     }
     @Override
     @Bean
