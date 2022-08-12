@@ -2,6 +2,7 @@ package com.example.fsoft_shopee_nhom02.filters;
 
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUserService;
 import com.example.fsoft_shopee_nhom02.auth.JwtUtil;
+import com.example.fsoft_shopee_nhom02.exception.BadRequest;
 import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,9 +39,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 username = jwtUtil.extractUsername(jwt);
             } catch (JwtException exception) {
-                throw new IllegalStateException("Token can't not be trusted");
+                throw new BadRequest("Token can't not be trusted");
             }
-
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {

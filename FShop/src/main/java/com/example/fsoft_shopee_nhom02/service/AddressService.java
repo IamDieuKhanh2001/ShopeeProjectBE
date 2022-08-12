@@ -105,13 +105,13 @@ public class AddressService {
         if(!addressOptional.isPresent()) {
             return false;
         }
-        AddressEntity newDefaultAddress = addressOptional.get();
-        newDefaultAddress.setAddressDefault(true);
 
         AddressEntity currentDefaultAddress = addressRepository
                 .findAddressEntityByAddressDefaultAndUserEntity(true, userEntityOptional.get());
         currentDefaultAddress.setAddressDefault(false);
 
+        AddressEntity newDefaultAddress = addressOptional.get();
+        newDefaultAddress.setAddressDefault(true);
         try {
             addressRepository.save(currentDefaultAddress);
             addressRepository.save(newDefaultAddress);
