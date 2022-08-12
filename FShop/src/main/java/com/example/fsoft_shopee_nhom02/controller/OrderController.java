@@ -1,5 +1,6 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
+import com.example.fsoft_shopee_nhom02.Notification.NotificationService;
 import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.model.OrderDetailsEntity;
 import com.example.fsoft_shopee_nhom02.model.OrderEntity;
@@ -20,7 +21,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static com.example.fsoft_shopee_nhom02.Notification.NotificationVar.*;
 import static com.example.fsoft_shopee_nhom02.config.GlobalVariable.*;
 
 @RestController
@@ -33,17 +33,17 @@ public class OrderController {
     private final AddressService addressService;
     private final CartService cartService;
     private final CartProductService cartProductService;
-    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final NotificationService notificationService;
 
     @Autowired
-    public OrderController(OrderDetailService orderDetailService, OrderService orderService, UserService userService, AddressService addressService, CartService cartService, CartProductService cartProductService, SimpMessagingTemplate simpMessagingTemplate) {
+    public OrderController(OrderDetailService orderDetailService, OrderService orderService, UserService userService, AddressService addressService, CartService cartService, CartProductService cartProductService, SimpMessagingTemplate simpMessagingTemplate, NotificationService notificationService) {
         this.orderDetailService = orderDetailService;
         this.orderService = orderService;
         this.userService = userService;
         this.addressService = addressService;
         this.cartService = cartService;
         this.cartProductService = cartProductService;
-        this.simpMessagingTemplate = simpMessagingTemplate;
+        this.notificationService = notificationService;
     }
 
     @GetMapping("/sentMessage")
@@ -51,7 +51,7 @@ public class OrderController {
         // more config
 
         //
-        simpMessagingTemplate.convertAndSendToUser(message.get("UserId"), destination, message.get("message"));
+        notificationService.sendNotification(message.get("message"),message.get("userId"));
     }
 
     @GetMapping("/all")
