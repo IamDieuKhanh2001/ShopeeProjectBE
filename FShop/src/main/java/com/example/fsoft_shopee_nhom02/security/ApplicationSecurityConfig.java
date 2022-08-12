@@ -56,7 +56,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                             "/products/**", "/products","/order/**",
                              "/recoveryPassword/**","/category/**",
                             "/category","/shop/**","/shop","/subcategory/**",
-                            "/subcategory", "/login/oauth2/code/google", "/oauth2/**").permitAll() //Các API không cần đăng nhập
+                            "/subcategory", "/login/oauth2/code/google", "/oauth2/**","/NotificationService/**").permitAll() //Các API không cần đăng nhập
                     .antMatchers().hasAnyRole(ADMIN.name(), USER.name()) //Các API cần đăng nhập bằng tk admin, user
                     .antMatchers("/admin/**").hasRole(ADMIN.name()) //Các API cần đăng nhập bằng tk admin
                     .antMatchers("/user/**").hasRole(USER.name()) //Các API cần đăng nhập bằng tk user
