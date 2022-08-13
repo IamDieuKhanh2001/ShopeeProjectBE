@@ -1,15 +1,16 @@
 package com.example.fsoft_shopee_nhom02.service.impl;
 
+import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
 import com.example.fsoft_shopee_nhom02.dto.SubCategoryDTO;
 import com.example.fsoft_shopee_nhom02.exception.BadRequest;
 import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.SubCategoryMapper;
 import com.example.fsoft_shopee_nhom02.model.CategoryEntity;
-import com.example.fsoft_shopee_nhom02.model.ProductEntity;
-import com.example.fsoft_shopee_nhom02.model.ShopEntity;
 import com.example.fsoft_shopee_nhom02.model.SubCategoryEntity;
-import com.example.fsoft_shopee_nhom02.repository.*;
-import com.example.fsoft_shopee_nhom02.service.CategoryService;
+import com.example.fsoft_shopee_nhom02.repository.CategoryRepository;
+import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
+import com.example.fsoft_shopee_nhom02.repository.ShopRepository;
+import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
 import com.example.fsoft_shopee_nhom02.service.CloudinaryService;
 import com.example.fsoft_shopee_nhom02.service.SubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class SubCategoryServiceImpl implements SubCategoryService {
@@ -44,7 +46,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                         +subCategoryDTO.getCategoryId()));
 
         //check category is inactive
-        if(category.getStatus().equals("Inactive")){
+        if(Objects.equals(category.getStatus(), GlobalVariable.INACTIVE_STATUS)){
             throw new BadRequest("This category is inactive!!");
         }
 
@@ -85,7 +87,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         List<SubCategoryDTO> subCategoryDTOS = new ArrayList<>();
         List<SubCategoryEntity> subCategories;
         if(active){
-            subCategories = subCategoryRepository.findAllByStatus("Active");
+            subCategories = subCategoryRepository.findAllByStatus(GlobalVariable.ACTIVE_STATUS);
         }
         else {
             subCategories = subCategoryRepository.findAll();
@@ -113,14 +115,14 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                 new BadRequest("There is no category with id = "+categoryId));
 
         //check category is inactive
-        if(category.getStatus().equals("Inactive")){
+        if(Objects.equals(category.getStatus(), GlobalVariable.INACTIVE_STATUS)){
             throw new BadRequest("This category is inactive!!");
         }
 
         List<SubCategoryDTO> subCategoryDTOS = new ArrayList<>();
         List<SubCategoryEntity> subCategories;
         if(active){
-            subCategories = subCategoryRepository.findAllByCategoryEntityIdAndStatus(categoryId,"Active");
+            subCategories = subCategoryRepository.findAllByCategoryEntityIdAndStatus(categoryId,GlobalVariable.ACTIVE_STATUS);
         }
         else {
             subCategories = subCategoryRepository.findAllByCategoryEntityId(categoryId);
@@ -138,13 +140,13 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     @Override
     public List<SubCategoryDTO> getSubCategoryByShopId(long shopId, boolean active) {
-        ShopEntity shop = shopRepository.findById(shopId).orElseThrow(()
-                -> new BadRequest("There is no shop with id = "+shopId));
+        shopRepository.findById(shopId).orElseThrow(()
+                -> new BadRequest("There is no shop with id = " + shopId));
 
         List<SubCategoryDTO> subCategoryDTOS = new ArrayList<>();
         List<SubCategoryEntity> subCategories;
         if(active){
-            subCategories = subCategoryRepository.findAllByShopEntityIdAndStatus(shopId,"Active");
+            subCategories = subCategoryRepository.findAllByShopEntityIdAndStatus(shopId,GlobalVariable.ACTIVE_STATUS);
         }
         else {
             subCategories = subCategoryRepository.findAllByShopEntityId(shopId);
@@ -168,9 +170,9 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
         if(active){
             if(categoryId == 0L) {
-                return subCategoryRepository.countByStatus("Active");
+                return subCategoryRepository.countByStatus(GlobalVariable.ACTIVE_STATUS);
             }
-            return subCategoryRepository.countByCategoryEntityIdAndStatus(categoryId,"Active");
+            return subCategoryRepository.countByCategoryEntityIdAndStatus(categoryId,GlobalVariable.ACTIVE_STATUS);
         }
         else{
             if(categoryId == 0L) {
@@ -195,7 +197,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
                         +subCategoryDTO.getCategoryId()));
 
         //check category is active
-        if(category.getStatus().equals("Inactive")){
+        if(Objects.equals(category.getStatus(), GlobalVariable.INACTIVE_STATUS)){
             throw new BadRequest("This category is inactive!!");
         }
 
@@ -216,7 +218,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
     @Override
     public void delete(long id) {
-        SubCategoryEntity subCategory  = subCategoryRepository.findById(id)
+        subCategoryRepository.findById(id)
                 .orElseThrow(() -> new BadRequest("Fail! This subcategory not exist"));
 
         subCategoryRepository.deleteById(id);
@@ -234,8 +236,8 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 //            product = productRepository.save(product);
 //        }
 
-        subCategory.setStatus("Inactive");
-        subCategory = subCategoryRepository.save(subCategory);
+        subCategory.setStatus(GlobalVariable.INACTIVE_STATUS);
+        subCategoryRepository.save(subCategory);
     }
 
     @Override
@@ -256,18 +258,4 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         return SubCategoryMapper.toSubCategoryDto(subCategory);
     }
 
-    //check name subcategory can not similar in category
-    public boolean checkNameInCategory(SubCategoryDTO subCategoryDTO){
-        boolean check = false;
-        List<SubCategoryEntity> subCategories = subCategoryRepository
-                .findAllByCategoryEntityId(subCategoryDTO.getCategoryId());
-
-        for(SubCategoryEntity subCategory : subCategories){
-            if(subCategory.getName().equals(subCategoryDTO.getName())){
-                check = true;
-                break;
-            }
-        }
-        return check;
-    }
 }

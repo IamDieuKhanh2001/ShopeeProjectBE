@@ -25,4 +25,8 @@ public class GlobalVariable {
         CANCELED,
         PENDING,
     }
+    public static final String ACTIVE_STATUS = "Active";
+    public static final String INACTIVE_STATUS = "Inactive";
+
+
 }

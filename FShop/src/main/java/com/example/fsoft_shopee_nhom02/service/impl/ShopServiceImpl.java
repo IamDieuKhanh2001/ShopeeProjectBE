@@ -78,7 +78,7 @@ public class ShopServiceImpl implements ShopService {
 
     @Override
     public void delete(long id) {
-        ShopEntity shop = shopRepository.findById(id).orElseThrow(()
+        shopRepository.findById(id).orElseThrow(()
                 -> new BadRequest("Fail! This shop not exist"));
         shopRepository.deleteById(id);
     }

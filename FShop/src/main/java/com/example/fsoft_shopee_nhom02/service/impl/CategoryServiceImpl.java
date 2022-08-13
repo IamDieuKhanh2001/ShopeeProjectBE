@@ -1,5 +1,6 @@
 package com.example.fsoft_shopee_nhom02.service.impl;
 
+import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
 import com.example.fsoft_shopee_nhom02.dto.CategoryDTO;
 import com.example.fsoft_shopee_nhom02.exception.BadRequest;
 import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
@@ -11,7 +12,6 @@ import com.example.fsoft_shopee_nhom02.repository.CategoryRepository;
 import com.example.fsoft_shopee_nhom02.repository.ShopRepository;
 import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
 import com.example.fsoft_shopee_nhom02.service.CategoryService;
-import com.example.fsoft_shopee_nhom02.service.SubCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -100,7 +100,7 @@ public class CategoryServiceImpl implements CategoryService {
         List<CategoryDTO> categoryDTOS = new ArrayList<>();
         List<CategoryEntity> categories;
         if(active) {
-            categories = categoryRepository.findAllByStatus("Active");
+            categories = categoryRepository.findAllByStatus(GlobalVariable.ACTIVE_STATUS);
         }
         else{
             categories = categoryRepository.findAll();
@@ -123,12 +123,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDTO> getCategoryByShopId(long shopId, boolean active) {
-        ShopEntity shop = shopRepository.findById(shopId).orElseThrow(()
+        shopRepository.findById(shopId).orElseThrow(()
                 -> new BadRequest("Not found shop with id = "+shopId));
         List<CategoryDTO> categoryDTOS = new ArrayList<>();
         List<CategoryEntity> categories;
         if(active) {
-            categories = categoryRepository.findAllByShopEntityIdAndStatus(shopId, "Active");
+            categories = categoryRepository.findAllByShopEntityIdAndStatus(shopId, GlobalVariable.ACTIVE_STATUS);
         }
         else{
             categories = categoryRepository.findAllByShopEntityId(shopId);
@@ -146,13 +146,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public long countCategoryByShopId(long shopId, boolean active) {
-        ShopEntity shop = shopRepository.findById(shopId).orElseThrow(() ->
+        shopRepository.findById(shopId).orElseThrow(() ->
                 new BadRequest("Not found shop with id = "+shopId));
         if(active) {
             if (shopId == 0L) {
-                return categoryRepository.countByStatus("Active");
+                return categoryRepository.countByStatus(GlobalVariable.ACTIVE_STATUS);
             }
-            return categoryRepository.countByShopEntityIdAndStatus(shopId,"Active");
+            return categoryRepository.countByShopEntityIdAndStatus(shopId,GlobalVariable.ACTIVE_STATUS);
         }
         else{
             if (shopId == 0L) {
@@ -164,7 +164,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void delete(long id) {
-        CategoryEntity category = categoryRepository.findById(id).orElseThrow(()
+        categoryRepository.findById(id).orElseThrow(()
                 -> new BadRequest("Fail!This category not exist"));
         categoryRepository.deleteById(id);
     }
@@ -178,13 +178,13 @@ public class CategoryServiceImpl implements CategoryService {
 
         List<SubCategoryEntity> subCategories = subCategoryRepository.findAllByCategoryEntityId(id);
         for(SubCategoryEntity subCategory : subCategories){
-            subCategory.setStatus("Inactive");
-            subCategory = subCategoryRepository.save(subCategory);
+            subCategory.setStatus(GlobalVariable.INACTIVE_STATUS);
+            subCategoryRepository.save(subCategory);
         }
 
-        category.setStatus("Inactive");
+        category.setStatus(GlobalVariable.INACTIVE_STATUS);
 
-        category = categoryRepository.save(category);
+        categoryRepository.save(category);
     }
 
     @Override
