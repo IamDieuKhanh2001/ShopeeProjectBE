@@ -78,9 +78,10 @@ public class ProductController {
         String maxPrice = requestParams.get("maxPrice");
         String subCate = requestParams.get("sub");
         String cat = requestParams.get("cat");
+        String rating = requestParams.get("rating");
 
         return productService.search(page, limit, keyword, minPrice,
-                maxPrice, subCate, cat);
+                maxPrice, subCate, cat, rating);
     }
 
     @PostMapping("/users/products/{proId}/comments")
