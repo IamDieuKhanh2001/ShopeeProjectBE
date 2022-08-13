@@ -120,7 +120,7 @@ public class ShopServiceImpl implements ShopService {
             shopDTOS.add(ShopMapper.toShopDto(shop));
         }
         if(shopDTOS.isEmpty()){
-            throw  new BadRequest("Not found shop name "+keyword);
+            throw new BadRequest("Not found shop name "+keyword);
         }
         return shopDTOS.get(0);
     }
