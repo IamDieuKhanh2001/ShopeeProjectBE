@@ -51,14 +51,17 @@ public class CartProductServiceImpl implements CartProductService {
         long qty = cartProductDTO.getQuantity();
         long productId = cartProductDTO.getProductId();
         String type = cartProductDTO.getType();
-        CartProductEntity obj = new CartProductEntity();
         CartProductMapper cartProductMapper = new CartProductMapper();
-        CartProductEntity obj1 = cartProductRepository.getCartByProductIdAnduserId(cartId, productId, type);
+
         if (cartProductRepository.getCartByProductIdAndCartId(cartId, productId, type).isPresent()) {
+            CartProductEntity obj1 = cartProductRepository.getCartByProductIdAndCartId(cartId, productId, type).
+                    orElseThrow(() -> new NotFoundException ("lỗi"));
             obj1.setQuantity(obj1.getQuantity() + qty);
             cartProductRepository.save(obj1);
             return cartProductMapper.toCartProductDto(obj1);
+
         } else {
+            CartProductEntity obj = new CartProductEntity();
             obj.setQuantity(qty);
             CartEntity cart = cartService.getCartsById(cartId);
             obj.setCartEntity(cart);
@@ -107,13 +110,14 @@ public class CartProductServiceImpl implements CartProductService {
         Long cartId = user.getCartEntity().getId();
         List<CartProductEntity> cartProductEntities = cartProductRepository.getCart(cartId);
         List<CartDetailDTO> cartDetailDTOS = new ArrayList<>();
+
         List<Integer> test = new ArrayList<>();
-        for (CartProductEntity cartProduct : cartProductEntities) {
+        for (CartProductEntity cartProductEntity : cartProductEntities) {
             CartDetailDTO cartDetailDTO = new CartDetailDTO();
 
-            cartDetailDTO.setQuantity(cartProduct.getQuantity());
+            cartDetailDTO.setQuantity(cartProductEntity.getQuantity());
 
-            ProductEntity product = productRepository.findById(cartProduct.getProductEntity().getId())
+            ProductEntity product = productRepository.findById(cartProductEntity.getProductEntity().getId())
                     .orElseThrow(() -> new NotFoundException("not found product"));
             //set name and image
             cartDetailDTO.setName(product.getName());
@@ -121,8 +125,9 @@ public class CartProductServiceImpl implements CartProductService {
             cartDetailDTO.setProductId(product.getId());
 
             //get type
-            TypeEntity type = typeRepository.findProductByType(cartProduct.getProductEntity().getId(), cartProduct.getType());
-            cartDetailDTO.setType(cartProduct.getType());
+            TypeEntity type = typeRepository.findProductByType(cartProductEntity.getProductEntity().getId(),
+                                            cartProductEntity.getType());
+            cartDetailDTO.setType(type.getType());
             cartDetailDTO.setPrice(type.getPrice());
 
             cartDetailDTO.setTotalPrice(cartDetailDTO.getTotalPrice());
