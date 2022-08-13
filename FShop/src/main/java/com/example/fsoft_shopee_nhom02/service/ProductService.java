@@ -369,6 +369,24 @@ public class ProductService {
         }
     }
 
+    Boolean isvalidRating(String rating) {
+        return (rating != null && !rating.equals("") && isNumber(rating)
+                && Long.parseLong(rating) <= 5 && Long.parseLong(rating) > 0);
+    }
+
+    List<ProductDTO> filterByAvgRating(String rating, List<ProductDTO> productDTOS) {
+        if (isvalidRating(rating)) {
+            List<ProductDTO> ratingFilter = new ArrayList<>();
+
+            for (ProductDTO commentDTO : productDTOS) {
+                if (commentDTO.getAvgRating() >= Long.parseLong(rating)) {
+                    ratingFilter.add(commentDTO);
+                }
+            }
+            return ratingFilter;
+        } else return productDTOS;
+    }
+
     void paginationDTOSHandler(int size, String page, String limit,
                                ListOutputResult res, List<?> dtos) {
         page = checkTotalPage(size, Long.parseLong(limit), Long.parseLong(page));
@@ -387,7 +405,8 @@ public class ProductService {
     }
 
     public ResponseEntity<ListOutputResult> search(String page, String limit, String keyword,
-                                                   String minPrice, String maxPrice, String sub, String cat) {
+                                                   String minPrice, String maxPrice, String sub,
+                                                   String cat, String rating) {
         ListOutputResult result = new ListOutputResult();
 
         if (typeRepository.findMaxPrice() == null) {
@@ -432,6 +451,9 @@ public class ProductService {
         // Search by Category
         productDTOS = filterByCate(cat, productDTOS);
 
+        // Search by Rating from
+        productDTOS = filterByAvgRating(rating, productDTOS);
+
         if (productDTOS.isEmpty()) {
             return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
                     HttpStatus.NOT_FOUND);
@@ -455,6 +477,7 @@ public class ProductService {
     }
 
     public ResponseEntity<?> postCommentImg(long id, MultipartFile img, String username) {
+        System.out.println(id);
         CommentEntity comment = commentRepository.findById(id)
                 .orElse(null);
 
@@ -535,10 +558,7 @@ public class ProductService {
     }
 
     List<CommentDTO> filterByRating(String rating, List<CommentDTO> commentDTOS) {
-        if (rating != null && !rating.equals("") && isNumber(rating)) {
-            rating = (Long.parseLong(rating) > 5) ? "5" : rating;
-            rating = (Long.parseLong(rating) < 1) ? "1" : rating;
-
+        if (isvalidRating(rating)) {
             List<CommentDTO> ratingFilter = new ArrayList<>();
 
             for (CommentDTO commentDTO : commentDTOS) {
@@ -546,11 +566,8 @@ public class ProductService {
                     ratingFilter.add(commentDTO);
                 }
             }
-
             return ratingFilter;
-        } else {
-            return commentDTOS;
-        }
+        } else return commentDTOS;
     }
 
     public ResponseEntity<ListOutputResult> getAllComments(long id, String page, String limit, String rating) {
