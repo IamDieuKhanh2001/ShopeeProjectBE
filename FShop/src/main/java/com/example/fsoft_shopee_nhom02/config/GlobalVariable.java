@@ -32,6 +32,10 @@ public class GlobalVariable {
     public static String Notification_endpoint = "/NotificationService";
     public static String Notification_sendPrefix = "/message";
     public static String Notification_pushPrefix = "/user";
+
+    public static final String DEFAULT_PAGE = "1";
+    public static final String DEFAULT_LIMIT = "12";
+    public static final String NOT_FOUND_PRODUCT_MESSAGE = "Not found product id ";
 }
 
 

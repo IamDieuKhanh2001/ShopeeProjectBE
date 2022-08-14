@@ -58,12 +58,12 @@ public class UploadImgController {
 //    image/jpeg
 
     @PostMapping("/admin/products/{id}/image")
-    public ProductDTO uploadProductImg(@PathVariable long id,
-                                       @RequestParam("imageProduct") MultipartFile imageProduct,
-                                       @RequestParam(value = "image1", required = false) MultipartFile image1,
-                                       @RequestParam(value = "image2", required = false) MultipartFile image2,
-                                       @RequestParam(value = "image3", required = false) MultipartFile image3,
-                                       @RequestParam(value = "image4", required = false) MultipartFile image4) {
+    public ResponseEntity<?> uploadProductImg(@PathVariable long id,
+                                              @RequestParam("imageProduct") MultipartFile imageProduct,
+                                              @RequestParam(value = "image1", required = false) MultipartFile image1,
+                                              @RequestParam(value = "image2", required = false) MultipartFile image2,
+                                              @RequestParam(value = "image3", required = false) MultipartFile image3,
+                                              @RequestParam(value = "image4", required = false) MultipartFile image4) {
 
         return productService.saveProductImage(id, imageProduct, image1, image2, image3, image4);
 
@@ -71,7 +71,7 @@ public class UploadImgController {
 
     @PostMapping("/users/comments/{id}/image")
     public ResponseEntity<?> uploadCommentImg(@PathVariable long id,
-                                       @RequestParam(required = false) MultipartFile img) {
+                                              @RequestParam(required = false) MultipartFile img) {
         String username = ApplicationUserService.GetUsernameLoggedIn();
 
         if(!img.getContentType().equals("image/png") && !img.getContentType().equals("image/jpeg")) {
@@ -83,7 +83,7 @@ public class UploadImgController {
 
     @PostMapping("/admin/subcategory/{id}/image")
     public SubCategoryDTO uploadSubcategoryImg(@PathVariable long id,
-                                           @RequestParam MultipartFile image) {
+                                               @RequestParam MultipartFile image) {
 
         return subCategoryService.uploadImage(id,image);
 

@@ -49,35 +49,42 @@ public class ProductService {
 
 
     // Use for Upload image controller
-    public ProductDTO saveProductImage(long id, MultipartFile imageProduct, MultipartFile image1, MultipartFile image2,
-                                       MultipartFile image3, MultipartFile image4) {
-        ProductEntity product = productRepository.findById(id).get();
+    public ResponseEntity<?> saveProductImage(long id, MultipartFile imageProduct, MultipartFile image1, MultipartFile image2,
+                                              MultipartFile image3, MultipartFile image4) {
+        ProductEntity product = productRepository.findById(id).orElse(null);
+
+        if(product == null) {
+            return new ResponseEntity<>(GlobalVariable.NOT_FOUND_PRODUCT_MESSAGE + id,
+                    HttpStatus.BAD_REQUEST);
+        }
 
         // ImageProduct url
+        String path = "ShopeeProject" + "/" + "Product" + "/";
+
         String imgProUrl = cloudinaryService.uploadFile(
                 imageProduct,
                 "ImageProduct",
-                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
+                path + product.getId());
 
         String imgOneUrl = cloudinaryService.uploadFile(
                 image1,
                 "Image1",
-                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
+                path + product.getId());
 
         String imgTwoUrl = cloudinaryService.uploadFile(
                 image2,
                 "Image2",
-                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
+                path + product.getId());
 
         String imgThreeUrl = cloudinaryService.uploadFile(
                 image3,
                 "Image3",
-                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
+                path + product.getId());
 
         String imgFourUrl = cloudinaryService.uploadFile(
                 image4,
                 "Image4",
-                "ShopeeProject" + "/" + "Product" + "/" + product.getId());
+                path + product.getId());
 
         product.setImageProduct(imgProUrl);
 
@@ -100,7 +107,7 @@ public class ProductService {
 
         productRepository.save(product);
 
-        return dtoHandler(product);
+        return new ResponseEntity<>(dtoHandler(product), HttpStatus.OK);
     }
 
     private Double calculateAvgRating(long total, long sum) {
@@ -162,7 +169,7 @@ public class ProductService {
                     .orElse(null);
 
             if (product == null) {
-                return new ResponseEntity<>("Not found product id " + productDTO.getId(),
+                return new ResponseEntity<>(GlobalVariable.NOT_FOUND_PRODUCT_MESSAGE + productDTO.getId(),
                         HttpStatus.BAD_REQUEST);
             }
             ProductMapper.toProductEntity(product, productDTO);
@@ -220,7 +227,7 @@ public class ProductService {
                 .orElse(null);
 
         if (product == null || product.getStatus().equals(GlobalVariable.INACTIVE_STATUS)) {
-            return new ResponseEntity<>("Cannot found product id " + id, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(GlobalVariable.NOT_FOUND_PRODUCT_MESSAGE + id, HttpStatus.BAD_REQUEST);
         }
 
         // Update view
@@ -235,11 +242,8 @@ public class ProductService {
                 .orElse(null);
 
         if (product == null) {
-            return new ResponseEntity<>("Cannot found product id " + id, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(GlobalVariable.NOT_FOUND_PRODUCT_MESSAGE + id, HttpStatus.BAD_REQUEST);
         }
-
-//        productRepository.delete(product);
-//        typeRepository.deleteAllByProductEntityId(id);
 
         if (product.getStatus().equals(GlobalVariable.ACTIVE_STATUS)) {
             product.setStatus(GlobalVariable.INACTIVE_STATUS);
@@ -257,7 +261,7 @@ public class ProductService {
 //region-------------------------Functions for Types Crud APIs, Search Function---------------------------
 
     public ResponseEntity<?> getTypes(long id) {
-        if (typeRepository.findAllByProductEntityId(id).size() > 0) {
+        if (!typeRepository.findAllByProductEntityId(id).isEmpty()) {
             return new ResponseEntity<>(typeRepository.findAllByProductEntityId(id), HttpStatus.OK);
         }
         return new ResponseEntity<>("Not found product id " + id, HttpStatus.BAD_REQUEST);
@@ -292,8 +296,6 @@ public class ProductService {
         }
 
         List<TypeEntity> updatedTypesList = typeRepository.findAllByProductEntityId(id);
-
-//        List<Object> res = new ArrayList<>();
 
         for (TypeEntity updatedType : updatedTypesList) {
             TypeEntity type = typesList.get(updatedTypesList.indexOf(updatedType));
@@ -516,7 +518,7 @@ public class ProductService {
 
         commentDTOS = filterByRating(rating, commentDTOS);
 
-        if (commentEntities.size() == 0 || commentDTOS.size() == 0) {
+        if (commentEntities.isEmpty() || commentDTOS.isEmpty()) {
             return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
                     HttpStatus.NOT_FOUND);
         }
@@ -553,8 +555,8 @@ public class ProductService {
         return productRepository.findById(productId).orElseThrow(() -> new Exception("Product is not found"));
     }
 
-    public List<ProductEntity> getAllByProIdList(Collection<Long> IdList) {
-        return productRepository.findAllByIdIn(IdList);
+    public List<ProductEntity> getAllByProIdList(Collection<Long> idList) {
+        return productRepository.findAllByIdIn(idList);
     }
 }
 

@@ -13,7 +13,7 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
     List<CommentEntity> findAllByProductEntityIdAndRating(long id, long rating,
                                                           Pageable pageable, String status);
 
-    long countAllByProductEntityIdAndStatus(long id, String status);
+    Long countAllByProductEntityIdAndStatus(long id, String status);
 
     long countAllByProductEntityIdAndRatingAndStatus(long id, long rating, String status);
 
