@@ -49,7 +49,7 @@ public class OrderController {
     }
 
     @PostMapping("/sentMessage")
-    public void sentMessage(@RequestBody Map<String, String> message) {
+    private void sentMessage(@RequestBody Map<String, String> message) {
         // more config
 
         //
@@ -57,41 +57,41 @@ public class OrderController {
     }
 
     @GetMapping("/all")
-    public Object getAllOrder() {
+    private Object getAllOrder() {
         return orderService.getAll();
     }
 
     @GetMapping("/detail/all")
-    public Object getAllOrderDetail() {
+    private Object getAllOrderDetail() {
         return orderDetailService.getAll();
     }
 
     @GetMapping("/user/{id}")
-    public Object getAllByUserId(@PathVariable String id) {
+    private Object getAllByUserId(@PathVariable String id) {
         return orderService.getAllByUserId(Long.parseLong(id));
     }
 
     @GetMapping("/pending/{id}")
-    public Object getAllPendingOrderByUserId(@PathVariable String id) {
+    private Object getAllPendingOrderByUserId(@PathVariable String id) {
         return orderService.getAllPendingOrderByUserId(Long.parseLong(id), ORDER_STATUS.PENDING.toString());
     }
 
     @GetMapping("/history/{id}")
-    public Object getAllOrderHistoryByUserId(@PathVariable String id) {
+    private Object getAllOrderHistoryByUserId(@PathVariable String id) {
         return orderService.getAllHistoryOrderByUserId(Long.parseLong(id), ORDER_STATUS.DONE.toString());
     }
 
     @GetMapping("/detail/{id}")
-    public Object getOrderDetailByOrderId(@PathVariable String id) {
+    private Object getOrderDetailByOrderId(@PathVariable String id) {
         List<OrderDetailsEntity> orderDetailsEntityList = orderDetailService.findAllByOrderEntityId(Long.parseLong(id));
 
         List<Long> productIdList = orderDetailsEntityList.stream().map(OrderDetailsEntity::getProductId).collect(Collectors.toList());
 
-        List<ProductEntity> productEntityList=productService.getAllByProIdList(productIdList);
+        List<ProductEntity> productEntityList = productService.getAllByProIdList(productIdList);
 
         List<String> productEntityImageList = productEntityList.stream().map(ProductEntity::getImageProduct).collect(Collectors.toList());
 
-        List<String> productNameList=productEntityList.stream().map(ProductEntity::getName).collect(Collectors.toList());
+        List<String> productNameList = productEntityList.stream().map(ProductEntity::getName).collect(Collectors.toList());
 
         OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
 
@@ -99,9 +99,9 @@ public class OrderController {
 
         res.put("orderDetailsList", orderDetailsEntityList);
 
-        res.put("productNameList",productNameList);
+        res.put("productNameList", productNameList);
 
-        res.put("orderDetailsImageList",productEntityImageList);
+        res.put("orderDetailsImageList", productEntityImageList);
 
         res.put("orderInfo", orderEntity);
 
@@ -109,12 +109,12 @@ public class OrderController {
     }
 
     @GetMapping("/get_order/{id}")
-    public Object getOneOrderById(@PathVariable String id) {
+    private Object getOneOrderById(@PathVariable String id) {
         return orderService.findOrderById(Long.parseLong(id));
     }
 
     @PostMapping("/create_order")
-    public Object CreateOrder(@RequestBody List<Object> req) throws ParseException {
+    private Object CreateOrder(@RequestBody List<Object> req) throws ParseException {
         // get request data
         List<Map<String, String>> orderDetailsEntityList_req = (List<Map<String, String>>) req.get(0);
         Map<String, String> orderInformation = (Map<String, String>) req.get(1);
@@ -195,7 +195,7 @@ public class OrderController {
     }
 
     @PostMapping("/update_order/{id}")
-    public Object UpdateOrder(@RequestBody Map<String, String> req, @PathVariable String id) throws ParseException {
+    private Object UpdateOrder(@RequestBody Map<String, String> req, @PathVariable String id) throws ParseException {
         OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
 
         orderEntity.setModifiedDate(getCurrentDateTime());
@@ -236,7 +236,7 @@ public class OrderController {
     }
 
     @PostMapping("/cancel_order/{id}")
-    public Object CancelOrder(@PathVariable String id) {
+    private Object CancelOrder(@PathVariable String id) {
         OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
         orderEntity.setStatus(ORDER_STATUS.CANCELED.toString());
 
@@ -245,7 +245,7 @@ public class OrderController {
     }
 
     @GetMapping("/get_shipping_fee")
-    public Object get_shipping_fee(@RequestParam String f, @RequestParam String t, @RequestParam String w) {
+    private Object get_shipping_fee(@RequestParam String f, @RequestParam String t, @RequestParam String w) {
         String httpRequest = "Can't get Shipping fee, Server Busy";
 
         try {
