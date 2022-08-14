@@ -112,7 +112,7 @@ public class ProductService {
 
     private Double calculateAvgRating(long total, long sum) {
         double avgRating = (double) sum / total;
-        return (double) Math.round(avgRating * 10.0) / 10.0;
+        return Math.round(avgRating * 10.0) / 10.0;
     }
 
     private void getItemForRatingAndPrice(ProductEntity product) {
@@ -350,6 +350,7 @@ public class ProductService {
         limit = (limit == null || limit.equals("") ||
                 !isNumber(limit) || Long.parseLong(limit) < 0) ? GlobalVariable.DEFAULT_LIMIT : limit;
 
+        keyword = (keyword == null) ? "" : keyword;
         Long minPriceParam = (isValidParam(minPrice)) ? Long.parseLong(minPrice) : null;
         Long maxPriceParam = (isValidParam(maxPrice)) ? Long.parseLong(maxPrice) : null;
         Long subParam = (isValidParam(sub)) ? Long.parseLong(sub) : null;
@@ -359,13 +360,8 @@ public class ProductService {
         Page<ProductEntity> productEntities;
         Pageable pageable = PageRequest.of((Integer.parseInt(page) - 1), Integer.parseInt(limit));
 
-        if (keyword == null) {
-            productEntities = productRepository.findAllWithCatIdAndSubCatIdAndStatus(subParam, catParam,
-                    minPriceParam, maxPriceParam, ratingParam, pageable);
-        } else {
-            productEntities = productRepository.findAllBySearchWithCatIdAndSubCatIdAndStatus(keyword, subParam,
-                    catParam, minPriceParam, maxPriceParam, ratingParam, pageable);
-        }
+        productEntities = productRepository.findAllBySearchWithCatIdAndSubCatIdAndStatus(keyword, subParam,
+                catParam, minPriceParam, maxPriceParam, ratingParam, pageable);
 
         List<ProductDTO> productDTOS = new ArrayList<>();
 

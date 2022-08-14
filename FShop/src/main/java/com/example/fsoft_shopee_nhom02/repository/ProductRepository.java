@@ -29,19 +29,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     @Query(value = "SELECT pro FROM ProductEntity pro JOIN " +
             "pro.subCategoryEntity sub JOIN " +
             "sub.categoryEntity cat " +
-            "WHERE pro.status = 'Active' " +
-            "AND (?1 is null or pro.subCategoryEntity.id = ?1) " +
-            "AND (?2 is null or cat.id = ?2) " +
-            "AND (?3 is null or pro.fromPrice > ?3 - 1) " +
-            "AND (?4 is null or pro.fromPrice < ?4 + 1) " +
-            "AND (?5 is null or pro.avgRating >= ?5)")
-    Page<ProductEntity> findAllWithCatIdAndSubCatIdAndStatus(Long subId, Long catId, Long minPrice,
-                                                             Long maxPrice, Integer rating, Pageable pageable);
-
-    @Query(value = "SELECT pro FROM ProductEntity pro JOIN " +
-            "pro.subCategoryEntity sub JOIN " +
-            "sub.categoryEntity cat " +
-            "WHERE pro.name LIKE %?1% " +
+            "WHERE (?1 is null or pro.name LIKE %?1%) " +
             "AND (?2 is null or pro.subCategoryEntity.id = ?2) " +
             "AND (?3 is null or cat.id = ?3) " +
             "AND (?4 is null or pro.fromPrice > ?4 - 1) " +
