@@ -14,11 +14,16 @@ public interface TypeRepository extends JpaRepository<TypeEntity,Long> {
 
     void deleteAllByProductEntityId(long productId);
 
-    @Query(value = "SELECT type.price FROM TypeEntity type WHERE type.productEntity.id = ?1")
-    List<Long> findFirstPrice(long productId);
+    @Query(value = "SELECT type.price " +
+            "FROM TypeEntity type " +
+            "WHERE type.productEntity.id = ?1 GROUP BY type.productEntity.id")
+    Long findFirstPrice(long productId);
 
     @Query(value = "SELECT max(price) FROM types", nativeQuery = true)
     Long findMaxPrice();
+
+    @Query(value = "SELECT min(price) FROM types WHERE product_id = :productId", nativeQuery = true)
+    Long findMinPrice(long productId);
 
     @Query("select type from TypeEntity type where type.type = :type")
     TypeEntity findByType(String type);

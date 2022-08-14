@@ -22,6 +22,8 @@ public class ProductEntity {
     private String image3;
     private String image4;
     private Long sale;
+    private Long fromPrice;
+    private Double avgRating;
     // Số lượt xem sản phẩm
     @Column(name="totalview", columnDefinition="Bigint default '0'")
     private Long totalView;
@@ -186,6 +188,22 @@ public class ProductEntity {
 
     public void setSale(Long sale) {
         this.sale = sale;
+    }
+
+    public Long getFromPrice() {
+        return fromPrice;
+    }
+
+    public void setFromPrice(Long fromPrice) {
+        this.fromPrice = fromPrice;
+    }
+
+    public Double getAvgRating() {
+        return avgRating;
+    }
+
+    public void setAvgRating(Double avgRating) {
+        this.avgRating = avgRating;
     }
 
     public SubCategoryEntity getSubCategoryEntity() {

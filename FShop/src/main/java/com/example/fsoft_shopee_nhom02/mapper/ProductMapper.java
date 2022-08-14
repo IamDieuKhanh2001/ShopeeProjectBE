@@ -21,6 +21,8 @@ public class ProductMapper {
         productDTO.setTotalView((productEntity.getTotalView() == null) ? 0 : productEntity.getTotalView());
         productDTO.setSubCategoryId(productEntity.getSubCategoryId());
         productDTO.setCatId(productEntity.getCatId());
+        productDTO.setAvgRating(productEntity.getAvgRating());
+        productDTO.setPrice(productEntity.getFromPrice());
 
         return productDTO;
     }
@@ -32,6 +34,11 @@ public class ProductMapper {
         productEntity.setDescription(productDTO.getDescription());
         productEntity.setDetail(productDTO.getDetail());
         productEntity.setSale(productDTO.getSale());
+        productEntity.setSold(0L);
+        productEntity.setTotalView(0L);
+        productEntity.setStatus("Active");
+        productEntity.setFromPrice(0L);
+        productEntity.setAvgRating(0.0);
 
         return productEntity;
     }

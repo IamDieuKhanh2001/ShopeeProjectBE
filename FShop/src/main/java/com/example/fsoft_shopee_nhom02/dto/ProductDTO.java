@@ -25,6 +25,25 @@ public class ProductDTO {
     public ProductDTO() {
     }
 
+    public ProductDTO(long id, String name, String description, String detail, double avgRating, String imageProduct, String image1, String image2, String image3, String image4, long price, long sale, long sold, long totalView, long subCategoryId, long catId) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.detail = detail;
+        this.avgRating = avgRating;
+        this.imageProduct = imageProduct;
+        this.image1 = image1;
+        this.image2 = image2;
+        this.image3 = image3;
+        this.image4 = image4;
+        this.price = price;
+        this.sale = sale;
+        this.sold = sold;
+        this.totalView = totalView;
+        this.subCategoryId = subCategoryId;
+        this.catId = catId;
+    }
+
     public long getId() {
         return id;
     }

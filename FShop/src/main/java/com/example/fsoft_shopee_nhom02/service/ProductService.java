@@ -2,6 +2,7 @@
 package com.example.fsoft_shopee_nhom02.service;
 
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUser;
+import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
 import com.example.fsoft_shopee_nhom02.dto.CommentDTO;
 import com.example.fsoft_shopee_nhom02.dto.ProductDTO;
 import com.example.fsoft_shopee_nhom02.dto.ListOutputResult;
@@ -10,6 +11,7 @@ import com.example.fsoft_shopee_nhom02.mapper.ProductMapper;
 import com.example.fsoft_shopee_nhom02.model.*;
 import com.example.fsoft_shopee_nhom02.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -82,27 +84,73 @@ public class ProductService {
         // Condition check if not have img (Not optimize)
         if (!imgOneUrl.equals("-1"))
             product.setImage1(imgOneUrl);
-        else
-            product.setImage1("");
+        else product.setImage1("");
 
         if (!imgTwoUrl.equals("-1"))
             product.setImage2(imgTwoUrl);
-        else
-            product.setImage2("");
+        else product.setImage2("");
 
         if (!imgThreeUrl.equals("-1"))
             product.setImage3(imgThreeUrl);
-        else
-            product.setImage3("");
+        else product.setImage3("");
 
         if (!imgFourUrl.equals("-1"))
             product.setImage4(imgFourUrl);
-        else
-            product.setImage4("");
+        else product.setImage4("");
 
         productRepository.save(product);
 
         return dtoHandler(product);
+    }
+
+    private Double calculateAvgRating(long total, long sum) {
+        double avgRating = (double) sum / total;
+        return (double) Math.round(avgRating * 10.0) / 10.0;
+    }
+
+    private void getItemForRatingAndPrice(ProductEntity product) {
+        Long sumRating = commentRepository.sumProductReview(product.getId());
+        Long totalCmt = commentRepository.countAllByProductEntityIdAndStatus(
+                product.getId(), GlobalVariable.ACTIVE_STATUS);
+
+        Long minPrice = typeRepository.findMinPrice(product.getId());
+
+        product.setAvgRating((product.getAvgRating() == null || sumRating == null
+                || totalCmt == null) ? 0.0 : calculateAvgRating(totalCmt, sumRating));
+        product.setFromPrice((product.getFromPrice() == null || minPrice == null) ? 0 : minPrice);
+    }
+
+    // Ham xu ly viec chuyen tu product sang DTO khi co truong Price
+    public ProductDTO dtoHandler(ProductEntity product) {
+        getItemForRatingAndPrice(product);
+
+        return ProductMapper.toProductDTO(product);
+    }
+
+
+    private String checkTotalPage(long totalItems, long limit, long page) {
+        long totalPage = (long) Math.ceil((double) totalItems / limit);
+
+        page = Math.min(totalPage, page);
+
+        return String.valueOf(page);
+    }
+
+    private Boolean isNumber(String s) {
+        try {
+            Long.parseLong(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private Boolean isValidPage(String page) {
+        return page != null && !page.equals("") && isNumber(page) && Long.parseLong(page) >= 0;
+    }
+
+    private Boolean isValidParam(String param) {
+        return param != null && !param.equals("") && isNumber(param);
     }
 
     public ResponseEntity<?> save(ProductDTO productDTO) {
@@ -118,12 +166,10 @@ public class ProductService {
                         HttpStatus.BAD_REQUEST);
             }
             ProductMapper.toProductEntity(product, productDTO);
+            getItemForRatingAndPrice(product);
         } else {
             // CREATE
             product = ProductMapper.toProductEntity(productDTO);
-            product.setSold(0L);
-            product.setTotalView(0L);
-            product.setStatus("Active");
         }
         SubCategoryEntity subCategoryEntity = subCategoryRepository.findById(productDTO.getSubCategoryId())
                 .orElse(null);
@@ -140,74 +186,21 @@ public class ProductService {
         return new ResponseEntity<>(ProductMapper.toProductDTO(product), HttpStatus.OK);
     }
 
-    // Ham xu ly viec chuyen tu product sang DTO khi co truong Price
-    ProductDTO dtoHandler(ProductEntity product) {
-        ProductDTO productDTO = ProductMapper.toProductDTO(product);
-        List<Long> priceList = typeRepository.findFirstPrice(product.getId());
-
-        Long sumRating = commentRepository.sumProductReview(product.getId());
-
-        // If condition de check neu sum = null thi cho danh gia tb = 0
-        if (sumRating == null) {
-            productDTO.setAvgRating(0);
-        }
-        // Tinh trung binh neu khac null
-        else {
-            long totalCmt = commentRepository.countAllByProductEntityIdAndStatus(
-                    product.getId(), "Active");
-            // Tinh trung binh va lam tron 1 so sau dau phay
-            double avgRating = (double) sumRating / totalCmt;
-            double roundAvgRating = (double) Math.round(avgRating * 10.0) / 10.0;
-            productDTO.setAvgRating(roundAvgRating);
-        }
-
-        // List rong thi cho price = 0 neu khong se lay price tai index 0
-        long price = priceList.isEmpty() ? 0 : priceList.get(0);
-
-        productDTO.setPrice(price);
-
-        return productDTO;
-    }
-
-    String checkTotalPage(long totalItems, long limit, long page) {
-        long totalPage = (long) Math.ceil((double) totalItems / limit);
-
-        page = Math.min(totalPage, page);
-
-        return String.valueOf(page);
-    }
-
-    Boolean isNumber(String s) {
-        try {
-            Long.parseLong(s);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    Boolean isValidPage(String page) {
-        return page != null && !page.equals("") && isNumber(page) && Long.parseLong(page) >= 0;
-    }
-
     public ResponseEntity<ListOutputResult> getAllProducts(String page, String limit) {
         ListOutputResult result = new ListOutputResult();
-        long productsNumber = productRepository.countAllByStatus("Active");
-
-        limit = (limit == null || limit.equals("")
-                || !isNumber(limit) || Long.parseLong(limit) < 0) ? "12" : limit;
-        page = (!isValidPage(page)) ? "1" :
-                checkTotalPage(productsNumber, Long.parseLong(limit), Long.parseLong(page));
 
         List<ProductDTO> productDTOS = new ArrayList<>();
 
+        limit = (limit == null || limit.equals("")
+                || !isNumber(limit) || Long.parseLong(limit) < 0) ? GlobalVariable.DEFAULT_LIMIT : limit;
+        page = (!isValidPage(page)) ? GlobalVariable.DEFAULT_PAGE : page;
+
         Pageable pageable = PageRequest.of((Integer.parseInt(page) - 1), Integer.parseInt(limit));
 
-        List<ProductEntity> products = productRepository.findAllWithCatIdAndSubCatIdAndStatus(pageable);
+        Page<ProductEntity> products = productRepository.findAllWithCatIdAndSubCatIdAndStatus(pageable);
 
         for (ProductEntity product : products) {
             ProductDTO productDTO = dtoHandler(product);
-
             productDTOS.add(productDTO);
         }
 
@@ -217,7 +210,7 @@ public class ProductService {
         }
 
         result.setList(productDTOS);
-        result.setItemsNumber(productsNumber);
+        result.setItemsNumber(products.getTotalElements());
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -226,7 +219,7 @@ public class ProductService {
         ProductEntity product = productRepository.findById(id)
                 .orElse(null);
 
-        if (product == null || product.getStatus().equals("Inactive")) {
+        if (product == null || product.getStatus().equals(GlobalVariable.INACTIVE_STATUS)) {
             return new ResponseEntity<>("Cannot found product id " + id, HttpStatus.BAD_REQUEST);
         }
 
@@ -248,10 +241,10 @@ public class ProductService {
 //        productRepository.delete(product);
 //        typeRepository.deleteAllByProductEntityId(id);
 
-        if (product.getStatus().equals("Active")) {
-            product.setStatus("Inactive");
+        if (product.getStatus().equals(GlobalVariable.ACTIVE_STATUS)) {
+            product.setStatus(GlobalVariable.INACTIVE_STATUS);
         } else
-            product.setStatus("Active");
+            product.setStatus(GlobalVariable.ACTIVE_STATUS);
 
         productRepository.save(product);
 
@@ -283,6 +276,10 @@ public class ProductService {
             typeRepository.save(type);
         }
 
+        // Update min price
+        getItemForRatingAndPrice(productEntity);
+        productRepository.save(productEntity);
+
         return new ResponseEntity<>(types, HttpStatus.OK);
     }
 
@@ -308,87 +305,20 @@ public class ProductService {
 
         typeRepository.saveAll(updatedTypesList);
 
+        // Update min price
+        getItemForRatingAndPrice(productEntity);
+        productRepository.save(productEntity);
+
         return new ResponseEntity<>(updatedTypesList, HttpStatus.OK);
     }
 
-    /*
-        Search truyen 3 params: page, limit, keyword
-        - Page, limit de phan trang.
-        - keyword la tu khoa nhap vao de tim san pham.
-        - Json respond se bao gom tu khoa vua nhap, so san pham tim duoc
-          va list san pham.
-
-     */
-    List<ProductDTO> filterByPriceRange(String minPrice, String maxPrice, long defaultMaxPrice,
-                                        List<ProductDTO> productDTOS) {
-        if (Long.parseLong(minPrice) < Long.parseLong(maxPrice) && Long.parseLong(minPrice) >= 0
-                || Long.parseLong(maxPrice) <= defaultMaxPrice - 1) {
-
-            List<ProductDTO> priceFilter = new ArrayList<>();
-            // Push the Product DTO that has valid price range to a new list
-            for (ProductDTO productDTO : productDTOS) {
-                if (productDTO.getPrice() > Long.parseLong(minPrice) - 1 &&
-                        productDTO.getPrice() < Long.parseLong(maxPrice) + 1) {
-
-                    priceFilter.add(productDTO);
-                }
-            }
-            return priceFilter;
-        } else {
-            return productDTOS;
-        }
-    }
-
-    List<ProductDTO> filterBySubCate(String sub, List<ProductDTO> productDTOS) {
-        if (sub != null && isNumber(sub) && !sub.equals("")) {
-            List<ProductDTO> subFilter = new ArrayList<>();
-
-            for (ProductDTO productDTO : productDTOS) {
-                if (Long.parseLong(sub) == productDTO.getSubCategoryId()) {
-                    subFilter.add(productDTO);
-                }
-            }
-            return subFilter;
-        } else {
-            return productDTOS;
-        }
-    }
-
-    List<ProductDTO> filterByCate(String cat, List<ProductDTO> productDTOS) {
-        if (cat != null && isNumber(cat) && !cat.equals("")) {
-            List<ProductDTO> catFilter = new ArrayList<>();
-
-            for (ProductDTO productDTO : productDTOS) {
-                if (Long.parseLong(cat) == productDTO.getCatId()) {
-                    catFilter.add(productDTO);
-                }
-            }
-            return catFilter;
-        } else {
-            return productDTOS;
-        }
-    }
-
-    Boolean isvalidRating(String rating) {
+    Boolean isValidRating(String rating) {
         return (rating != null && !rating.equals("") && isNumber(rating)
                 && Long.parseLong(rating) <= 5 && Long.parseLong(rating) > 0);
     }
 
-    List<ProductDTO> filterByAvgRating(String rating, List<ProductDTO> productDTOS) {
-        if (isvalidRating(rating)) {
-            List<ProductDTO> ratingFilter = new ArrayList<>();
-
-            for (ProductDTO commentDTO : productDTOS) {
-                if (commentDTO.getAvgRating() >= Long.parseLong(rating)) {
-                    ratingFilter.add(commentDTO);
-                }
-            }
-            return ratingFilter;
-        } else return productDTOS;
-    }
-
-    void paginationDTOSHandler(int size, String page, String limit,
-                               ListOutputResult res, List<?> dtos) {
+    private void paginationDTOSHandler(int size, String page, String limit,
+                                       ListOutputResult res, List<?> dtos) {
         page = checkTotalPage(size, Long.parseLong(limit), Long.parseLong(page));
 
         // Start index and end index
@@ -414,52 +344,41 @@ public class ProductService {
                     HttpStatus.NOT_FOUND);
         }
 
-        long defaultMaxPrice = typeRepository.findMaxPrice() + 1;
-
-        page = (!isValidPage(page)) ? "1" : page;
-
+        page = (!isValidPage(page)) ? GlobalVariable.DEFAULT_PAGE : page;
         limit = (limit == null || limit.equals("") ||
-                !isNumber(limit) || Long.parseLong(limit) < 0) ? "12" : limit;
+                !isNumber(limit) || Long.parseLong(limit) < 0) ? GlobalVariable.DEFAULT_LIMIT : limit;
 
-        minPrice = (minPrice == null || minPrice.equals("") || !isNumber(minPrice)) ? "-1" : minPrice;
+        Long minPriceParam = (isValidParam(minPrice)) ? Long.parseLong(minPrice) : null;
+        Long maxPriceParam = (isValidParam(maxPrice)) ? Long.parseLong(maxPrice) : null;
+        Long subParam = (isValidParam(sub)) ? Long.parseLong(sub) : null;
+        Long catParam = (isValidParam(cat)) ? Long.parseLong(cat) : null;
+        Integer ratingParam = (isValidRating(rating)) ? Integer.parseInt(rating) : null;
 
-        maxPrice = (maxPrice == null || maxPrice.equals("") || !isNumber(maxPrice))
-                ? String.valueOf(defaultMaxPrice) : maxPrice;
-
-        List<ProductEntity> productEntities;
+        Page<ProductEntity> productEntities;
+        Pageable pageable = PageRequest.of((Integer.parseInt(page) - 1), Integer.parseInt(limit));
 
         if (keyword == null) {
-            productEntities = productRepository.findAllWithCatIdAndSubCatIdAndStatus();
+            productEntities = productRepository.findAllWithCatIdAndSubCatIdAndStatus(subParam, catParam,
+                    minPriceParam, maxPriceParam, ratingParam, pageable);
         } else {
-            productEntities = productRepository.findAllBySearchWithCatIdAndSubCatIdAndStatus(keyword);
+            productEntities = productRepository.findAllBySearchWithCatIdAndSubCatIdAndStatus(keyword, subParam,
+                    catParam, minPriceParam, maxPriceParam, ratingParam, pageable);
         }
 
         List<ProductDTO> productDTOS = new ArrayList<>();
 
         for (ProductEntity product : productEntities) {
             ProductDTO productDTO = dtoHandler(product);
-
             productDTOS.add(productDTO);
         }
-
-        // Search by Price range
-        productDTOS = filterByPriceRange(minPrice, maxPrice, defaultMaxPrice, productDTOS);
-
-        // Search by Sub category
-        productDTOS = filterBySubCate(sub, productDTOS);
-
-        // Search by Category
-        productDTOS = filterByCate(cat, productDTOS);
-
-        // Search by Rating from
-        productDTOS = filterByAvgRating(rating, productDTOS);
 
         if (productDTOS.isEmpty()) {
             return new ResponseEntity<>(new ListOutputResult(0, new ArrayList<>()),
                     HttpStatus.NOT_FOUND);
         }
 
-        paginationDTOSHandler(productDTOS.size(), page, limit, result, productDTOS);
+        result.setItemsNumber(productEntities.getTotalElements());
+        result.setList(productDTOS);
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
@@ -468,7 +387,7 @@ public class ProductService {
 
 //region--------------------Functions for Comments Crud APIs---------------------------
 
-    void commentDTOHandler(CommentEntity comment, CommentDTO commentDTO) {
+    private void commentDTOHandler(CommentEntity comment, CommentDTO commentDTO) {
         CommentMapper.toCommentDTO(comment, commentDTO);
 
         UserEntity resUser = userRepository.findFirstById(comment.getUserid());
@@ -477,14 +396,12 @@ public class ProductService {
     }
 
     public ResponseEntity<?> postCommentImg(long id, MultipartFile img, String username) {
-        System.out.println(id);
         CommentEntity comment = commentRepository.findById(id)
                 .orElse(null);
 
         if (comment == null) {
             return new ResponseEntity<>("Not found comment id " + id, HttpStatus.BAD_REQUEST);
         }
-
 
         Optional<UserEntity> usersOptional = userRepository.findByUsername(username);
 
@@ -554,11 +471,16 @@ public class ProductService {
         CommentDTO res = new CommentDTO();
         commentDTOHandler(comment, res);
 
+        // update avg rating
+        getItemForRatingAndPrice(productEntity);
+        productRepository.save(productEntity);
+
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
-    List<CommentDTO> filterByRating(String rating, List<CommentDTO> commentDTOS) {
-        if (isvalidRating(rating)) {
+    private List<CommentDTO> filterByRating(String rating, List<CommentDTO> commentDTOS) {
+        if (isValidRating(rating)) {
+
             List<CommentDTO> ratingFilter = new ArrayList<>();
 
             for (CommentDTO commentDTO : commentDTOS) {
@@ -571,14 +493,14 @@ public class ProductService {
     }
 
     public ResponseEntity<ListOutputResult> getAllComments(long id, String page, String limit, String rating) {
-        page = (!isValidPage(page)) ? "1" : page;
+        page = (!isValidPage(page)) ? GlobalVariable.DEFAULT_PAGE : page;
 
         limit = (limit == null || limit.equals("") ||
-                !isNumber(limit) || Long.parseLong(limit) < 0) ? "12" : limit;
+                !isNumber(limit) || Long.parseLong(limit) < 0) ? GlobalVariable.DEFAULT_LIMIT : limit;
 
         List<CommentDTO> commentDTOS = new ArrayList<>();
         List<CommentEntity> commentEntities = commentRepository.
-                findAllByProductEntityIdAndStatus(id, "Active");
+                findAllByProductEntityIdAndStatus(id, GlobalVariable.ACTIVE_STATUS);
         ListOutputResult res = new ListOutputResult();
 
         // Check if rating not a number or empty string set it to null
@@ -613,10 +535,10 @@ public class ProductService {
                     HttpStatus.BAD_REQUEST);
         }
 
-        if (comment.getStatus().equals("Active")) {
-            comment.setStatus("Inactive");
+        if (comment.getStatus().equals(GlobalVariable.ACTIVE_STATUS)) {
+            comment.setStatus(GlobalVariable.INACTIVE_STATUS);
         } else
-            comment.setStatus("Active");
+            comment.setStatus(GlobalVariable.ACTIVE_STATUS);
 
         commentRepository.save(comment);
 
