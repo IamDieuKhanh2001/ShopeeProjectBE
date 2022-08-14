@@ -31,25 +31,21 @@ public class OrderController {
     private final OrderService orderService;
     private final UserService userService;
     private final AddressService addressService;
-    private final CartService cartService;
     private final CartProductService cartProductService;
     private final NotificationService notificationService;
-    private final ProductService productService;
 
     @Autowired
-    public OrderController(OrderDetailService orderDetailService, OrderService orderService, UserService userService, AddressService addressService, CartService cartService, CartProductService cartProductService, NotificationService notificationService, ProductService productService) {
+    public OrderController(OrderDetailService orderDetailService, OrderService orderService, UserService userService, AddressService addressService, CartProductService cartProductService, NotificationService notificationService) {
         this.orderDetailService = orderDetailService;
         this.orderService = orderService;
         this.userService = userService;
         this.addressService = addressService;
-        this.cartService = cartService;
         this.cartProductService = cartProductService;
         this.notificationService = notificationService;
-        this.productService = productService;
     }
 
     @PostMapping("/sentMessage")
-    private void sentMessage(@RequestBody Map<String, String> message) {
+    public void sentMessage(@RequestBody Map<String, String> message) {
         // more config
 
         //
@@ -57,145 +53,77 @@ public class OrderController {
     }
 
     @GetMapping("/all")
-    private Object getAllOrder() {
+    public Object getAllOrder() {
         return orderService.getAll();
     }
 
     @GetMapping("/detail/all")
-    private Object getAllOrderDetail() {
+    public Object getAllOrderDetail() {
         return orderDetailService.getAll();
     }
 
     @GetMapping("/user/{id}")
-    private Object getAllByUserId(@PathVariable String id) {
+    public Object getAllByUserId(@PathVariable String id) {
         return orderService.getAllByUserId(Long.parseLong(id));
     }
 
     @GetMapping("/pending/{id}")
-    private Object getAllPendingOrderByUserId(@PathVariable String id) {
+    public Object getAllPendingOrderByUserId(@PathVariable String id) {
         return orderService.getAllPendingOrderByUserId(Long.parseLong(id), ORDER_STATUS.PENDING.toString());
     }
 
     @GetMapping("/history/{id}")
-    private Object getAllOrderHistoryByUserId(@PathVariable String id) {
+    public Object getAllOrderHistoryByUserId(@PathVariable String id) {
         return orderService.getAllHistoryOrderByUserId(Long.parseLong(id), ORDER_STATUS.PENDING.toString());
     }
 
     @GetMapping("/detail/{id}")
-    private Object getOrderDetailByOrderId(@PathVariable String id) {
-        List<OrderDetailsEntity> orderDetailsEntityList = orderDetailService.findAllByOrderEntityId(Long.parseLong(id));
-
-        List<Long> productIdList = orderDetailsEntityList.stream().map(OrderDetailsEntity::getProductId).collect(Collectors.toList());
-
-        List<ProductEntity> productEntityList = productService.getAllByProIdList(productIdList);
-
-        List<String> productEntityImageList = productEntityList.stream().map(ProductEntity::getImageProduct).collect(Collectors.toList());
-
-        List<String> productNameList = productEntityList.stream().map(ProductEntity::getName).collect(Collectors.toList());
-
-        OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
-
-        Map<String, Object> res = new HashMap<>();
-
-        res.put("orderDetailsList", orderDetailsEntityList);
-
-        res.put("productNameList", productNameList);
-
-        res.put("orderDetailsImageList", productEntityImageList);
-
-        res.put("orderInfo", orderEntity);
-
-        return res;
+    public Object getOrderDetailByOrderId(@PathVariable String id) {
+        return orderService.findById(Long.parseLong(id));
     }
 
     @GetMapping("/get_order/{id}")
-    private Object getOneOrderById(@PathVariable String id) {
+    public Object getOneOrderById(@PathVariable String id) {
         return orderService.findOrderById(Long.parseLong(id));
     }
 
     @PostMapping("/create_order")
-    private Object CreateOrder(@RequestBody List<Object> req) throws ParseException {
+    public Object CreateOrder(@RequestBody List<Object> req) throws ParseException {
         // get request data
         List<Map<String, String>> orderDetailsEntityList_req = (List<Map<String, String>>) req.get(0);
         Map<String, String> orderInformation = (Map<String, String>) req.get(1);
-
         // create variable for usage
-        OrderEntity orderEntity = new OrderEntity();
-        List<OrderDetailsEntity> orderDetailsEntityList;
-        Collection<Long> productEntity_idList;
-        Collection<String> typeList;
-
+        OrderEntity orderEntity;
         // get user information
         UserEntity user = userService.findByIdUser(Long.parseLong(orderInformation.get("user_id")));
-        // get user cartService.
-        long CardId = cartService.findByUserId(user.getId()).getId();
-
-        // calculate for order Entity
-        Timestamp created_date = getCurrentDateTime();
-        String status = ORDER_STATUS.PENDING.toString();
         AtomicReference<Long> total_cost = new AtomicReference<>((long) 0);
-
         // analyze order Product data
-        orderDetailsEntityList = orderDetailsEntityList_req.stream()
-                .map(orderEntity_req -> {
-                    OrderDetailsEntity orderDetailsEntity = new OrderDetailsEntity();
-                    orderDetailsEntity.setQuantity(Long.parseLong(orderEntity_req.get("quantity")));
-                    orderDetailsEntity.setUnitPrice(Long.parseLong(orderEntity_req.get("unit_price")));
-                    orderDetailsEntity.setProductEntityID(Long.parseLong(orderEntity_req.get("product_id")));
-                    orderDetailsEntity.setType(orderEntity_req.get("type"));
-
-                    total_cost.updateAndGet(v -> v + (Long.parseLong(orderEntity_req.get("unit_price")) * Long.parseLong(orderEntity_req.get("quantity"))));
-                    return orderDetailsEntity;
-                }).collect(Collectors.toList());
-
-        // map value for orderEntity
-        orderEntity.setCreatedDate(created_date);
-        orderEntity.setModifiedDate(created_date);
-
+        List<OrderDetailsEntity> orderDetailsEntityList = orderDetailsEntityList_req.stream().map(orderEntity_req -> {
+            OrderDetailsEntity orderDetailsEntity = new OrderDetailsEntity(Long.parseLong(orderEntity_req.get("unit_price")), Long.parseLong(orderEntity_req.get("quantity")), orderEntity_req.get("type"));
+            orderDetailsEntity.setProductEntityID(Long.parseLong(orderEntity_req.get("product_id")));
+            total_cost.updateAndGet(v -> v + (Long.parseLong(orderEntity_req.get("unit_price")) * Long.parseLong(orderEntity_req.get("quantity"))));
+            return orderDetailsEntity;
+        }).collect(Collectors.toList());
+        // map value for orderEntity and check if user want to add new address
         if (orderInformation.get("address") == null) {
-            orderEntity.setAddress(user.getAddressEntityList().get(0).getAddress());
-            orderEntity.setPhone(user.getPhone());
-            orderEntity.setUserName(user.getUsername());
+            orderEntity = new OrderEntity(ORDER_STATUS.PENDING.toString(), user.getUsername(), user.getAddressEntityList().get(0).getAddress(), user.getPhone(), orderInformation.get("note"), orderInformation.get("payment"), Long.parseLong(orderInformation.get("shipping_fee")), total_cost.get(), user, getCurrentDateTime());
         } else {
-            orderEntity.setAddress(orderInformation.get("address"));
-            orderEntity.setPhone(orderInformation.get("phone"));
-            orderEntity.setUserName(orderInformation.get("user_name"));
-
+            orderEntity = new OrderEntity(ORDER_STATUS.PENDING.toString(), orderInformation.get("user_name"), orderInformation.get("address"), orderInformation.get("phone"), orderInformation.get("note"), orderInformation.get("payment"), Long.parseLong(orderInformation.get("shipping_fee")), total_cost.get(), user, getCurrentDateTime());
             // add new address for later usage
             addressService.saveUserAddress(new AddressDTO(orderInformation.get("address"), orderInformation.get("user_name"), orderInformation.get("phone")), user.getUsername());
         }
-
-        orderEntity.setNote(orderInformation.get("note"));
-        orderEntity.setPayment(orderInformation.get("payment"));
-        orderEntity.setShippingFee(Long.parseLong(orderInformation.get("shipping_fee")));
-        orderEntity.setStatus(status);
-        orderEntity.setTotalPrice(total_cost.get());
-        orderEntity.setUserId(user.getId());
-
-        // insert order to DB
+        // map order and order-details
+        orderEntity.setOrderDetailsEntities(orderDetailsEntityList);
+        orderDetailsEntityList.forEach(i -> i.setOrderEntity(orderEntity));
+        // insert order and details to DB
         orderService.addNewOrder(orderEntity);
-
-        // insert orderId for orderDetails
-        long newOrderEntityID = orderEntity.getId();
-
-        // set attribute for delete cartProduct func
-        productEntity_idList = orderDetailsEntityList.stream().map(OrderDetailsEntity::getProductId).collect(Collectors.toList());
-        typeList = orderDetailsEntityList.stream().map(OrderDetailsEntity::getType).collect(Collectors.toList());
-
-        // set id for order Detail
-        orderDetailsEntityList.forEach(orderDetailsEntity -> orderDetailsEntity.setOrderEntityID(newOrderEntityID));
-
-        // insert order detail to DB
-        orderDetailService.addNewOrderDetails(orderDetailsEntityList);
-
         // delete cartProduct from DB
-        cartProductService.deleteListOfCartProduct(productEntity_idList, CardId, typeList);
-
+        cartProductService.deleteListOfCartProduct(orderDetailsEntityList.stream().map(OrderDetailsEntity::getProductId).collect(Collectors.toList()), user.getCartEntity().getId(), orderDetailsEntityList.stream().map(OrderDetailsEntity::getType).collect(Collectors.toList()));
         return "created order";
     }
 
     @PostMapping("/update_order/{id}")
-    private Object UpdateOrder(@RequestBody Map<String, String> req, @PathVariable String id) throws ParseException {
+    public Object UpdateOrder(@RequestBody Map<String, String> req, @PathVariable String id) throws ParseException {
         OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
 
         orderEntity.setModifiedDate(getCurrentDateTime());
@@ -236,7 +164,7 @@ public class OrderController {
     }
 
     @PostMapping("/cancel_order/{id}")
-    private Object CancelOrder(@PathVariable String id) {
+    public Object CancelOrder(@PathVariable String id) {
         OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
         orderEntity.setStatus(ORDER_STATUS.CANCELED.toString());
 
@@ -245,7 +173,7 @@ public class OrderController {
     }
 
     @GetMapping("/get_shipping_fee")
-    private Object get_shipping_fee(@RequestParam String f, @RequestParam String t, @RequestParam String w) {
+    public Object get_shipping_fee(@RequestParam String f, @RequestParam String t, @RequestParam String w) {
         String httpRequest = "Can't get Shipping fee, Server Busy";
 
         try {

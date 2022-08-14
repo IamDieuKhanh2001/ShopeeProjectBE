@@ -5,6 +5,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +50,20 @@ public class OrderEntity extends BaseClassEntity {
         this.shippingFee = shippingFee;
         this.totalPrice = totalPrice;
         this.phone = phone;
+    }
+
+    public OrderEntity(String status, String userName, String address, String phone, String note, String payment, Long shippingFee, Long totalPrice, UserEntity userEntities,Timestamp time) {
+        this.status = status;
+        this.userName = userName;
+        this.address = address;
+        this.phone = phone;
+        this.note = note;
+        this.payment = payment;
+        this.shippingFee = shippingFee;
+        this.totalPrice = totalPrice;
+        this.userEntities = userEntities;
+        setCreatedDate(time);
+        setModifiedDate(time);
     }
 
     public String getPhone() {
@@ -130,5 +145,22 @@ public class OrderEntity extends BaseClassEntity {
 
     public Long getUserId() {
         return this.userEntities.getId();
+    }
+
+
+    public UserEntity getUserEntities() {
+        return userEntities;
+    }
+
+    public void setUserEntities(UserEntity userEntities) {
+        this.userEntities = userEntities;
+    }
+
+    public List<OrderDetailsEntity> getOrderDetailsEntities() {
+        return orderDetailsEntities;
+    }
+
+    public void setOrderDetailsEntities(List<OrderDetailsEntity> orderDetailsEntities) {
+        this.orderDetailsEntities = orderDetailsEntities;
     }
 }

@@ -15,13 +15,13 @@ public class OrderDetailsEntity {
     private Long quantity;
     private String type;
     //  Tạo quan hệ với bảng Order
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "orderId", nullable = false, referencedColumnName = "id")
     private OrderEntity orderEntity;
 
     //  Tạo quan hệ với bảng Product
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "productId", nullable = false, referencedColumnName = "id")
     private ProductEntity productEntity;
@@ -32,6 +32,12 @@ public class OrderDetailsEntity {
 
     public OrderDetailsEntity(Long id, Long unitPrice, Long quantity, String type) {
         this.id = id;
+        this.unitPrice = unitPrice;
+        this.quantity = quantity;
+        this.type = type;
+    }
+
+    public OrderDetailsEntity(Long unitPrice, Long quantity, String type) {
         this.unitPrice = unitPrice;
         this.quantity = quantity;
         this.type = type;
@@ -89,5 +95,21 @@ public class OrderDetailsEntity {
 
     public Long getOrderEntityID(long id) {
         return this.orderEntity.getId();
+    }
+
+//    public OrderEntity getOrderEntity() {
+//        return orderEntity;
+//    }
+//
+    public void setOrderEntity(OrderEntity orderEntity) {
+        this.orderEntity = orderEntity;
+    }
+
+    public ProductEntity getProductEntity() {
+        return productEntity;
+    }
+
+    public void setProductEntity(ProductEntity productEntity) {
+        this.productEntity = productEntity;
     }
 }

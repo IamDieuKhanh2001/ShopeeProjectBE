@@ -40,7 +40,7 @@ public class ProductEntity {
     private List<OrderDetailsEntity> orderDetailsEntities =new ArrayList<>();
 
     // Tạo quan hệ với SubCategoryEntity
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "sub_category_id", nullable = false, referencedColumnName = "id")
     private SubCategoryEntity subCategoryEntity;

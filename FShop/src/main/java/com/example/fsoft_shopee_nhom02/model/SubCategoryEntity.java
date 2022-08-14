@@ -18,7 +18,7 @@ public class SubCategoryEntity {
     @Column(name="status", columnDefinition="Varchar(255) default 'Active'")
     private String status;
     // Tạo quan hệ với CategoryEntity
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "category_id", nullable = false, referencedColumnName = "id")
     private CategoryEntity categoryEntity;

@@ -22,7 +22,7 @@ public class CategoryEntity {
     private List<SubCategoryEntity> subCategoryEntities =new ArrayList<>();
 
     // Tạo quan hệ với ShopEntity
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "shopId", nullable = false, referencedColumnName = "id")
     private ShopEntity shopEntity;
