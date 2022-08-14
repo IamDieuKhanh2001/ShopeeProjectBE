@@ -79,7 +79,7 @@ public class OrderController {
 
     @GetMapping("/detail/{id}")
     public Object getOrderDetailByOrderId(@PathVariable String id) {
-        return orderService.findById(Long.parseLong(id));
+        return orderService.findById(Long.parseLong(id)).getOrderDetailsEntities();
     }
 
     @GetMapping("/get_order/{id}")

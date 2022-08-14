@@ -10,7 +10,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-@SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
+import java.util.ArrayList;
+import java.util.List;
+
+@SpringBootApplication(exclude = {SecurityAutoConfiguration.class})
 public class FSoftShopeeNhom02Application {
 
     public static void main(String[] args) {
@@ -19,10 +22,14 @@ public class FSoftShopeeNhom02Application {
 
     @Bean
     public FilterRegistrationBean customCorsFilter() {
+        List<String> allowedOrigins = new ArrayList<>();
+        allowedOrigins.add("http://localhost:3000/");
+        allowedOrigins.add("https://react02-group06.vercel.app/");
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:3000");
+        config.setAllowedOrigins(allowedOrigins);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
