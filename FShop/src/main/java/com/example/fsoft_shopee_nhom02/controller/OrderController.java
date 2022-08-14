@@ -78,7 +78,7 @@ public class OrderController {
 
     @GetMapping("/history/{id}")
     private Object getAllOrderHistoryByUserId(@PathVariable String id) {
-        return orderService.getAllHistoryOrderByUserId(Long.parseLong(id), ORDER_STATUS.DONE.toString());
+        return orderService.getAllHistoryOrderByUserId(Long.parseLong(id), ORDER_STATUS.PENDING.toString());
     }
 
     @GetMapping("/detail/{id}")

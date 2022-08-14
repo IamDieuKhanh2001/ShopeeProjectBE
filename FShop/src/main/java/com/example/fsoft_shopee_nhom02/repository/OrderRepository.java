@@ -18,6 +18,8 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
     List<OrderEntity> getAllByUserEntitiesIdAndStatus(Long userEntities_id, String status);
 
+    List<OrderEntity> getAllByUserEntitiesIdAndStatusNot(Long userEntities_id, String status);
+
     // Thống kê doanh thu theo tháng
     @Query(value = "select sum(total_price) \n" +
             "from orders \n" +
