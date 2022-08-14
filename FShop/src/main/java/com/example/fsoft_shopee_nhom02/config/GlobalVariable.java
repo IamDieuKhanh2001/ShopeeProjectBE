@@ -28,5 +28,10 @@ public class GlobalVariable {
     public static final String ACTIVE_STATUS = "Active";
     public static final String INACTIVE_STATUS = "Inactive";
 
-
+    public static String Notification_destination = "/client";
+    public static String Notification_endpoint = "/NotificationService";
+    public static String Notification_sendPrefix = "/message";
+    public static String Notification_pushPrefix = "/user";
 }
+
+

@@ -1,10 +1,11 @@
 package com.example.fsoft_shopee_nhom02.Notification;
 
+import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import static com.example.fsoft_shopee_nhom02.Notification.NotificationVar.*;
+import static com.example.fsoft_shopee_nhom02.config.GlobalVariable.*;
 
 @Service
 public class NotificationService {
@@ -16,6 +17,6 @@ public class NotificationService {
     }
 
     public void sendNotification(String message, String UserId) {
-        simpMessagingTemplate.convertAndSendToUser(UserId, destination, message);
+        simpMessagingTemplate.convertAndSendToUser(UserId, Notification_destination, message);
     }
 }
