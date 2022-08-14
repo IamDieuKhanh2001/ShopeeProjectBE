@@ -129,8 +129,6 @@ public class ProductService {
 
     // Ham xu ly viec chuyen tu product sang DTO khi co truong Price
     public ProductDTO dtoHandler(ProductEntity product) {
-        getItemForRatingAndPrice(product);
-
         return ProductMapper.toProductDTO(product);
     }
 
@@ -360,8 +358,8 @@ public class ProductService {
         Page<ProductEntity> productEntities;
         Pageable pageable = PageRequest.of((Integer.parseInt(page) - 1), Integer.parseInt(limit));
 
-        productEntities = productRepository.findAllBySearchWithCatIdAndSubCatIdAndStatus(keyword, subParam,
-                catParam, minPriceParam, maxPriceParam, ratingParam, pageable);
+        productEntities = productRepository.findAllBySearchWithCatIdAndSubCatIdAndStatus(keyword,
+                subParam, catParam, minPriceParam, maxPriceParam, ratingParam, pageable);
 
         List<ProductDTO> productDTOS = new ArrayList<>();
 
