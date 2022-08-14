@@ -3,11 +3,13 @@ package com.example.fsoft_shopee_nhom02.oauth;
 import com.example.fsoft_shopee_nhom02.auth.AuthenticationProvider;
 import com.example.fsoft_shopee_nhom02.auth.JwtUtil;
 import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
+import com.example.fsoft_shopee_nhom02.exception.BadRequest;
 import com.example.fsoft_shopee_nhom02.model.CartEntity;
 import com.example.fsoft_shopee_nhom02.model.RoleEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.RoleRepository;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,7 +34,7 @@ public class GoogleLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private UserRepository userRepository;
 
     @Autowired
-    private RoleRepository roleRepository;
+    private GoogleOauth2UserService googleOauth2UserService;
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -51,42 +53,22 @@ public class GoogleLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         GoogleOauth2User googleUser = (GoogleOauth2User) authentication.getPrincipal();
-//        System.out.println(emailUsername);
-//        System.out.println(googleUser.getAvatarPicture());
         Optional<UserEntity> userEntityOptional = userRepository.findByEmail(googleUser.getEmail());
         if(!userEntityOptional.isPresent()) { //Lần đầu đăng nhap google
-            String[] splitEmail = googleUser.getEmail().split("@"); //Tạo random username cho google account
-            String randomUsername = splitEmail[0] + "#" + GlobalVariable.GetRandom4DigitNumber();
-            UserEntity googleUserRegister =
-                    new UserEntity(
-                            googleUser.getFullName(),
-                            randomUsername,
-                            googleUser.getEmail(),
-                            googleUser.getAvatarPicture(),
-                            AuthenticationProvider.GOOGLE,
-                            new Timestamp(System.currentTimeMillis())
-                            );
-            googleUserRegister.setCartEntity(new CartEntity()); //Tạo cart
-
-            RoleEntity roleUser = roleRepository.getRoleEntityById(Long.parseLong("2")); //Lấy ROLE_USER
-//            List<RoleEntity> roleUserList = new ArrayList<>();
-//            roleUserOptional.ifPresent(roleUserList::add);
-            Set<RoleEntity> roleUserSet = new HashSet<>();//ép kiểu role thành set gán cho entity user
-            roleUserSet.add(roleUser);
-            googleUserRegister.setRoleEntitySet(roleUserSet);
-            userRepository.save(googleUserRegister);
-
-            String jwtToken = getJwtTokenByUsername(googleUserRegister.getUsername());
-            System.out.println(jwtToken);
-            response.sendRedirect("/?jwt=" + jwtToken);
+            if(googleOauth2UserService.saveUser(googleUser)) {
+                Optional<UserEntity> userLoginByGoogleOptional = userRepository.findByEmail(googleUser.getEmail());
+                String jwtToken = getJwtTokenByUsername(userLoginByGoogleOptional.get().getUsername());
+                response.sendRedirect("/?jwt=" + jwtToken);
+            }
         } else {
             UserEntity userGoogleRegistered = userEntityOptional.get();
             userGoogleRegistered.setModifiedDate(new Timestamp(System.currentTimeMillis()));
             userGoogleRegistered.setName(googleUser.getFullName());
             userRepository.save(userGoogleRegistered);
             String jwtToken = getJwtTokenByUsername(userGoogleRegistered.getUsername());
-            System.out.println(jwtToken);
             response.sendRedirect("/?jwt=" + jwtToken);
         }
+        //Login fail exception
+
     }
 }

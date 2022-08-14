@@ -4,13 +4,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
-//@ConfigurationProperties(prefix = "application.jwt")
+@ConfigurationProperties(prefix = "application.jwt")
 public class JwtConfig {
 
 
-    private String secretKey = "thuctapfpt2022";
-    private String tokenPrefix = "Bearer ";
-    private Integer tokenExpirationAfterDays = 60;
+    private String secretKey;
+    private String tokenPrefix;
+    private Integer tokenExpirationAfterDays;
 
     public JwtConfig() {
     }

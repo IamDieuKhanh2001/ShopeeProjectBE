@@ -2,6 +2,7 @@ package com.example.fsoft_shopee_nhom02.service;
 
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUserService;
 import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
+import com.example.fsoft_shopee_nhom02.exception.BadRequest;
 import com.example.fsoft_shopee_nhom02.model.AddressEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.AddressRepository;
@@ -29,7 +30,7 @@ public class AddressService {
     public boolean saveUserAddress(AddressDTO addressDTO, String username) {
         Optional<UserEntity> userEntityOptional = userRepository.findByUsername(username);
         if(!userEntityOptional.isPresent()) {
-            throw new IllegalStateException("Username " + username + " not found");
+            throw new BadRequest("Username " + username + " not found");
         }
         AddressEntity newUserAddress = new AddressEntity(
                 addressDTO.getAddress(),

@@ -37,7 +37,7 @@ public class PasswordRecoveryController {
         try {
             sendRecoveryEmail(emailRecovery, user.getUsername(), otpCode);
         } catch (MessagingException e) {
-            throw new BadRequest("gmail gửi thất bại");
+            throw new BadRequest("gmail send fail");
         }
 
         return new OtpSendMailResponseDTO("Valid", otpCode);
@@ -54,6 +54,6 @@ public class PasswordRecoveryController {
     @PutMapping(path = "/recovery/{email}")
     public SuccessResponseDTO recoveryPassword(@PathVariable String email,@RequestBody RecoveryPasswordDTO userChangePassword) {
         userService.changeUserPasswordByEmail(userChangePassword.getPassword(), email);
-        return new SuccessResponseDTO(HttpStatus.OK, "Đã thay đổi mật khẩu thành công");
+        return new SuccessResponseDTO(HttpStatus.OK, "Change password success");
     }
 }

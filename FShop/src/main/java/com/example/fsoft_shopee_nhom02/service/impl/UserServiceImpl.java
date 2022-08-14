@@ -2,6 +2,7 @@ package com.example.fsoft_shopee_nhom02.service.impl;
 
 import com.example.fsoft_shopee_nhom02.dto.UserDTO;
 import com.example.fsoft_shopee_nhom02.dto.UserProfileDTO;
+import com.example.fsoft_shopee_nhom02.exception.BadRequest;
 import com.example.fsoft_shopee_nhom02.exception.NotFoundException;
 import com.example.fsoft_shopee_nhom02.exception.ResourceNotFoundException;
 import com.example.fsoft_shopee_nhom02.mapper.UserMapper;
@@ -138,7 +139,7 @@ public class UserServiceImpl implements UserService {
         if (userEntityOptional.isPresent()) {
             userEntityList.add(userEntityOptional.get());
         } else {
-            throw new IllegalStateException("User with this email not found!!");
+            throw new BadRequest("User with this email not found!!");
         }
         return userEntityList;
     }
@@ -158,7 +159,7 @@ public class UserServiceImpl implements UserService {
     public UserProfileDTO findByUsername(String username) {
         Optional<UserEntity> user = userRepository.findByUsername(username);
         if(!user.isPresent()){
-            throw new IllegalStateException("Khong tim thay username "+username);
+            throw new BadRequest("Khong tim thay username "+username);
         }
         UserProfileDTO userProfile = UserMapper.toUserProfileDTO(user.get());
         return userProfile;
