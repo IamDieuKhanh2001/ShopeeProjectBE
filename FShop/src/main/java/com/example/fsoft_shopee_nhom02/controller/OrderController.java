@@ -4,10 +4,10 @@ import com.example.fsoft_shopee_nhom02.Notification.NotificationService;
 import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.model.OrderDetailsEntity;
 import com.example.fsoft_shopee_nhom02.model.OrderEntity;
-import com.example.fsoft_shopee_nhom02.model.ProductEntity;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
@@ -15,7 +15,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
@@ -51,14 +50,48 @@ public class OrderController {
         notificationService.sendNotification(message.get("message"), message.get("userId"));
     }
 
-    @GetMapping("/all")
-    public Object getAllOrder() {
-        return orderService.getAll();
+    @GetMapping("/all/{page}")
+    public Object getAllOrder(@PathVariable String page) {
+        Map<String, Object> res = new HashMap<>();
+        Page<OrderEntity> orderEntityPage = orderService.getAll(Integer.parseInt(page) - 1);
+
+        res.put("orderEntityPage", orderEntityPage.getContent());
+        res.put("maxPage", orderEntityPage.getTotalPages());
+
+        return res;
     }
 
-    @GetMapping("/detail/all")
-    public Object getAllOrderDetail() {
-        return orderDetailService.getAll();
+    @GetMapping("/detail/all/{page}")
+    public Object getAllOrderDetail(@PathVariable String page) {
+        Map<String, Object> res = new HashMap<>();
+        Page<OrderDetailsEntity> orderDetailsEntityPage = orderDetailService.getAll(Integer.parseInt(page) - 1);
+
+        res.put("orderDetailsEntityPage", orderDetailsEntityPage.getContent());
+        res.put("maxPage", orderDetailsEntityPage.getTotalPages());
+
+        return res;
+    }
+
+    @GetMapping("/all/{status}/{page}")
+    public Object getAllOrderByStatus(@PathVariable String status, @PathVariable String page) {
+        Map<String, Object> res = new HashMap<>();
+        Page<OrderEntity> orderEntityPage = orderService.getAllByStatus(status, Integer.parseInt(page) - 1);
+
+        res.put("orderEntityPage", orderEntityPage.getContent());
+        res.put("maxPage", orderEntityPage.getTotalPages());
+
+        return res;
+    }
+
+    @GetMapping("/detail/all/{status}/{page}")
+    public Object getAllOrderDetailByStatus(@PathVariable String status, @PathVariable String page) {
+        Map<String, Object> res=new HashMap<>();
+        Page<OrderDetailsEntity> orderDetailsEntityPage=orderDetailService.getAllByOrderStatus(status, Integer.parseInt(page));
+
+        res.put("orderDetailsEntityPage", orderDetailsEntityPage.getContent());
+        res.put("maxPage", orderDetailsEntityPage.getTotalPages());
+
+        return res;
     }
 
     @GetMapping("/user/{id}")
@@ -87,27 +120,27 @@ public class OrderController {
     }
 
     @PostMapping("/create_order")
-    public Object CreateOrder(@RequestBody List<Object> req) throws ParseException {
+    public Object createOrder(@RequestBody List<Object> req) throws ParseException {
         // get request data
-        List<Map<String, String>> orderDetailsEntityList_req = (List<Map<String, String>>) req.get(0);
+        List<Map<String, String>> orderDetailsEntityListReq = (List<Map<String, String>>) req.get(0);
         Map<String, String> orderInformation = (Map<String, String>) req.get(1);
         // create variable for usage
         OrderEntity orderEntity;
         // get user information
         UserEntity user = userService.findByIdUser(Long.parseLong(orderInformation.get("user_id")));
-        AtomicReference<Long> total_cost = new AtomicReference<>((long) 0);
+        AtomicReference<Long> totalCost = new AtomicReference<>((long) 0);
         // analyze order Product data
-        List<OrderDetailsEntity> orderDetailsEntityList = orderDetailsEntityList_req.stream().map(orderEntity_req -> {
-            OrderDetailsEntity orderDetailsEntity = new OrderDetailsEntity(Long.parseLong(orderEntity_req.get("unit_price")), Long.parseLong(orderEntity_req.get("quantity")), orderEntity_req.get("type"));
-            orderDetailsEntity.setProductEntityID(Long.parseLong(orderEntity_req.get("product_id")));
-            total_cost.updateAndGet(v -> v + (Long.parseLong(orderEntity_req.get("unit_price")) * Long.parseLong(orderEntity_req.get("quantity"))));
+        List<OrderDetailsEntity> orderDetailsEntityList = orderDetailsEntityListReq.stream().map(orderEntityReq -> {
+            OrderDetailsEntity orderDetailsEntity = new OrderDetailsEntity(Long.parseLong(orderEntityReq.get("unit_price")), Long.parseLong(orderEntityReq.get("quantity")), orderEntityReq.get("type"));
+            orderDetailsEntity.setProductEntityID(Long.parseLong(orderEntityReq.get("product_id")));
+            totalCost.updateAndGet(v -> v + (Long.parseLong(orderEntityReq.get("unit_price")) * Long.parseLong(orderEntityReq.get("quantity"))));
             return orderDetailsEntity;
         }).collect(Collectors.toList());
         // map value for orderEntity and check if user want to add new address
         if (orderInformation.get("address") == null) {
-            orderEntity = new OrderEntity(ORDER_STATUS.PENDING.toString(), user.getUsername(), user.getAddressEntityList().get(0).getAddress(), user.getPhone(), orderInformation.get("note"), orderInformation.get("payment"), Long.parseLong(orderInformation.get("shipping_fee")), total_cost.get(), user, getCurrentDateTime());
+            orderEntity = new OrderEntity(ORDER_STATUS.PENDING.toString(), user.getUsername(), user.getAddressEntityList().get(0).getAddress(), user.getPhone(), orderInformation.get("note"), orderInformation.get("payment"), Long.parseLong(orderInformation.get("shipping_fee")), totalCost.get(), user, getCurrentDateTime());
         } else {
-            orderEntity = new OrderEntity(ORDER_STATUS.PENDING.toString(), orderInformation.get("user_name"), orderInformation.get("address"), orderInformation.get("phone"), orderInformation.get("note"), orderInformation.get("payment"), Long.parseLong(orderInformation.get("shipping_fee")), total_cost.get(), user, getCurrentDateTime());
+            orderEntity = new OrderEntity(ORDER_STATUS.PENDING.toString(), orderInformation.get("user_name"), orderInformation.get("address"), orderInformation.get("phone"), orderInformation.get("note"), orderInformation.get("payment"), Long.parseLong(orderInformation.get("shipping_fee")), totalCost.get(), user, getCurrentDateTime());
             // add new address for later usage
             addressService.saveUserAddress(new AddressDTO(orderInformation.get("address"), orderInformation.get("user_name"), orderInformation.get("phone")), user.getUsername());
         }
@@ -122,7 +155,7 @@ public class OrderController {
     }
 
     @PostMapping("/update_order/{id}")
-    public Object UpdateOrder(@RequestBody Map<String, String> req, @PathVariable String id) throws ParseException {
+    public Object updateOrder(@RequestBody Map<String, String> req, @PathVariable String id) throws ParseException {
         OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
 
         orderEntity.setModifiedDate(getCurrentDateTime());
@@ -162,9 +195,9 @@ public class OrderController {
         return "updated order";
     }
 
-    @PostMapping("/cancel_order/{id}")
-    public Object CancelOrder(@PathVariable String id) {
-        OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
+    @PostMapping("/cancel_order")
+    public Object cancelOrder(@RequestBody Map<String, String> req) {
+        OrderEntity orderEntity = orderService.findById(Long.parseLong(req.get("id")));
         orderEntity.setStatus(ORDER_STATUS.CANCELED.toString());
 
         orderService.updateOrder(orderEntity);
@@ -172,7 +205,7 @@ public class OrderController {
     }
 
     @GetMapping("/get_shipping_fee")
-    public Object get_shipping_fee(@RequestParam String f, @RequestParam String t, @RequestParam String w) {
+    public Object getShippingFee(@RequestParam String f, @RequestParam String t, @RequestParam String w) {
         String httpRequest = "Can't get Shipping fee, Server Busy";
 
         try {
@@ -182,14 +215,14 @@ public class OrderController {
             String line;
             InputStreamReader streamReader = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8);
             BufferedReader bufferedReader = new BufferedReader(streamReader);
-            StringBuilder res_html = new StringBuilder();
+            StringBuilder resHtml = new StringBuilder();
             while ((line = bufferedReader.readLine()) != null) {
-                res_html.append(line);
+                resHtml.append(line);
             }
             bufferedReader.close();
-            httpRequest = res_html.toString();
+            httpRequest = resHtml.toString();
         } catch (Exception e) {
-            System.out.println(httpRequest);
+            e.printStackTrace();
         }
 
         return httpRequest;

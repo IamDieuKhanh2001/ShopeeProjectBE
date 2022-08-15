@@ -2,6 +2,8 @@ package com.example.fsoft_shopee_nhom02.repository;
 
 import com.example.fsoft_shopee_nhom02.model.OrderDetailsEntity;
 import com.example.fsoft_shopee_nhom02.model.OrderEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,30 +16,30 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
     List<OrderEntity> findAllByUserEntitiesId(Long UserId);
 
-//    List<OrderEntity> getAllByUserEntitiesIdAndStatus(Long userEntities_id, String status);
-
     List<OrderEntity> getAllByUserEntitiesIdAndStatus(Long userEntities_id, String status);
 
     List<OrderEntity> getAllByUserEntitiesIdAndStatusNot(Long userEntities_id, String status);
 
-    // Thống kê doanh thu theo tháng
+    Page<OrderEntity> searchAllByStatus(String status, Pageable pageable);
+
+    // stonk by month
     @Query(value = "select sum(total_price) \n" +
             "from orders \n" +
             "where year(modified_date) = '2022' and month(modified_date) =:Month and status = 'Done'", nativeQuery = true)
     String getAllOrderByMonth(@Param("Month") String Month);
 
-    // Tổng doanh thu
+    // sum of stonk
     @Query(value = "select sum(total_price) \n" +
             "from orders where status = 'Done'\n", nativeQuery = true)
     long getTurnOver();
 
-    // Thống kê doanh thu theo ngày
+    // stonk per day
     @Query(value = "select sum(total_price) \n" +
             "from orders \n" +
             "where year(modified_date) = :Year and month(modified_date) =:Month and day(modified_date) =:Day and status = 'Done'", nativeQuery = true)
     String getAllOrderByDay(@Param("Year") String Year, @Param("Month") String Month, @Param("Day") String Day);
 
-    // Thống kê tổng số đơn hàng
+    // stonk by all stonk of orders
     @Query(value = "SELECT count(*) \n" +
             "FROM shopee.orders where status = 'Done'", nativeQuery = true)
     long getTotalOrder();

@@ -20,18 +20,22 @@ public class GlobalVariable {
     public static String GetRandom4DigitNumber() {
         return String.format("%04d", new Random().nextInt(9999));
     }
+
     public enum ORDER_STATUS {
         DONE,
         CANCELED,
         PENDING,
     }
+
     public static final String ACTIVE_STATUS = "Active";
     public static final String INACTIVE_STATUS = "Inactive";
 
-    public static String Notification_destination = "/client";
-    public static String Notification_endpoint = "/NotificationService";
-    public static String Notification_sendPrefix = "/message";
-    public static String Notification_pushPrefix = "/user";
+    public static final String Notification_destination = "/client";
+    public static final String Notification_endpoint = "/NotificationService";
+    public static final String Notification_sendPrefix = "/message";
+    public static final String Notification_pushPrefix = "/user";
+
+    public static final int OrderPagingLimit = 10;
 
     public static final String DEFAULT_PAGE = "1";
     public static final String DEFAULT_LIMIT = "12";

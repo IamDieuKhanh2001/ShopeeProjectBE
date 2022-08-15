@@ -4,9 +4,13 @@ import com.example.fsoft_shopee_nhom02.model.OrderEntity;
 import com.example.fsoft_shopee_nhom02.repository.OrderRepository;
 import com.example.fsoft_shopee_nhom02.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.example.fsoft_shopee_nhom02.config.GlobalVariable.OrderPagingLimit;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -18,8 +22,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderEntity> getAll() {
-        return orderRepository.findAll();
+    public Page<OrderEntity> getAll(int page) {
+        return orderRepository.findAll(PageRequest.of(page, 10));
     }
 
     @Override
@@ -78,7 +82,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteOrder(Long OrderId) {
-        orderRepository.deleteById(OrderId);
+    public Page<OrderEntity> getAllByStatus(String status, int page) {
+        return orderRepository.searchAllByStatus(status, PageRequest.of(page, OrderPagingLimit));
     }
 }
