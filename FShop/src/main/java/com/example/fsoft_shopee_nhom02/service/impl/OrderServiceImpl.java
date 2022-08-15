@@ -42,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderEntity> getAllHistoryOrderByUserId(Long UserId, String Status) {
-        return orderRepository.getAllByUserEntitiesIdAndStatus(UserId, Status);
+        return orderRepository.getAllByUserEntitiesIdAndStatusNot(UserId, Status);
     }
 
     @Override
