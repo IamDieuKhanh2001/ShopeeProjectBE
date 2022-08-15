@@ -20,10 +20,14 @@ public class OrderServiceImpl implements OrderService {
     public OrderServiceImpl(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
+    @Override
+    public Page<OrderEntity> getAllByStatus(String status, int page) {
+        return orderRepository.searchAllByStatus(status, PageRequest.of(page, OrderPagingLimit));
+    }
 
     @Override
     public Page<OrderEntity> getAll(int page) {
-        return orderRepository.findAll(PageRequest.of(page, 10));
+        return orderRepository.findAll(PageRequest.of(page, OrderPagingLimit));
     }
 
     @Override
@@ -38,7 +42,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderEntity> getAllHistoryOrderByUserId(Long UserId, String Status) {
-        return orderRepository.getAllByUserEntitiesIdAndStatusNot(UserId, Status);
+        return orderRepository.getAllByUserEntitiesIdAndStatus(UserId, Status);
     }
 
     @Override
@@ -47,8 +51,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public String getAllOrderByMonth(String Month) {
-        return orderRepository.getAllOrderByMonth(Month);
+    public String getAllOrderByMonth(String MonthM) {
+        return orderRepository.getAllOrderByMonth(MonthM);
     }
 
     @Override
@@ -82,7 +86,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<OrderEntity> getAllByStatus(String status, int page) {
-        return orderRepository.searchAllByStatus(status, PageRequest.of(page, OrderPagingLimit));
+    public void deleteOrder(Long OrderId) {
+        orderRepository.deleteById(OrderId);
     }
+
+    public String getAllOrderFromDayToDay(String Year, String Month, String Day, String YearEnd, String MonthEnd, String DayEnd) {
+        return orderRepository.getAllOrderFromDayToDay(Year, Month, Day, YearEnd, MonthEnd, DayEnd);
+    }
+
 }

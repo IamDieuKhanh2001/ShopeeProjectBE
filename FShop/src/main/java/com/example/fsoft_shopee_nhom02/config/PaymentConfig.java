@@ -7,9 +7,12 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 public class PaymentConfig {
+    public static final List<String> months = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12");
     public static final String IPDEFAULT = "0:0:0:0:0:0:0:1";
     public static final String VERSIONVNPAY = "2.1.0";
     public static final String COMMAND = "querydr";
@@ -18,7 +21,7 @@ public class PaymentConfig {
     public static final String CURRCODE =  "VND";
     public static final String LOCALEDEFAULT = "vn";
     public static final String ORDERTYPE = "170000";
-    public static final String RETURNURL = "https://shopeeeee.herokuapp.com/statistic/year"; // Trang trả về sau khi thanh toán thành công
+    public static final String RETURNURL = "http://localhost:8082/payment/accept/1"; // Trang trả về sau khi thanh toán thành công
     public static final String VNPAYURL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     public static String Sha256(String message) {
         String digest = null;
@@ -45,6 +48,8 @@ public class PaymentConfig {
         }
         return digest;
     }
+
+
     public static String hmacSHA512(final String key, final String data) {
         try {
 
