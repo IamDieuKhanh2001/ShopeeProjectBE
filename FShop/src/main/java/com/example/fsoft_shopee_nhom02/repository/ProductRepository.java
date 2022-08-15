@@ -34,7 +34,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
             "AND (?3 is null or cat.id = ?3) " +
             "AND (?4 is null or pro.fromPrice > ?4 - 1) " +
             "AND (?5 is null or pro.fromPrice < ?5 + 1) " +
-            "AND (?6 is null or pro.avgRating >= ?6)")
+            "AND (?6 is null or pro.avgRating >= ?6) " +
+            "AND pro.status = 'Active'")
     Page<ProductEntity> findAllBySearchWithCatIdAndSubCatIdAndStatus(String search, Long subId, Long catId, Long minPrice,
                                                                      Long maxPrice, Integer rating, Pageable pageable);
 }
