@@ -20,7 +20,9 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
     List<OrderEntity> getAllByUserEntitiesIdAndStatusNot(Long userEntities_id, String status);
 
-    Page<OrderEntity> searchAllByStatus(String status, Pageable pageable);
+    Page<OrderEntity> searchAllByStatusOrderByCreatedDateDesc(String status, Pageable pageable);
+
+    Page<OrderEntity> findAllByOrderByCreatedDateDesc(Pageable pageable);
 
     // Statistic by month
     @Query(value = "select sum(total_price) \n" +

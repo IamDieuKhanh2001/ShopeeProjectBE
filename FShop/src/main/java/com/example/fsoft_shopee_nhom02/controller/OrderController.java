@@ -53,7 +53,7 @@ public class OrderController {
     @GetMapping("/all/{page}")
     public Object getAllOrder(@PathVariable String page) {
         Map<String, Object> res = new HashMap<>();
-        Page<OrderEntity> orderEntityPage = orderService.getAll(Integer.parseInt(page) - 1);
+        Page<OrderEntity> orderEntityPage = orderService.getAllPaging(Integer.parseInt(page) - 1);
 
         res.put("orderEntityPage", orderEntityPage.getContent());
         res.put("maxPage", orderEntityPage.getTotalPages());
@@ -64,7 +64,7 @@ public class OrderController {
     @GetMapping("/detail/all/{page}")
     public Object getAllOrderDetail(@PathVariable String page) {
         Map<String, Object> res = new HashMap<>();
-        Page<OrderDetailsEntity> orderDetailsEntityPage = orderDetailService.getAll(Integer.parseInt(page) - 1);
+        Page<OrderDetailsEntity> orderDetailsEntityPage = orderDetailService.getAllPaging(Integer.parseInt(page) - 1);
 
         res.put("orderDetailsEntityPage", orderDetailsEntityPage.getContent());
         res.put("maxPage", orderDetailsEntityPage.getTotalPages());

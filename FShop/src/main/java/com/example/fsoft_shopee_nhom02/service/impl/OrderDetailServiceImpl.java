@@ -24,12 +24,12 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
     @Override
     public Page<OrderDetailsEntity> getAllByOrderStatus(String status, int page) {
-        return orderDetailRepository.findAllByOrderEntityStatus(status, PageRequest.of(page, OrderPagingLimit));
+        return orderDetailRepository.findAllByOrderEntityStatusOrderByOrderEntityDesc(status, PageRequest.of(page, OrderPagingLimit));
     }
 
     @Override
-    public Page<OrderDetailsEntity> getAll(int page) {
-        return orderDetailRepository.findAll(PageRequest.of(page, OrderPagingLimit));
+    public Page<OrderDetailsEntity> getAllPaging(int page) {
+        return orderDetailRepository.findAllByOrderByOrderEntityDesc(PageRequest.of(page, OrderPagingLimit));
     }
 
     @Override

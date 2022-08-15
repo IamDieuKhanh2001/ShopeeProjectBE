@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrderService {
-    Page<OrderEntity> getAll(int page);
+    Page<OrderEntity> getAllPaging(int page);
 
     List<OrderEntity> getAllByUserId(Long UserId);
 

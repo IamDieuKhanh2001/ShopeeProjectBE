@@ -22,12 +22,12 @@ public class OrderServiceImpl implements OrderService {
     }
     @Override
     public Page<OrderEntity> getAllByStatus(String status, int page) {
-        return orderRepository.searchAllByStatus(status, PageRequest.of(page, OrderPagingLimit));
+        return orderRepository.searchAllByStatusOrderByCreatedDateDesc(status, PageRequest.of(page, OrderPagingLimit));
     }
 
     @Override
-    public Page<OrderEntity> getAll(int page) {
-        return orderRepository.findAll(PageRequest.of(page, OrderPagingLimit));
+    public Page<OrderEntity> getAllPaging(int page) {
+        return orderRepository.findAllByOrderByCreatedDateDesc(PageRequest.of(page, OrderPagingLimit));
     }
 
     @Override
