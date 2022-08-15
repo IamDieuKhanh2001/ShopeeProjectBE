@@ -85,8 +85,8 @@ public class OrderController {
 
     @GetMapping("/detail/all/{status}/{page}")
     public Object getAllOrderDetailByStatus(@PathVariable String status, @PathVariable String page) {
-        Map<String, Object> res=new HashMap<>();
-        Page<OrderDetailsEntity> orderDetailsEntityPage=orderDetailService.getAllByOrderStatus(status, Integer.parseInt(page));
+        Map<String, Object> res = new HashMap<>();
+        Page<OrderDetailsEntity> orderDetailsEntityPage = orderDetailService.getAllByOrderStatus(status, Integer.parseInt(page) - 1);
 
         res.put("orderDetailsEntityPage", orderDetailsEntityPage.getContent());
         res.put("maxPage", orderDetailsEntityPage.getTotalPages());
