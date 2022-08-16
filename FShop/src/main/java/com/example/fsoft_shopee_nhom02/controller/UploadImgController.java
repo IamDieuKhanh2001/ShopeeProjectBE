@@ -2,10 +2,6 @@ package com.example.fsoft_shopee_nhom02.controller;
 
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUserService;
 import com.example.fsoft_shopee_nhom02.dto.*;
-import com.example.fsoft_shopee_nhom02.model.ProductEntity;
-import com.example.fsoft_shopee_nhom02.model.UserEntity;
-import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
-import com.example.fsoft_shopee_nhom02.repository.UserRepository;
 import com.example.fsoft_shopee_nhom02.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -59,7 +55,7 @@ public class UploadImgController {
 
     @PostMapping("/admin/products/{id}/image")
     public ResponseEntity<?> uploadProductImg(@PathVariable long id,
-                                              @RequestParam("imageProduct") MultipartFile imageProduct,
+                                              @RequestParam(value = "imageProduct", required = false) MultipartFile imageProduct,
                                               @RequestParam(value = "image1", required = false) MultipartFile image1,
                                               @RequestParam(value = "image2", required = false) MultipartFile image2,
                                               @RequestParam(value = "image3", required = false) MultipartFile image3,
@@ -71,14 +67,14 @@ public class UploadImgController {
 
     @PostMapping("/users/comments/{id}/image")
     public ResponseEntity<?> uploadCommentImg(@PathVariable long id,
-                                              @RequestParam(required = false) MultipartFile img) {
+                                              @RequestParam(value = "image", required = false) MultipartFile image) {
         String username = ApplicationUserService.GetUsernameLoggedIn();
 
-        if(!img.getContentType().equals("image/png") && !img.getContentType().equals("image/jpeg")) {
+        if(!image.getContentType().equals("image/png") && !image.getContentType().equals("image/jpeg")) {
             return new ResponseEntity<>("File khong hop le!", HttpStatus.BAD_REQUEST);
         }
 
-        return productService.postCommentImg(id, img, username);
+        return productService.postCommentImg(id, image, username);
     }
 
     @PostMapping("/admin/subcategory/{id}/image")

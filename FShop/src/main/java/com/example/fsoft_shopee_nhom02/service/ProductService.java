@@ -20,10 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ProductService {
@@ -509,6 +506,9 @@ public class ProductService {
             commentDTOHandler(comment, commentDTO);
             commentDTOS.add(commentDTO);
         }
+
+        // Newest comments go first
+        commentDTOS.sort(Comparator.comparing(CommentDTO::getId).reversed());
 
         commentDTOS = filterByRating(rating, commentDTOS);
 

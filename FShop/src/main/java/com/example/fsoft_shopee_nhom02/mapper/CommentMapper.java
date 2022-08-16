@@ -1,5 +1,6 @@
 package com.example.fsoft_shopee_nhom02.mapper;
 
+import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
 import com.example.fsoft_shopee_nhom02.dto.CommentDTO;
 import com.example.fsoft_shopee_nhom02.model.CommentEntity;
 
@@ -19,7 +20,7 @@ public class CommentMapper {
         commentDTO.setId(comment.getId());
         commentDTO.setRating(comment.getRating());
         commentDTO.setComment(comment.getComment());
-        commentDTO.setCreatedOn(comment.getCreatedDate());
+        commentDTO.setCreatedOn(GlobalVariable.datetimeFormat.format(comment.getCreatedDate()));
         commentDTO.setImage(comment.getImage());
 
         return commentDTO;
