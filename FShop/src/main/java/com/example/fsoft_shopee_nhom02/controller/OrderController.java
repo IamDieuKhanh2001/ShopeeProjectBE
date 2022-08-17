@@ -46,7 +46,6 @@ public class OrderController {
     @PostMapping("/sentMessage")
     public void sentMessage(@RequestBody Map<String, String> message) {
         // more config
-        //
         notificationService.sendNotification(message.get("message"), message.get("userId"));
     }
 
