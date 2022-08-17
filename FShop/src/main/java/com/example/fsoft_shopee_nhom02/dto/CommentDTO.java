@@ -8,7 +8,7 @@ public class CommentDTO {
     private String avatar;
     private long rating;
     private String comment;
-    private Date createdOn;
+    private String createdOn;
     private String image;
 
     public long getId() {
@@ -51,11 +51,11 @@ public class CommentDTO {
         this.comment = comment;
     }
 
-    public Date getCreatedOn() {
+    public String getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(Date createdOn) {
+    public void setCreatedOn(String createdOn) {
         this.createdOn = createdOn;
     }
 
