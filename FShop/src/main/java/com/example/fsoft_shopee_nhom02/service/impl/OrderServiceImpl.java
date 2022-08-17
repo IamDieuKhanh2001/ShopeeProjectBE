@@ -31,8 +31,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderEntity> getAllByUserId(Long UserId) {
-        return orderRepository.findAllByUserEntitiesId(UserId);
+    public Page<OrderEntity> getAllByUserId(Long UserId, int page) {
+        return orderRepository.findAllByUserEntitiesId(UserId,PageRequest.of(page,OrderPagingLimit));
     }
 
     @Override

@@ -94,9 +94,15 @@ public class OrderController {
         return res;
     }
 
-    @GetMapping("/user/{id}")
-    public Object getAllByUserId(@PathVariable String id) {
-        return orderService.getAllByUserId(Long.parseLong(id));
+    @GetMapping("/user/{id}/{page}")
+    public Object getAllByUserId(@PathVariable String id, @PathVariable String page) {
+        Map<String, Object> res = new HashMap<>();
+        Page<OrderEntity> orderEntityPage = orderService.getAllByUserId(Long.parseLong(id), Integer.parseInt(page) - 1);
+
+        res.put("orderEntityPage", orderEntityPage.getContent());
+        res.put("maxPage", orderEntityPage.getTotalPages());
+
+        return res;
     }
 
     @GetMapping("/pending/{id}")
