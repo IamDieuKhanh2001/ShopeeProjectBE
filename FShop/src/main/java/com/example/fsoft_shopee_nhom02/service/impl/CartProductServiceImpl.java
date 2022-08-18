@@ -109,7 +109,7 @@ public class CartProductServiceImpl implements CartProductService {
     public List<CartDetailDTO> getAllCart(long userId) {
         user = userService.findByIdUser(userId);
         Long cartId = user.getCartEntity().getId();
-        List<CartProductEntity> cartProductEntities = cartProductRepository.getCart(cartId);
+        List<CartProductEntity> cartProductEntities = cartProductRepository.getCart(94L);
         List<CartDetailDTO> cartDetailDTOS = new ArrayList<>();
 
         if (cartProductEntities.isEmpty()) {
@@ -130,7 +130,8 @@ public class CartProductServiceImpl implements CartProductService {
             //get type
             TypeEntity type = typeRepository.findTypeEntityByProduct(cartProductEntity.getProductEntity().getId(),
                             cartProductEntity.getType())
-                    .orElseThrow(() -> new NotFoundException("type and productId not in Type table in DB"));
+                    .orElseThrow(() -> new NotFoundException("type and productId transfer" +
+                            " not match in Type table in DB"));
             cartDetailDTO.setType(type.getType());
             cartDetailDTO.setPrice(type.getPrice());
 
