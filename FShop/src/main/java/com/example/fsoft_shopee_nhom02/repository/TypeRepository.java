@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TypeRepository extends JpaRepository<TypeEntity,Long> {
@@ -37,4 +38,8 @@ public interface TypeRepository extends JpaRepository<TypeEntity,Long> {
             "                     left join products pd on o.product_id = pd.id\n" +
             "            where o.product_id=:ProductId and o.type =:TypeProduct", nativeQuery = true)
     TypeEntity findProductByType(@Param("ProductId") Long ProductId, @Param("TypeProduct") String TypeProduct);
+
+    @Query("select type from TypeEntity type where type.productEntity.id =:productId" +
+            " and type.type = :type ")
+    Optional<TypeEntity> findTypeEntityByProduct(@Param("productId")Long productId, @Param("type")String type);
 }

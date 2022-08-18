@@ -43,6 +43,7 @@ public class CartProductServiceImpl implements CartProductService {
     UserService userService;
 
     UserEntity user;
+
     @Override
     public CartProductDTO addCart(CartProductDTO cartProductDTO) throws Exception {
         long userId = cartProductDTO.getUserId();
@@ -55,7 +56,7 @@ public class CartProductServiceImpl implements CartProductService {
 
         if (cartProductRepository.getCartByProductIdAndCartId(cartId, productId, type).isPresent()) {
             CartProductEntity obj1 = cartProductRepository.getCartByProductIdAndCartId(cartId, productId, type).
-                    orElseThrow(() -> new NotFoundException ("lỗi"));
+                    orElseThrow(() -> new NotFoundException("lỗi"));
             obj1.setQuantity(obj1.getQuantity() + qty);
             cartProductRepository.save(obj1);
             return cartProductMapper.toCartProductDto(obj1);
@@ -111,7 +112,9 @@ public class CartProductServiceImpl implements CartProductService {
         List<CartProductEntity> cartProductEntities = cartProductRepository.getCart(cartId);
         List<CartDetailDTO> cartDetailDTOS = new ArrayList<>();
 
-        List<Integer> test = new ArrayList<>();
+        if (cartProductEntities.isEmpty()) {
+            return cartDetailDTOS;
+        }
         for (CartProductEntity cartProductEntity : cartProductEntities) {
             CartDetailDTO cartDetailDTO = new CartDetailDTO();
 
@@ -125,8 +128,9 @@ public class CartProductServiceImpl implements CartProductService {
             cartDetailDTO.setProductId(product.getId());
 
             //get type
-            TypeEntity type = typeRepository.findProductByType(cartProductEntity.getProductEntity().getId(),
-                                            cartProductEntity.getType());
+            TypeEntity type = typeRepository.findTypeEntityByProduct(cartProductEntity.getProductEntity().getId(),
+                            cartProductEntity.getType())
+                    .orElseThrow(() -> new NotFoundException("type and productId not in Type table in DB"));
             cartDetailDTO.setType(type.getType());
             cartDetailDTO.setPrice(type.getPrice());
 
