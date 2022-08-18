@@ -44,7 +44,7 @@ public class ShopController {
     @PutMapping("/admin/shop/{id}")
     public ResponseEntity<?> update(@RequestBody ShopDTO model, @PathVariable long id){
         model.setId(id);
-        return ResponseEntity.ok(shopService.update(model));
+        return ResponseEntity.ok(shopService.save(model));
     }
 
     @DeleteMapping("/admin/shop/{id}")

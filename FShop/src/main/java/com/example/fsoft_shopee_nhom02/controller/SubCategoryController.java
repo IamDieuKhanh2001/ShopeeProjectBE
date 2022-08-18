@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.ParseException;
+import java.util.List;
 
 @RestController
 public class SubCategoryController {
@@ -18,8 +19,8 @@ public class SubCategoryController {
     private SubCategoryService subCategoryService;
 
     @PostMapping("/admin/subcategory")
-    public ResponseEntity<?> createNewSubCategory(@RequestBody SubCategoryDTO model){
-        return ResponseEntity.ok(subCategoryService.save(model));
+    public ResponseEntity<?> createNewSubCategory(@RequestBody List<SubCategoryDTO> models){
+        return ResponseEntity.ok(subCategoryService.createListSubcategory(models));
     }
 
     @GetMapping("/subcategory/get-all")

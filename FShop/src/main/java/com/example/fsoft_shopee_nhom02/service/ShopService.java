@@ -9,7 +9,7 @@ import java.util.List;
 @Service
 public interface ShopService {
     ShopDTO save (ShopDTO shopDTO);
-    ShopDTO update (ShopDTO shopDTO);
+    //ShopDTO update (ShopDTO shopDTO);
     void delete(long id);
     List<ShopDTO> findAllShop();
     ShopDTO findShopById(long id);

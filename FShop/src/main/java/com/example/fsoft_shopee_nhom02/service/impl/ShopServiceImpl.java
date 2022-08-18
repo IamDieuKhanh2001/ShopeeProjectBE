@@ -55,26 +55,26 @@ public class ShopServiceImpl implements ShopService {
 
     }
 
-    @Override
-    public ShopDTO update(ShopDTO shopDTO) {
-        ShopEntity shop = shopRepository.findById(shopDTO.getId()).orElseThrow(()
-        -> new BadRequest("Not found shop with id ="+shopDTO.getId()));
-
-        if(shopRepository.findByNameExceptCurrentName(shopDTO.getId(),shopDTO.getName()) != null){
-            throw new BadRequest(shopDTO.getName()+" have been used");
-        }
-
-        shop.setName(shopDTO.getName());
-        shop.setAvatar(shopDTO.getAvatar());
-        shop.setBackground(shopDTO.getBackground());
-        shop.setDescription(shopDTO.getDescription());
-        shop.setStatus(shopDTO.getStatus());
-        shop.setTotalProduct(shopRepository.countTotalProduct(shopDTO.getId()));
-
-        shop = shopRepository.save(shop);
-
-        return ShopMapper.toShopDto(shop);
-    }
+//    @Override
+//    public ShopDTO update(ShopDTO shopDTO) {
+//        ShopEntity shop = shopRepository.findById(shopDTO.getId()).orElseThrow(()
+//        -> new BadRequest("Not found shop with id ="+shopDTO.getId()));
+//
+//        if(shopRepository.findByNameExceptCurrentName(shopDTO.getId(),shopDTO.getName()) != null){
+//            throw new BadRequest(shopDTO.getName()+" have been used");
+//        }
+//
+//        shop.setName(shopDTO.getName());
+//        shop.setAvatar(shopDTO.getAvatar());
+//        shop.setBackground(shopDTO.getBackground());
+//        shop.setDescription(shopDTO.getDescription());
+//        shop.setStatus(shopDTO.getStatus());
+//        shop.setTotalProduct(shopRepository.countTotalProduct(shopDTO.getId()));
+//
+//        shop = shopRepository.save(shop);
+//
+//        return ShopMapper.toShopDto(shop);
+//    }
 
     @Override
     public void delete(long id) {

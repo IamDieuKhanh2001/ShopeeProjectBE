@@ -8,7 +8,7 @@ import java.util.List;
 @Service
 public interface CategoryService {
     CategoryDTO save(CategoryDTO categoryDTO);
-    CategoryDTO update(CategoryDTO categoryDTO);
+    //CategoryDTO update(CategoryDTO categoryDTO);
     List<CategoryDTO> getAllCategory(boolean active);
     CategoryDTO getCategoryById(long id);
     List<CategoryDTO> getCategoryByShopId(long shopId, boolean active);

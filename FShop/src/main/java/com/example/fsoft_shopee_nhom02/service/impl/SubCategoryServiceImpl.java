@@ -83,6 +83,16 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
     @Override
+    public List<SubCategoryDTO> createListSubcategory(List<SubCategoryDTO> subCategoryDTOS) {
+        List<SubCategoryDTO> result = new ArrayList<>();
+        for(SubCategoryDTO subCategoryDTO : subCategoryDTOS){
+            subCategoryDTO = save(subCategoryDTO);
+            result.add(subCategoryDTO);
+        }
+        return result;
+    }
+
+    @Override
     public List<SubCategoryDTO> getAllSubCategory(boolean active) {
         List<SubCategoryDTO> subCategoryDTOS = new ArrayList<>();
         List<SubCategoryEntity> subCategories;
@@ -182,39 +192,39 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         }
     }
 
-    @Override
-    public SubCategoryDTO update(SubCategoryDTO subCategoryDTO) {
-        if(subCategoryDTO.getCategoryId() == null){
-            throw new BadRequest("Please provide the category id want to add this subcategory.");
-            //subCategory = subCategoryRepository.save(subCategory);
-        }
-
-        SubCategoryEntity subCategory  = subCategoryRepository.findById(subCategoryDTO.getId())
-                .orElseThrow(() -> new BadRequest("Not found subcategory with id = "+subCategoryDTO.getId()));
-
-        CategoryEntity category = categoryRepository.findById(subCategoryDTO.getCategoryId())
-                .orElseThrow(() -> new BadRequest("Not found category with id = "
-                        +subCategoryDTO.getCategoryId()));
-
-        //check category is active
-        if(Objects.equals(category.getStatus(), GlobalVariable.INACTIVE_STATUS)){
-            throw new BadRequest("This category is inactive!!");
-        }
-
-        //check name subcategory in 1 category is not similar
-        if(subCategoryRepository.findByNameAndCategoryIdExceptOldName(subCategoryDTO.getId(),
-                subCategoryDTO.getCategoryId(),subCategoryDTO.getName()) != null){
-            throw new BadRequest("This name have been used!!");
-        }
-
-        subCategory.setName(subCategoryDTO.getName());
-        subCategory.setImage(subCategoryDTO.getImage());
-        subCategory.setStatus(subCategoryDTO.getStatus());
-        subCategory.setCategoryEntity(category);
-        subCategory = subCategoryRepository.save(subCategory);
-
-        return SubCategoryMapper.toSubCategoryDto(subCategory);
-    }
+//    @Override
+//    public SubCategoryDTO update(SubCategoryDTO subCategoryDTO) {
+//        if(subCategoryDTO.getCategoryId() == null){
+//            throw new BadRequest("Please provide the category id want to add this subcategory.");
+//            //subCategory = subCategoryRepository.save(subCategory);
+//        }
+//
+//        SubCategoryEntity subCategory  = subCategoryRepository.findById(subCategoryDTO.getId())
+//                .orElseThrow(() -> new BadRequest("Not found subcategory with id = "+subCategoryDTO.getId()));
+//
+//        CategoryEntity category = categoryRepository.findById(subCategoryDTO.getCategoryId())
+//                .orElseThrow(() -> new BadRequest("Not found category with id = "
+//                        +subCategoryDTO.getCategoryId()));
+//
+//        //check category is active
+//        if(Objects.equals(category.getStatus(), GlobalVariable.INACTIVE_STATUS)){
+//            throw new BadRequest("This category is inactive!!");
+//        }
+//
+//        //check name subcategory in 1 category is not similar
+//        if(subCategoryRepository.findByNameAndCategoryIdExceptOldName(subCategoryDTO.getId(),
+//                subCategoryDTO.getCategoryId(),subCategoryDTO.getName()) != null){
+//            throw new BadRequest("This name have been used!!");
+//        }
+//
+//        subCategory.setName(subCategoryDTO.getName());
+//        subCategory.setImage(subCategoryDTO.getImage());
+//        subCategory.setStatus(subCategoryDTO.getStatus());
+//        subCategory.setCategoryEntity(category);
+//        subCategory = subCategoryRepository.save(subCategory);
+//
+//        return SubCategoryMapper.toSubCategoryDto(subCategory);
+//    }
 
     @Override
     public void delete(long id) {
