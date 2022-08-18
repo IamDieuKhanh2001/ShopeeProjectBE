@@ -121,15 +121,17 @@ public class ProductService {
         return Math.round(avgRating * 10.0) / 10.0;
     }
 
-    private void getItemForRatingAndPrice(ProductEntity product) {
+    private void getItemForRating(ProductEntity product) {
         Long sumRating = commentRepository.sumProductReview(product.getId());
         Long totalCmt = commentRepository.countAllByProductEntityIdAndStatus(
                 product.getId(), GlobalVariable.ACTIVE_STATUS);
 
-        Long minPrice = typeRepository.findMinPrice(product.getId());
-
         product.setAvgRating((product.getAvgRating() == null || sumRating == null
                 || totalCmt == null) ? 0.0 : calculateAvgRating(totalCmt, sumRating));
+    }
+
+    private void getItemForPrice(ProductEntity product) {
+        Long minPrice = typeRepository.findMinPrice(product.getId());
         product.setFromPrice((product.getFromPrice() == null || minPrice == null) ? 0 : minPrice);
     }
 
@@ -177,7 +179,7 @@ public class ProductService {
                         HttpStatus.BAD_REQUEST);
             }
             ProductMapper.toProductEntity(product, productDTO);
-            getItemForRatingAndPrice(product);
+            // getItemForRatingAndPrice(product);
         } else {
             // CREATE
             product = ProductMapper.toProductEntity(productDTO);
@@ -285,7 +287,7 @@ public class ProductService {
         }
 
         // Update min price
-        getItemForRatingAndPrice(productEntity);
+        getItemForPrice(productEntity);
         productRepository.save(productEntity);
 
         return new ResponseEntity<>(types, HttpStatus.OK);
@@ -312,7 +314,7 @@ public class ProductService {
         typeRepository.saveAll(updatedTypesList);
 
         // Update min price
-        getItemForRatingAndPrice(productEntity);
+        getItemForPrice(productEntity);
         productRepository.save(productEntity);
 
         return new ResponseEntity<>(updatedTypesList, HttpStatus.OK);
@@ -467,14 +469,13 @@ public class ProductService {
 
         UserEntity user = userRepository.findFirstByUsername(username);
         comment.setUserid(user.getId());
-
         commentRepository.save(comment);
 
         CommentDTO res = new CommentDTO();
         commentDTOHandler(comment, res);
 
         // update avg rating
-        getItemForRatingAndPrice(productEntity);
+        getItemForRating(productEntity);
         productRepository.save(productEntity);
 
         return new ResponseEntity<>(res, HttpStatus.OK);
