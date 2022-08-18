@@ -46,6 +46,8 @@ public class ProductService {
 
 
     // Use for Upload image controller
+
+
     public ResponseEntity<?> saveProductImage(long id, MultipartFile imageProduct, MultipartFile image1, MultipartFile image2,
                                               MultipartFile image3, MultipartFile image4) {
         ProductEntity product = productRepository.findById(id).orElse(null);
@@ -83,24 +85,31 @@ public class ProductService {
                 "Image4",
                 path + product.getId());
 
-        product.setImageProduct(imgProUrl);
-
         // Condition check if not have img (Not optimize)
-        if (!imgOneUrl.equals("-1"))
+        if(!imgProUrl.equals("-1"))
+            product.setImageProduct(imgProUrl);
+        else if(product.getImageProduct().equals("") || product.getImageProduct().equals("-1"))
+            product.setImageProduct("");
+
+        if(!imgOneUrl.equals("-1"))
             product.setImage1(imgOneUrl);
-        else product.setImage1("");
+        else if(product.getImage1().equals("") || product.getImage1().equals("-1"))
+            product.setImage1("");
 
-        if (!imgTwoUrl.equals("-1"))
+        if(!imgTwoUrl.equals("-1"))
             product.setImage2(imgTwoUrl);
-        else product.setImage2("");
+        else if(product.getImage2().equals("") || product.getImage2().equals("-1"))
+            product.setImage2("");
 
-        if (!imgThreeUrl.equals("-1"))
+        if(!imgThreeUrl.equals("-1"))
             product.setImage3(imgThreeUrl);
-        else product.setImage3("");
+        else if(product.getImage3().equals("") || product.getImage3().equals("-1"))
+            product.setImage3("");
 
-        if (!imgFourUrl.equals("-1"))
+        if(!imgFourUrl.equals("-1"))
             product.setImage4(imgFourUrl);
-        else product.setImage4("");
+        else if(product.getImage4().equals("") || product.getImage4().equals("-1"))
+            product.setImage4("");
 
         productRepository.save(product);
 
@@ -259,7 +268,7 @@ public class ProductService {
         if (!typeRepository.findAllByProductEntityId(id).isEmpty()) {
             return new ResponseEntity<>(typeRepository.findAllByProductEntityId(id), HttpStatus.OK);
         }
-        return new ResponseEntity<>("Not found product id " + id, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(GlobalVariable.NOT_FOUND_PRODUCT_MESSAGE + id, HttpStatus.BAD_REQUEST);
     }
 
     public ResponseEntity<?> createTypes(long id, List<TypeEntity> types) {
@@ -267,7 +276,7 @@ public class ProductService {
                 .orElse(null);
 
         if (productEntity == null) {
-            return new ResponseEntity<>("Cannot found product id " + id, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(GlobalVariable.NOT_FOUND_PRODUCT_MESSAGE + id, HttpStatus.BAD_REQUEST);
         }
 
         for (TypeEntity type : types) {
@@ -287,7 +296,7 @@ public class ProductService {
                 .orElse(null);
 
         if (productEntity == null) {
-            return new ResponseEntity<>("Cannot found product id " + id, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(GlobalVariable.NOT_FOUND_PRODUCT_MESSAGE + id, HttpStatus.BAD_REQUEST);
         }
 
         List<TypeEntity> updatedTypesList = typeRepository.findAllByProductEntityId(id);
@@ -435,7 +444,7 @@ public class ProductService {
                 .orElse(null);
 
         if (productEntity == null) {
-            return new ResponseEntity<>("Not found product id " + id, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(GlobalVariable.NOT_FOUND_PRODUCT_MESSAGE + id, HttpStatus.BAD_REQUEST);
         }
 
         // Limit the max rating
