@@ -56,6 +56,7 @@ public class OrderController {
         Page<OrderEntity> orderEntityPage = orderService.getAllPaging(Integer.parseInt(page) - 1);
 
         res.put("orderEntityPage", orderEntityPage.getContent());
+        res.put("orderEntityDetail", orderEntityPage.getContent().stream().map(OrderEntity::getOrderDetailsEntities).collect(Collectors.toList()));
         res.put("maxPage", orderEntityPage.getTotalPages());
 
         return res;
@@ -78,6 +79,7 @@ public class OrderController {
         Page<OrderEntity> orderEntityPage = orderService.getAllByStatus(status, Integer.parseInt(page) - 1);
 
         res.put("orderEntityPage", orderEntityPage.getContent());
+        res.put("orderEntityDetail", orderEntityPage.getContent().stream().map(OrderEntity::getOrderDetailsEntities).collect(Collectors.toList()));
         res.put("maxPage", orderEntityPage.getTotalPages());
 
         return res;
