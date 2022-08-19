@@ -24,6 +24,7 @@ public class GlobalVariable {
     public enum ORDER_STATUS {
         DONE,
         CANCELED,
+        VNPAY_CONFIRM,
         PENDING,
     }
 

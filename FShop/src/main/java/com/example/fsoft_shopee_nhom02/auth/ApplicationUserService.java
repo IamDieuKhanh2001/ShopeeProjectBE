@@ -54,6 +54,7 @@ public class ApplicationUserService implements UserDetailsService {
         } else {
             username = principal.toString();
         }
+
         return username;
     }
 

@@ -2,13 +2,14 @@ package com.example.fsoft_shopee_nhom02.service.impl;
 
 import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
 import com.example.fsoft_shopee_nhom02.config.PaymentConfig;
+import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.dto.PaymentDTO;
-import com.example.fsoft_shopee_nhom02.model.OrderDetailsEntity;
-import com.example.fsoft_shopee_nhom02.model.OrderEntity;
-import com.example.fsoft_shopee_nhom02.model.ProductEntity;
-import com.example.fsoft_shopee_nhom02.model.TypeEntity;
+import com.example.fsoft_shopee_nhom02.dto.UserProfileDTO;
+import com.example.fsoft_shopee_nhom02.model.*;
 import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
 import com.example.fsoft_shopee_nhom02.repository.TypeRepository;
+import com.example.fsoft_shopee_nhom02.repository.UserRepository;
+import com.example.fsoft_shopee_nhom02.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +18,14 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+
+import static com.example.fsoft_shopee_nhom02.auth.ApplicationUserService.GetUsernameLoggedIn;
+import static com.example.fsoft_shopee_nhom02.config.GlobalVariable.getCurrentDateTime;
 
 @Service
 public class PaymentServiceImpl {
@@ -30,6 +37,10 @@ public class PaymentServiceImpl {
     TypeRepository typeRepository;
     @Autowired
     ProductRepository productRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    AddressService addressService;
 
     public ResponseEntity<?> acceptOrder(Long id)
     {
@@ -85,7 +96,7 @@ public class PaymentServiceImpl {
         vnp_Params.put("vnp_OrderInfo", paymentDTO.getDescription());
         vnp_Params.put("vnp_OrderType", PaymentConfig.ORDERTYPE);
         vnp_Params.put("vnp_Locale", PaymentConfig.LOCALEDEFAULT);
-        vnp_Params.put("vnp_ReturnUrl", PaymentConfig.RETURNURL + paymentDTO.getOrderId()); //add id order
+        vnp_Params.put("vnp_ReturnUrl", PaymentConfig.RETURNURL); //add id order
         vnp_Params.put("vnp_IpAddr", PaymentConfig.IPDEFAULT);
         Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -123,4 +134,5 @@ public class PaymentServiceImpl {
         String paymentUrl = PaymentConfig.VNPAYURL + "?" + queryUrl;
         return paymentUrl;
     }
+
 }
