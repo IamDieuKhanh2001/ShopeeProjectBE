@@ -1,6 +1,7 @@
 package com.example.fsoft_shopee_nhom02.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import  com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders")
+@JsonIgnoreProperties({"orderDetailsEntities"})
 public class OrderEntity extends BaseClassEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +35,7 @@ public class OrderEntity extends BaseClassEntity {
     private UserEntity userEntities; //Liên hệ với MapBy ở Category
 
     // Relationship with table OrderDetailsEntity
-    @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private List<OrderDetailsEntity> orderDetailsEntities;
 
     // Constructor, Getter, Setter

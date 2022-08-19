@@ -1,6 +1,7 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
 import com.example.fsoft_shopee_nhom02.Notification.NotificationService;
+import com.example.fsoft_shopee_nhom02.auth.OrderCreator;
 import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.model.OrderDetailsEntity;
 import com.example.fsoft_shopee_nhom02.model.OrderEntity;
@@ -99,6 +100,7 @@ public class OrderController {
         Page<OrderEntity> orderEntityPage = orderService.getAllByUserId(Long.parseLong(id), Integer.parseInt(page) - 1);
 
         res.put("orderEntityPage", orderEntityPage.getContent());
+        res.put("orderEntityDetail", orderEntityPage.getContent().stream().map(OrderEntity::getOrderDetailsEntities).collect(Collectors.toList()));
         res.put("maxPage", orderEntityPage.getTotalPages());
 
         return res;
@@ -126,37 +128,7 @@ public class OrderController {
 
     @PostMapping("/create_order")
     public Object createOrder(@RequestBody List<Object> req) throws ParseException {
-        // get request data
-        List<Map<String, String>> orderDetailsEntityListReq = (List<Map<String, String>>) req.get(0);
-        Map<String, String> orderInformation = (Map<String, String>) req.get(1);
-        // create variable for usage
-        OrderEntity orderEntity;
-        // get user information
-        UserEntity user = userService.findByIdUser(Long.parseLong(orderInformation.get("user_id")));
-        AtomicReference<Long> totalCost = new AtomicReference<>((long) 0);
-        // analyze order Product data
-        List<OrderDetailsEntity> orderDetailsEntityList = orderDetailsEntityListReq.stream().map(orderEntityReq -> {
-            OrderDetailsEntity orderDetailsEntity = new OrderDetailsEntity(Long.parseLong(orderEntityReq.get("unit_price")), Long.parseLong(orderEntityReq.get("quantity")), orderEntityReq.get("type"));
-            orderDetailsEntity.setProductEntityID(Long.parseLong(orderEntityReq.get("product_id")));
-            totalCost.updateAndGet(v -> v + (Long.parseLong(orderEntityReq.get("unit_price")) * Long.parseLong(orderEntityReq.get("quantity"))));
-            return orderDetailsEntity;
-        }).collect(Collectors.toList());
-        // map value for orderEntity and check if user want to add new address
-        if (orderInformation.get("address") == null) {
-            orderEntity = new OrderEntity(ORDER_STATUS.PENDING.toString(), user.getUsername(), user.getAddressEntityList().get(0).getAddress(), user.getPhone(), orderInformation.get("note"), orderInformation.get("payment"), Long.parseLong(orderInformation.get("shipping_fee")), totalCost.get(), user, getCurrentDateTime());
-        } else {
-            orderEntity = new OrderEntity(ORDER_STATUS.PENDING.toString(), orderInformation.get("user_name"), orderInformation.get("address"), orderInformation.get("phone"), orderInformation.get("note"), orderInformation.get("payment"), Long.parseLong(orderInformation.get("shipping_fee")), totalCost.get(), user, getCurrentDateTime());
-            // add new address for later usage
-            addressService.saveUserAddress(new AddressDTO(orderInformation.get("address"), orderInformation.get("user_name"), orderInformation.get("phone")), user.getUsername());
-        }
-        // map order and order-details
-        orderEntity.setOrderDetailsEntities(orderDetailsEntityList);
-        orderDetailsEntityList.forEach(i -> i.setOrderEntity(orderEntity));
-        // insert order and details to DB
-        orderService.addNewOrder(orderEntity);
-        // delete cartProduct from DB
-        cartProductService.deleteListOfCartProduct(orderDetailsEntityList.stream().map(OrderDetailsEntity::getProductId).collect(Collectors.toList()), user.getCartEntity().getId(), orderDetailsEntityList.stream().map(OrderDetailsEntity::getType).collect(Collectors.toList()));
-        return "created order";
+        return OrderCreator.CreateOrder(userService, addressService, orderService, cartProductService, req);
     }
 
     @PostMapping("/update_order/{id}")

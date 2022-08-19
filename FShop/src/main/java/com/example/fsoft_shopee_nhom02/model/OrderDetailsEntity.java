@@ -1,5 +1,6 @@
 package com.example.fsoft_shopee_nhom02.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -7,6 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "orderdetails")
+//@JsonIgnoreProperties({"orderEntity"})
 public class OrderDetailsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +17,7 @@ public class OrderDetailsEntity {
     private Long quantity;
     private String type;
     //  Relationship with table Order
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "orderId", nullable = false, referencedColumnName = "id")
     private OrderEntity orderEntity;
@@ -97,7 +99,7 @@ public class OrderDetailsEntity {
         return this.orderEntity.getId();
     }
 
-//    public OrderEntity getOrderEntity() {
+    //    public OrderEntity getOrderEntity() {
 //        return orderEntity;
 //    }
 //
