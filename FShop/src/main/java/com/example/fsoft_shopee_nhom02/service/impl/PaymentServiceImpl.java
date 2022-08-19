@@ -85,7 +85,7 @@ public class PaymentServiceImpl {
         vnp_Params.put("vnp_OrderInfo", paymentDTO.getDescription());
         vnp_Params.put("vnp_OrderType", PaymentConfig.ORDERTYPE);
         vnp_Params.put("vnp_Locale", PaymentConfig.LOCALEDEFAULT);
-        vnp_Params.put("vnp_ReturnUrl", PaymentConfig.RETURNURL);
+        vnp_Params.put("vnp_ReturnUrl", PaymentConfig.RETURNURL + paymentDTO.getOrderId()); //add id order
         vnp_Params.put("vnp_IpAddr", PaymentConfig.IPDEFAULT);
         Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");

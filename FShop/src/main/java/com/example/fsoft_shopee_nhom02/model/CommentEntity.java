@@ -21,7 +21,7 @@ public class CommentEntity extends BaseClassEntity{
     @Column(name="status", columnDefinition="Varchar(255) default 'Active'")
     private String status;
 
-    // Tạo quan hệ với ProductEntity
+    // Relationship with table ProductEntity
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "productId", nullable = false, referencedColumnName = "id")

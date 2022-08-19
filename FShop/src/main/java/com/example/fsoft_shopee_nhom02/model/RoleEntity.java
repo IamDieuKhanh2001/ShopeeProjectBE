@@ -16,7 +16,7 @@ public class RoleEntity {
     private Long id;
     private String roleName;
 
-    //Tạo quan hệ với UserEntity
+    // Relationship with table UserEntity
     @ManyToMany(mappedBy = "roleEntitySet")
     @JsonBackReference
     private Set<UserEntity> userEntitySet;

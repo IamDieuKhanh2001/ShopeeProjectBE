@@ -17,11 +17,11 @@ public class CategoryEntity {
     private String image;
     @Column(name="status", columnDefinition="Varchar(255) default 'Active'")
     private String status;
-    // Tạo quan hệ với SubCategoryEntity
+    // Relationship with table SubCategoryEntity
     @OneToMany(mappedBy = "categoryEntity", cascade = CascadeType.ALL)
     private List<SubCategoryEntity> subCategoryEntities =new ArrayList<>();
 
-    // Tạo quan hệ với ShopEntity
+    // Relationship with table ShopEntity
     @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "shopId", nullable = false, referencedColumnName = "id")

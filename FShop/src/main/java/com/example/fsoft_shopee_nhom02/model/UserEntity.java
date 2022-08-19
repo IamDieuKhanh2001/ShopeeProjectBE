@@ -31,7 +31,7 @@ public class UserEntity extends BaseClassEntity{
     @Column(name="auth_provider")
     private AuthenticationProvider auth_provider = AuthenticationProvider.LOCAL;
 
-    // Tạo quan hệ với AddressEntity
+    // Relationship with table AddressEntity
     @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<AddressEntity> addressEntityList =new ArrayList<>();
@@ -53,22 +53,22 @@ public class UserEntity extends BaseClassEntity{
         this.addressEntityList = addressEntityList;
     }
 
-    // Tạo quan hệ với OrderEntity (1:n)
+    // Relationship with table OrderEntity (1:n)
     @OneToMany(mappedBy = "userEntities", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<OrderEntity> orderEntities =new ArrayList<>();
 
-    // Tạo quan hệ với RoleEntity
+    // Relationship with table RoleEntity
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
-    @JoinTable(name = "users_roles", //Tên bảng trung gian
-            joinColumns = @JoinColumn(name = "userID"), //Khóa chính để liên kết với bảng Users
-            inverseJoinColumns = @JoinColumn(name = "roleId")) //Khóa chính để liên kết với bảng Roles
-    private Set<RoleEntity> roleEntitySet; //Liên kết với mapedBy ở RoleEntity
+    @JoinTable(name = "users_roles", // table link two relationship
+            joinColumns = @JoinColumn(name = "userID"), // Key is link with table Users
+            inverseJoinColumns = @JoinColumn(name = "roleId")) //Key is link with table Roles
+    private Set<RoleEntity> roleEntitySet; //link with mapedBy in table RoleEntity
 
-    // Tạo quan hệ với CartEntity
+    // Relationship with table CartEntity
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cartId", referencedColumnName = "id")
-    private CartEntity cartEntity; // Tương ứng với mappedBy ở CartEntity
+    private CartEntity cartEntity; // mappedBy in table CartEntity
 
     public CartEntity getCartEntity() {
         return cartEntity;

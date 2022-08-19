@@ -14,18 +14,18 @@ public class CartProductEntity {
     private Long quantity;
     private String type;
 
-    //  Tạo quan hệ với bảng Cart
+    //  Relationship with table Cart
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "cartId", nullable = false, referencedColumnName = "id")
     //cartId là trường khóa phụ ta tạo ra ở bảng SubCategory để referenced đến trường id của bảng CartEntity
     private CartEntity cartEntity; //Liên hệ với MapBy ở CartEntity
 
-    //  Tạo quan hệ với bảng Product
+    //  Relationship with table Product
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "productId", nullable = false, referencedColumnName = "id")
-    //productId là trường khóa phụ ta tạo ra ở bảng SubCategory để referenced đến trường id của bảng ProductEntity
+    //productId is foreign key of SubCategory and referenced to id of table ProductEntity
     private ProductEntity productEntity; //Liên hệ với MapBy ở ProductEntity
 
     public CartProductEntity() {

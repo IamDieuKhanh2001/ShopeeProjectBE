@@ -16,7 +16,7 @@ public class ShopEntity {
     private String description;
     private String avatar;
     private String background;
-    // Tạo quan hệ với CategoryEntity
+    // Relationship with table CategoryEntity
     @OneToMany(mappedBy = "shopEntity", cascade = CascadeType.ALL)
     private List<CategoryEntity> categoryEntities =new ArrayList<>();
 

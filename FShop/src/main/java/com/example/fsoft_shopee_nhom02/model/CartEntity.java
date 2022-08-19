@@ -14,12 +14,12 @@ public class CartEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Tạo quan hệ với UserEntity
+    // Relationship with table UserEntity
     @OneToOne(mappedBy = "cartEntity")
     private UserEntity userEntity;
 
 
-    // Tạo quan hệ với CartProductEntity
+    // Relationship with table CartProductEntity
     @OneToMany(mappedBy = "cartEntity", cascade = CascadeType.ALL)
     private List<CartProductEntity> cartProductEntities =new ArrayList<>();
 

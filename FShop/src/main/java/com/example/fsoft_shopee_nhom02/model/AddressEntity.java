@@ -22,12 +22,12 @@ public class AddressEntity {
     @Column(columnDefinition = "boolean default false")
     private Boolean addressDefault = false;
 
-    //  Tạo quan hệ với bảng User
+    //  Relationship with table User
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "userId", nullable = false, referencedColumnName = "id")
     @JsonBackReference
-    //category_id là trường khóa phụ ta tạo ra ở bảng SubCategory để referenced đến trường id của bảng Category
+    //category_id is foreign key of SubCategory and referenced to id of table Category
     private UserEntity userEntity; //Liên hệ với MapBy ở Category
 
     public UserEntity getUserEntity() {

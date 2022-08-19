@@ -14,13 +14,13 @@ public class OrderDetailsEntity {
     private Long unitPrice;
     private Long quantity;
     private String type;
-    //  Tạo quan hệ với bảng Order
+    //  Relationship with table Order
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "orderId", nullable = false, referencedColumnName = "id")
     private OrderEntity orderEntity;
 
-    //  Tạo quan hệ với bảng Product
+    //  Relationship with table Product
     @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "productId", nullable = false, referencedColumnName = "id")

@@ -24,15 +24,15 @@ public class OrderEntity extends BaseClassEntity {
     private Long shippingFee;
     private Long totalPrice;
 
-    //Tạo quan hệ với UserEntity (n:1)
+    // Relationship with table UserEntity (n:1)
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "userId", nullable = false, referencedColumnName = "id")
     @JsonBackReference
-    //category_id là trường khóa phụ ta tạo ra ở bảng SubCategory để referenced đến trường id của bảng Category
+    //category_id is foreign key of SubCategory and referenced to id of table Category
     private UserEntity userEntities; //Liên hệ với MapBy ở Category
 
-    // Tạo quan hệ với OrderDetailsEntity
+    // Relationship with table OrderDetailsEntity
     @OneToMany(mappedBy = "orderEntity", cascade = CascadeType.ALL)
     private List<OrderDetailsEntity> orderDetailsEntities;
 

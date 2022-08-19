@@ -21,7 +21,7 @@ public class PaymentConfig {
     public static final String CURRCODE =  "VND";
     public static final String LOCALEDEFAULT = "vn";
     public static final String ORDERTYPE = "170000";
-    public static final String RETURNURL = "http://localhost:8082/payment/accept/1"; // Trang trả về sau khi thanh toán thành công
+    public static final String RETURNURL = "http://localhost:8082/payment/accept/"; // Url return after payment successed
     public static final String VNPAYURL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     public static String Sha256(String message) {
         String digest = null;

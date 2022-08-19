@@ -24,33 +24,31 @@ public class ProductEntity {
     private Long sale;
     private Long fromPrice;
     private Double avgRating;
-    // Số lượt xem sản phẩm
     @Column(name="totalview", columnDefinition="Bigint default '0'")
     private Long totalView;
-    // Số lượng sản phẩm đã bán
     @Column(name="sold", columnDefinition="Bigint default '0'")
     private Long sold;
     @Column(name="status", columnDefinition="Varchar(255) default 'Active'")
     private String status;
-    // Tạo quan hệ với CartProductEntity
+    // Relationship with table CartProductEntity
     @OneToMany(mappedBy = "productEntity", cascade = CascadeType.ALL)
     private List<CartProductEntity> cartProductEntities =new ArrayList<>();
 
 
-    // Tạo quan hệ với OrderDetailsEntity
+    // Relationship with table OrderDetailsEntity
     @OneToMany(mappedBy = "productEntity", cascade = CascadeType.ALL)
     private List<OrderDetailsEntity> orderDetailsEntities =new ArrayList<>();
 
-    // Tạo quan hệ với SubCategoryEntity
+    // Relationship with table SubCategoryEntity
     @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "sub_category_id", nullable = false, referencedColumnName = "id")
     private SubCategoryEntity subCategoryEntity;
 
-    // Tạo quan hệ với TypeEntity
+    // Relationship with table TypeEntity
     @OneToMany(mappedBy = "productEntity", cascade = CascadeType.ALL)
     private List<TypeEntity> typeEntities =new ArrayList<>();
-    // Tạo quan hệ với TypeEntity
+    // Relationship with table TypeEntity
     @OneToMany(mappedBy = "productEntity", cascade = CascadeType.ALL)
     private List<CommentEntity> commentEntities =new ArrayList<>();
 
