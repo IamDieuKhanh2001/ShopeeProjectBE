@@ -109,7 +109,7 @@ public class CartProductServiceImpl implements CartProductService {
     public List<CartDetailDTO> getAllCart(long userId) {
         user = userService.findByIdUser(userId);
         Long cartId = user.getCartEntity().getId();
-        List<CartProductEntity> cartProductEntities = cartProductRepository.getCart(94L);
+        List<CartProductEntity> cartProductEntities = cartProductRepository.getCart(cartId);
         List<CartDetailDTO> cartDetailDTOS = new ArrayList<>();
 
         if (cartProductEntities.isEmpty()) {
