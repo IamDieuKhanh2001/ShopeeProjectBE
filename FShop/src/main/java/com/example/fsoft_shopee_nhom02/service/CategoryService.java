@@ -2,6 +2,7 @@ package com.example.fsoft_shopee_nhom02.service;
 
 import com.example.fsoft_shopee_nhom02.dto.CategoryDTO;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,5 +17,6 @@ public interface CategoryService {
     void delete(long id);
     void hide(long id);
     List<CategoryDTO> getRandomCategory(Integer limit);
+    CategoryDTO uploadImage(long id, MultipartFile image);
 
 }

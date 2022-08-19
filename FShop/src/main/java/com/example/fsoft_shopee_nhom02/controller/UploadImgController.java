@@ -24,6 +24,8 @@ public class UploadImgController {
     private SubCategoryService subCategoryService;
     @Autowired
     private ShopService shopService;
+    @Autowired
+    private CategoryService categoryService;
 
     @PostMapping("/user/avatar")
     public ResponseEntity<?> uploadAvatar(
@@ -91,5 +93,12 @@ public class UploadImgController {
                                  @RequestParam MultipartFile background) {
 
         return shopService.uploadImage(id,avatar,background);
+    }
+
+    @PostMapping("/admin/category/{id}/image")
+    public CategoryDTO uploadCategoryImg(@PathVariable long id,
+                                 @RequestParam MultipartFile image) {
+
+        return categoryService.uploadImage(id,image);
     }
 }

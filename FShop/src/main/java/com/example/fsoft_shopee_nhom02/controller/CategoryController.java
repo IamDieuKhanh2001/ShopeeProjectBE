@@ -3,11 +3,16 @@ package com.example.fsoft_shopee_nhom02.controller;
 import com.example.fsoft_shopee_nhom02.dto.CategoryDTO;
 import com.example.fsoft_shopee_nhom02.dto.SuccessResponseDTO;
 import com.example.fsoft_shopee_nhom02.service.CategoryService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 public class CategoryController {
@@ -16,7 +21,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping("/admin/category")
-    public ResponseEntity<?> createNewCategory(@RequestBody CategoryDTO model){
+    public ResponseEntity<?> createNewCategory(@RequestBody CategoryDTO model) {
         return ResponseEntity.ok(categoryService.save(model));
     }
 

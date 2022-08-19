@@ -12,8 +12,10 @@ import com.example.fsoft_shopee_nhom02.repository.CategoryRepository;
 import com.example.fsoft_shopee_nhom02.repository.ShopRepository;
 import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
 import com.example.fsoft_shopee_nhom02.service.CategoryService;
+import com.example.fsoft_shopee_nhom02.service.CloudinaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,8 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository categoryRepository;
     @Autowired
     private SubCategoryRepository subCategoryRepository;
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     @Override
     public CategoryDTO save(CategoryDTO categoryDTO) {
@@ -62,7 +66,6 @@ public class CategoryServiceImpl implements CategoryService {
 
             category = CategoryMapper.toEntity(categoryDTO);
         }
-
         category.setShopEntity(shopEntity);
 
         category = categoryRepository.save(category);
@@ -198,6 +201,25 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         return categoryDTOS;
+    }
+
+    @Override
+    public CategoryDTO uploadImage(long id, MultipartFile image) {
+        CategoryEntity category = categoryRepository.findById(id).orElseThrow(()
+                -> new BadRequest("This category not exist"));
+
+        String imageUrl = cloudinaryService.uploadFile(image,String.valueOf(id),
+                "ShopeeProject"+ "/" + "Category");
+
+        if(imageUrl.equals("-1")){
+            category.setImage("");
+        }
+        else {
+            category.setImage(imageUrl);
+        }
+
+        categoryRepository.save(category);
+        return CategoryMapper.toCategoryDto(category);
     }
 
 }
