@@ -128,7 +128,7 @@ public class OrderController {
 
     @PostMapping("/create_order")
     public Object createOrder(@RequestBody List<Object> req) throws ParseException {
-        return OrderCreator.CreateOrder(userService, addressService, orderService, cartProductService, req);
+        return OrderCreator.CreateOrder(userService, addressService, orderService, cartProductService, req, ORDER_STATUS.PENDING.toString());
     }
 
     @PostMapping("/update_order/{id}")
