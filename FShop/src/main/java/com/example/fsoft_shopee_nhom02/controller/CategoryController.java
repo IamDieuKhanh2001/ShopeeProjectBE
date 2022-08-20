@@ -26,14 +26,14 @@ public class CategoryController {
     }
 
     @GetMapping("/category/get-all")
-    public ResponseEntity<?> getAllCategory(){
-        return ResponseEntity.ok(categoryService.getAllCategory(false));
+    public ResponseEntity<?> getAllCategory(@RequestParam(required = false, defaultValue = "") String sort){
+        return ResponseEntity.ok(categoryService.getAllCategory(sort,false));
     }
 
     //get all category active
     @GetMapping("/category/get-all-active")
-    public ResponseEntity<?> getAllActiveCategory(){
-        return ResponseEntity.ok(categoryService.getAllCategory(true));
+    public ResponseEntity<?> getAllActiveCategory(@RequestParam(required = false, defaultValue = "") String sort){
+        return ResponseEntity.ok(categoryService.getAllCategory(sort,true));
     }
 
     @GetMapping("/category/{id}")

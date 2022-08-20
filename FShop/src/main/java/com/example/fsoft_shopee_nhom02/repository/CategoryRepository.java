@@ -20,6 +20,7 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity,Long> {
     CategoryEntity findByNameAndShopIdExceptOldName(long id, long shopId, String name);
     List<CategoryEntity> findAllByShopEntityId(long shopId);
     List<CategoryEntity> findAllByStatus(String status);
+    List<CategoryEntity> findAllByStatusOrderByIdDesc(String status);
     List<CategoryEntity> findAllByShopEntityIdAndStatus(long shopId,String status);
     @Query(value = "SELECT * FROM categories WHERE status = 'Active' ORDER BY rand() limit ?",nativeQuery = true)
     List<CategoryEntity> findRandomByTop(Integer limit);

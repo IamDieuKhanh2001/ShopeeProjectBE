@@ -9,7 +9,7 @@ import java.util.List;
 @Service
 public interface SubCategoryService {
     SubCategoryDTO save (SubCategoryDTO subCategoryDTO);
-    List<SubCategoryDTO> createListSubcategory (List<SubCategoryDTO> subCategoryDTOS);
+    List<SubCategoryDTO> saveListSubcategory (List<SubCategoryDTO> subCategoryDTOS);
     List<SubCategoryDTO> getAllSubCategory(boolean active);
     SubCategoryDTO getSubCategoryById(long id);
     List<SubCategoryDTO> getSubCategoryByCategoryId(long categoryId, boolean active);

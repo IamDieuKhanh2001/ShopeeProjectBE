@@ -10,7 +10,7 @@ import java.util.List;
 public interface CategoryService {
     CategoryDTO save(CategoryDTO categoryDTO);
     //CategoryDTO update(CategoryDTO categoryDTO);
-    List<CategoryDTO> getAllCategory(boolean active);
+    List<CategoryDTO> getAllCategory(String sort,boolean active);
     CategoryDTO getCategoryById(long id);
     List<CategoryDTO> getCategoryByShopId(long shopId, boolean active);
     long countCategoryByShopId(long shopId, boolean active);

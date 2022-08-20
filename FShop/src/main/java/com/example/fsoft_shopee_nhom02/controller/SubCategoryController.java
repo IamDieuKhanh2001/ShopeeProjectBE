@@ -20,7 +20,7 @@ public class SubCategoryController {
 
     @PostMapping("/admin/subcategory")
     public ResponseEntity<?> createNewSubCategory(@RequestBody List<SubCategoryDTO> models){
-        return ResponseEntity.ok(subCategoryService.createListSubcategory(models));
+        return ResponseEntity.ok(subCategoryService.saveListSubcategory(models));
     }
 
     @GetMapping("/subcategory/get-all")
@@ -87,6 +87,11 @@ public class SubCategoryController {
     public ResponseEntity<?> updateSubCategory(@PathVariable long id, @RequestBody SubCategoryDTO model){
         model.setId(id);
         return ResponseEntity.ok(subCategoryService.save(model));
+    }
+
+    @PutMapping("/admin/subcategory/updateAll")
+    public ResponseEntity<?> updateSubCategories(@RequestBody List<SubCategoryDTO> model){
+        return ResponseEntity.ok(subCategoryService.saveListSubcategory(model));
     }
 
     @DeleteMapping("/admin/subcategory/{id}")

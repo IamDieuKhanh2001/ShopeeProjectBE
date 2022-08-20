@@ -14,10 +14,12 @@ import com.example.fsoft_shopee_nhom02.repository.SubCategoryRepository;
 import com.example.fsoft_shopee_nhom02.service.CategoryService;
 import com.example.fsoft_shopee_nhom02.service.CloudinaryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -99,14 +101,24 @@ public class CategoryServiceImpl implements CategoryService {
 //    }
 
     @Override
-    public List<CategoryDTO> getAllCategory(boolean active) {
+    public List<CategoryDTO> getAllCategory(String sort, boolean active) {
         List<CategoryDTO> categoryDTOS = new ArrayList<>();
         List<CategoryEntity> categories;
         if(active) {
-            categories = categoryRepository.findAllByStatus(GlobalVariable.ACTIVE_STATUS);
+            if(sort.equals("desc")){
+                categories = categoryRepository.findAllByStatusOrderByIdDesc(GlobalVariable.ACTIVE_STATUS);
+            }
+            else {
+                categories = categoryRepository.findAllByStatus(GlobalVariable.ACTIVE_STATUS);
+            }
         }
         else{
-            categories = categoryRepository.findAll();
+            if(sort.equals("desc")){
+                categories = categoryRepository.findAll(Sort.by(Sort.Direction.DESC,"id"));
+            }
+            else{
+                categories = categoryRepository.findAll();
+            }
         }
         for (CategoryEntity category : categories){
             categoryDTOS.add(CategoryMapper.toCategoryDto(category));

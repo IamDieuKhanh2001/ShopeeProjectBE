@@ -83,7 +83,7 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
     @Override
-    public List<SubCategoryDTO> createListSubcategory(List<SubCategoryDTO> subCategoryDTOS) {
+    public List<SubCategoryDTO> saveListSubcategory(List<SubCategoryDTO> subCategoryDTOS) {
         List<SubCategoryDTO> result = new ArrayList<>();
         for(SubCategoryDTO subCategoryDTO : subCategoryDTOS){
             subCategoryDTO = save(subCategoryDTO);
