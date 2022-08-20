@@ -97,7 +97,7 @@ public class UploadImgController {
 
     @PostMapping("/admin/category/{id}/image")
     public CategoryDTO uploadCategoryImg(@PathVariable long id,
-                                 @RequestParam MultipartFile image) {
+                                 @RequestParam(required = false) MultipartFile image) {
 
         return categoryService.uploadImage(id,image);
     }
