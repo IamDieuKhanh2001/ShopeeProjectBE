@@ -56,7 +56,6 @@ public class CategoryServiceImpl implements CategoryService {
             }
 
             category.setName(categoryDTO.getName());
-            category.setImage(categoryDTO.getImage());
             category.setStatus(categoryDTO.getStatus());
         }
         else { //create
