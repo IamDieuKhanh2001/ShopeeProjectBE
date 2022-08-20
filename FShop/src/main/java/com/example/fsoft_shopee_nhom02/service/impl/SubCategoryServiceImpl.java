@@ -66,10 +66,10 @@ public class SubCategoryServiceImpl implements SubCategoryService {
             subCategory  = subCategoryRepository.findById(subCategoryDTO.getId())
                     .orElseThrow(() -> new BadRequest("Not found subcategory with id = "+subCategoryDTO.getId()));
 
-            if(subCategoryRepository.findByNameAndCategoryIdExceptOldName(subCategoryDTO.getId(),
-                    subCategoryDTO.getCategoryId(),subCategoryDTO.getName()) != null){
-                throw new BadRequest("This name have been used!!");
-            }
+//            if(subCategoryRepository.findByNameAndCategoryIdExceptOldName(subCategoryDTO.getId(),
+//                    subCategoryDTO.getCategoryId(),subCategoryDTO.getName()) != null){
+//                throw new BadRequest("This name have been used!!");
+//            }
 
             subCategory.setName(subCategoryDTO.getName());
             subCategory.setImage(subCategoryDTO.getImage());
@@ -258,12 +258,12 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         String imageUrl = cloudinaryService.uploadFile(image,String.valueOf(id),
                 "ShopeeProject"+ "/" + "Subcategory");
 
-        if(imageUrl.equals("-1")){
-            subCategory.setImage("");
-        }
-        else {
+        if(!imageUrl.equals("-1")) {
             subCategory.setImage(imageUrl);
         }
+        else if(subCategory.getImage().equals("") || subCategory.getImage().equals("-1"))
+            subCategory.setImage("");
+
         subCategoryRepository.save(subCategory);
         return SubCategoryMapper.toSubCategoryDto(subCategory);
     }

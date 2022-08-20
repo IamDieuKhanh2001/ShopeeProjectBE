@@ -44,10 +44,7 @@ public class ProductService {
 
 //region--------------------Functions for Product Crud APIs---------------------------
 
-
     // Use for Upload image controller
-
-
     public ResponseEntity<?> saveProductImage(long id, MultipartFile imageProduct, MultipartFile image1, MultipartFile image2,
                                               MultipartFile image3, MultipartFile image4) {
         ProductEntity product = productRepository.findById(id).orElse(null);
