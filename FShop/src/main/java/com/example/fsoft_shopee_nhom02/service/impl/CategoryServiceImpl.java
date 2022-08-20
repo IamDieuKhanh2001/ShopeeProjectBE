@@ -223,11 +223,11 @@ public class CategoryServiceImpl implements CategoryService {
         String imageUrl = cloudinaryService.uploadFile(image,String.valueOf(id),
                 "ShopeeProject"+ "/" + "Category");
 
-        if(imageUrl.equals("-1")){
-            category.setImage("");
-        }
-        else {
+        if(!imageUrl.equals("-1")){
             category.setImage(imageUrl);
+        }
+        else if(category.getImage().equals("") || category.getImage().equals("-1")) {
+            category.setImage("");
         }
 
         categoryRepository.save(category);
