@@ -39,4 +39,20 @@ public class CartEntity {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public UserEntity getUserEntity() {
+        return userEntity;
+    }
+
+    public void setUserEntity(UserEntity userEntity) {
+        this.userEntity = userEntity;
+    }
+
+    public List<CartProductEntity> getCartProductEntities() {
+        return cartProductEntities;
+    }
+
+    public void setCartProductEntities(List<CartProductEntity> cartProductEntities) {
+        this.cartProductEntities = cartProductEntities;
+    }
 }
