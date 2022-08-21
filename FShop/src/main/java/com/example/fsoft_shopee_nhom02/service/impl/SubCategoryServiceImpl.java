@@ -126,7 +126,6 @@ public class SubCategoryServiceImpl implements SubCategoryService {
         for(SubCategoryEntity subCategory : subCategories){
             result.add(SubCategoryMapper.toSubCategoryDto(subCategory));
         }
-
         return result;
     }
 
