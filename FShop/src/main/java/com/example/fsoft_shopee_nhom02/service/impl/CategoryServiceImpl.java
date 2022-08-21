@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -72,32 +71,6 @@ public class CategoryServiceImpl implements CategoryService {
         category = categoryRepository.save(category);
         return CategoryMapper.toCategoryDto(category);
     }
-
-//    @Override
-//    public CategoryDTO update(CategoryDTO categoryDTO) {
-//        if(categoryDTO.getShopId() == null){
-//            throw new BadRequest("Please provide the shop id want to add this category.");
-//            //category = CategoryMapper.toEntity(categoryDTO);
-//        }
-//        ShopEntity shopEntity = shopRepository.findById(categoryDTO.getShopId()).orElseThrow(()
-//                -> new BadRequest("Not found shop with id = "+categoryDTO.getShopId()));
-//
-//        CategoryEntity category = categoryRepository.findById(categoryDTO.getId()).orElseThrow(()
-//                -> new BadRequest("Not found category with id = "+categoryDTO.getId()));
-//
-//        if(categoryRepository.findByNameAndShopIdExceptOldName(categoryDTO.getId(),
-//                categoryDTO.getShopId(),categoryDTO.getName()) != null){
-//            throw new BadRequest("This name have been used!!");
-//        }
-//
-//        category.setName(categoryDTO.getName());
-//        category.setImage(categoryDTO.getImage());
-//        category.setStatus(categoryDTO.getStatus());
-//        category.setShopEntity(shopEntity);
-//        category = categoryRepository.save(category);
-//
-//        return CategoryMapper.toCategoryDto(category);
-//    }
 
     @Override
     public List<CategoryDTO> getAllCategory(String sort, boolean active) {
