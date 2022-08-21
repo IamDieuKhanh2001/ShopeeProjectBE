@@ -4,6 +4,7 @@ import com.example.fsoft_shopee_nhom02.auth.OrderCreator;
 import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
 import com.example.fsoft_shopee_nhom02.config.PaymentConfig;
 import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
+import com.example.fsoft_shopee_nhom02.dto.OrderIdDTO;
 import com.example.fsoft_shopee_nhom02.dto.PaymentDTO;
 import com.example.fsoft_shopee_nhom02.dto.PaymentResultDTO;
 import com.example.fsoft_shopee_nhom02.model.*;
@@ -97,9 +98,9 @@ public class PaymentController {
         return paymentService.acceptOrder(id);
     }
 
-    @PutMapping("cancel/{id}")
-    public ResponseEntity<?> cancelOrder(@PathVariable long id){
-        return paymentService.cancelOrder(id);
+    @PutMapping("cancel")
+    public ResponseEntity<?> cancelOrder(@RequestBody OrderIdDTO orderId){
+        return paymentService.cancelOrder(orderId.getId());
     }
 
     @GetMapping("resultPayment")
