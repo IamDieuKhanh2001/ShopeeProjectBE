@@ -93,9 +93,9 @@ public class PaymentController {
         return ResponseEntity.status(HttpStatus.OK).body(paymentResultDTO.toString());
     }
 
-    @PutMapping("accept/{id}")
-    public ResponseEntity<?> acceptOrder(@PathVariable long id){
-        return paymentService.acceptOrder(id);
+    @PutMapping("accept")
+    public ResponseEntity<?> acceptOrder(@RequestBody OrderIdDTO orderId){
+        return paymentService.acceptOrder(orderId.getId());
     }
 
     @PutMapping("cancel")
