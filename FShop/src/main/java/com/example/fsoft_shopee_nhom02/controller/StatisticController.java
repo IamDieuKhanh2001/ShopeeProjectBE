@@ -40,6 +40,10 @@ public class StatisticController {
 
     @GetMapping("/reveune")
     public String getRevenue(){
+        if (orderService.getTurnOver() == null)
+        {
+            return "0";
+        }
         return String.valueOf(orderService.getTurnOver());
     }
     @GetMapping("/day")
@@ -53,6 +57,10 @@ public class StatisticController {
 
     @GetMapping("/totalorder")
     public String getTotalOrder(){
+        if (orderService.getTotalOrder() == null)
+        {
+            return "0";
+        }
         return String.valueOf(orderService.getTotalOrder());
     }
 

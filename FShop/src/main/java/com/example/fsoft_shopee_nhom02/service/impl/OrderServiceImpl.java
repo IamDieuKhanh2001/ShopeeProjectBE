@@ -61,7 +61,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public long getTurnOver() {
+    public String getTurnOver() {
         return orderRepository.getTurnOver();
     }
 
@@ -71,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public long getTotalOrder() {
+    public String getTotalOrder() {
         return orderRepository.getTotalOrder();
     }
 
