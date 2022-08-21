@@ -40,7 +40,7 @@ import static com.example.fsoft_shopee_nhom02.auth.ApplicationUserService.GetUse
 import static com.example.fsoft_shopee_nhom02.config.GlobalVariable.getCurrentDateTime;
 
 @RestController
-@RequestMapping("/payment")
+@RequestMapping("/admin/payment")
 public class PaymentController {
     @Autowired
     OrderServiceImpl orderService;
