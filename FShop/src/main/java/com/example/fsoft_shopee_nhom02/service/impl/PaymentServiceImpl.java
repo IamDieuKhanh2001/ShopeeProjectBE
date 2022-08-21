@@ -2,9 +2,7 @@ package com.example.fsoft_shopee_nhom02.service.impl;
 
 import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
 import com.example.fsoft_shopee_nhom02.config.PaymentConfig;
-import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.dto.PaymentDTO;
-import com.example.fsoft_shopee_nhom02.dto.UserProfileDTO;
 import com.example.fsoft_shopee_nhom02.model.*;
 import com.example.fsoft_shopee_nhom02.repository.ProductRepository;
 import com.example.fsoft_shopee_nhom02.repository.TypeRepository;
@@ -18,14 +16,9 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
-
-import static com.example.fsoft_shopee_nhom02.auth.ApplicationUserService.GetUsernameLoggedIn;
-import static com.example.fsoft_shopee_nhom02.config.GlobalVariable.getCurrentDateTime;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class PaymentServiceImpl {
@@ -44,6 +37,7 @@ public class PaymentServiceImpl {
 
     public ResponseEntity<?> acceptOrder(Long id)
     {
+        final String[] checkQuantity = {"True"};
         OrderEntity order = orderService.findOrderById(id);
         if (order == null)
         {
@@ -54,19 +48,29 @@ public class PaymentServiceImpl {
             TypeEntity type = typeRepository.findProductByType(orderDetail.getProductId(), orderDetail.getType());
             ProductEntity product = productRepository.findById(orderDetail.getProductId()).get();
             // Update quantity type
-            if (type.getQuantity() <= orderDetail.getQuantity())
+            if (type.getQuantity() >= orderDetail.getQuantity())
             {
                 type.setQuantity(type.getQuantity() - orderDetail.getQuantity());
+                typeRepository.save(type);
+                // Update product sold
+                product.setSold(product.getSold() + orderDetail.getQuantity());
+                productRepository.save(product);
             }
-            typeRepository.save(type);
-            // Update product sold
-            product.setSold(product.getSold() + orderDetail.getQuantity());
-            productRepository.save(product);
+            if (type.getQuantity() < orderDetail.getQuantity())
+            {
+                checkQuantity[0] = "Failed";
+            }
         });
-        // Set status order
-        order.setStatus(GlobalVariable.ORDER_STATUS.DONE.toString());
-        orderService.updateOrder(order);
-        return ResponseEntity.ok("Payment success!");
+        if (checkQuantity[0] == "Failed")
+        {
+            return ResponseEntity.ok("Not enough quantity!");
+        }
+        else {
+            // Set status order
+            order.setStatus(GlobalVariable.ORDER_STATUS.DONE.toString());
+            orderService.updateOrder(order);
+            return ResponseEntity.ok("Payment success!");
+        }
     }
 
 
