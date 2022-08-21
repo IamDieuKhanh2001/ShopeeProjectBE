@@ -100,20 +100,32 @@ public class SubCategoryServiceImpl implements SubCategoryService {
 
         List<SubCategoryEntity> subCategories = subCategoryRepository.findAllByCategoryEntityId(id);
 
-        for(SubCategoryEntity updateSubCategory: subCategories){
+        int currentAmount = subCategories.size();
+        int changeAmount = subCategoryDTOS.size();
+        List<SubCategoryDTO> newSub = subCategoryDTOS.subList(currentAmount,changeAmount);
+
+        if(newSub.size() > 0){
+            SubCategoryEntity subCategory;
+            for(SubCategoryDTO addNew: newSub){
+                subCategory = SubCategoryMapper.toEntity(addNew);
+                subCategory.setCategoryEntity(category);
+                subCategories.add(subCategory);
+            }
+        }
+
+        for (SubCategoryEntity updateSubCategory : subCategories) {
             SubCategoryDTO subCategoryDTO = subCategoryDTOS.get(subCategories.indexOf(updateSubCategory));
             updateSubCategory.setStatus(subCategoryDTO.getStatus());
             updateSubCategory.setName(subCategoryDTO.getName());
             updateSubCategory.setCategoryEntity(category);
-        }
 
-        subCategories = subCategoryRepository.saveAll(subCategories);
+            subCategories = subCategoryRepository.saveAll(subCategories);
+        }
 
         List<SubCategoryDTO> result = new ArrayList<>();
         for(SubCategoryEntity subCategory : subCategories){
             result.add(SubCategoryMapper.toSubCategoryDto(subCategory));
         }
-
 
         return result;
     }
