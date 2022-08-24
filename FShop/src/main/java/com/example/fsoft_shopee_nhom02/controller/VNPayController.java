@@ -65,7 +65,7 @@ public class VNPayController {
         Map<String, String> vnp_Params = paymentService.returnParamVnPay(paymentDTO);
         String paymentUrl = paymentService.returnPaymentUrl(vnp_Params);
         PaymentResultDTO paymentResultDTO = new PaymentResultDTO("00", "Success", paymentUrl);
-        return ResponseEntity.status(HttpStatus.OK).body(paymentResultDTO.toString());
+        return ResponseEntity.status(HttpStatus.OK).body(paymentResultDTO);
     }
 
     @GetMapping("result")
