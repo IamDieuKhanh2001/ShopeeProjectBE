@@ -44,54 +44,7 @@ import static com.example.fsoft_shopee_nhom02.config.GlobalVariable.getCurrentDa
 @RequestMapping("/admin/payment")
 public class PaymentController {
     @Autowired
-    OrderServiceImpl orderService;
-    @Autowired
-    OrderDetailServiceImpl orderDetailService;
-    @Autowired
-    TypeRepository typeRepository;
-    @Autowired
-    ProductRepository productRepository;
-    @Autowired
     PaymentServiceImpl paymentService;
-    @Autowired
-    OrderRepository orderRepository;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    AddressService addressService;
-    @Autowired
-    UserServiceImpl userService;
-    @Autowired
-    CartProductService cartProductService;
-
-    @PostMapping("payment-vnpay")
-    public ResponseEntity<?> paymentVnpay(@RequestBody PaymentDTO paymentDTO) throws UnsupportedEncodingException, NoSuchAlgorithmException, ParseException {
-        OrderEntity order = orderService.findOrderById(paymentDTO.getOrderId());
-        if (order == null)
-        {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Can't find an order!");
-        }
-        Map<String, String> vnp_Params = paymentService.returnParamVnPay(paymentDTO);
-        String paymentUrl = paymentService.returnPaymentUrl(vnp_Params);
-        PaymentResultDTO paymentResultDTO = new PaymentResultDTO("00", "Success", paymentUrl);
-        return ResponseEntity.status(HttpStatus.OK).body(paymentResultDTO.toString());
-    }
-
-    @PostMapping("payment-vnpay2")
-    public ResponseEntity<?> createPaymentVnpay(@RequestBody List<Object> req) throws UnsupportedEncodingException, NoSuchAlgorithmException, ParseException {
-        OrderEntity orderEntity = OrderCreator.CreateOrder(userService, addressService, orderService, cartProductService,req, GlobalVariable.ORDER_STATUS.VNPAY_CONFIRM.toString());
-
-        PaymentDTO paymentDTO = new PaymentDTO();
-        paymentDTO.setOrderId(orderEntity.getId());
-        paymentDTO.setBankCode(PaymentConfig.BANKCODE);
-        paymentDTO.setAmount((int) (Math.toIntExact(orderEntity.getTotalPrice())+orderEntity.getShippingFee()));
-        paymentDTO.setDescription(GlobalVariable.ORDER_STATUS.VNPAY_CONFIRM.toString());
-
-        Map<String, String> vnp_Params = paymentService.returnParamVnPay(paymentDTO);
-        String paymentUrl = paymentService.returnPaymentUrl(vnp_Params);
-        PaymentResultDTO paymentResultDTO = new PaymentResultDTO("00", "Success", paymentUrl);
-        return ResponseEntity.status(HttpStatus.OK).body(paymentResultDTO.toString());
-    }
 
     @PutMapping("accept")
     public ResponseEntity<?> acceptOrder(@RequestBody OrderIdDTO orderId){
@@ -103,13 +56,5 @@ public class PaymentController {
         return paymentService.cancelOrder(orderId.getId());
     }
 
-    @GetMapping("resultPayment")
-    public ResponseEntity<?> returnResultPayment(HttpServletRequest request){
-        if (request.getParameter("vnp_ResponseCode").equals("24"))
-        {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Payment failed!");
-        }
-        return paymentService.acceptOrder(Long.valueOf(request.getParameter("vnp_TxnRef")));
-    }
 
 }
