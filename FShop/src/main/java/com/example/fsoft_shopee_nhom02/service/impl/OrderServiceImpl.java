@@ -6,6 +6,7 @@ import com.example.fsoft_shopee_nhom02.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,7 +33,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Page<OrderEntity> getAllByUserId(Long UserId, int page) {
-        return orderRepository.findAllByUserEntitiesId(UserId,PageRequest.of(page,OrderPagingLimit));
+        return orderRepository.findAllByUserEntitiesId(UserId,PageRequest.of(page,OrderPagingLimit,
+                Sort.by("id").descending()));
     }
 
     @Override
