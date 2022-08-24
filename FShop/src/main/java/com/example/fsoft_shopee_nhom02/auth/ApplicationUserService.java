@@ -61,18 +61,6 @@ public class ApplicationUserService implements UserDetailsService {
 
     public ResponseEntity<?> save(UserDTO userDTO) {
         Optional<UserEntity> DAOUsernameOptional = userRepository.findByUsername(userDTO.getUsername());
-        if(DAOUsernameOptional.isPresent()){
-            return new ResponseEntity<>("Username have been used! Please try another username", HttpStatus.BAD_REQUEST);
-        }
-
-        if(Objects.equals(userDTO.getEmail(), "")){
-            return new ResponseEntity<>("Email not null! Please try another Email", HttpStatus.BAD_REQUEST);
-        }
-        Optional<UserEntity> DAOUserEmailOptional = userRepository.findByEmail(userDTO.getEmail());
-        if(DAOUserEmailOptional.isPresent()){
-            return new ResponseEntity<>("Email have been registered for another account! Please try another Email", HttpStatus.BAD_REQUEST);
-        }
-
         if(userDTO.getPassword() == null || userDTO.getPassword().length() <= 6) {
             return new ResponseEntity<>("Password must be longer than 7 character and can't be null", HttpStatus.BAD_REQUEST);
         }

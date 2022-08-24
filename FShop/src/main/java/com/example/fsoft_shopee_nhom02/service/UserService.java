@@ -25,4 +25,6 @@ public interface UserService {
     UserProfileDTO findByUsername(String username);
     Boolean uploadUserAvatar(MultipartFile avatar, String username);
     UserEntity findFirstByUsername(String username);
+
+    String getCheckValidEmailOTP(String username, String emailRegister);
 }
