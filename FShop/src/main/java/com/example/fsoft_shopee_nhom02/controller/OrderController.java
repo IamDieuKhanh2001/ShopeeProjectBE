@@ -126,7 +126,6 @@ public class OrderController {
     @PostMapping("/update_order/{id}")
     public Object updateOrder(@RequestBody Map<String, String> req, @PathVariable String id) throws ParseException {
         OrderEntity orderEntity = orderService.findById(Long.parseLong(id));
-
         orderEntity.setModifiedDate(getCurrentDateTime());
 
         req.forEach((key, value) -> {
