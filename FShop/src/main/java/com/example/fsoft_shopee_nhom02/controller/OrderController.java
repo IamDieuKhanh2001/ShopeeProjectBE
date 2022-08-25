@@ -1,6 +1,5 @@
 package com.example.fsoft_shopee_nhom02.controller;
 
-import com.example.fsoft_shopee_nhom02.Notification.NotificationService;
 import com.example.fsoft_shopee_nhom02.auth.OrderCreator;
 import com.example.fsoft_shopee_nhom02.dto.AddressDTO;
 import com.example.fsoft_shopee_nhom02.model.OrderDetailsEntity;
@@ -18,7 +17,6 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static com.example.fsoft_shopee_nhom02.config.GlobalVariable.*;
@@ -32,22 +30,14 @@ public class OrderController {
     private final UserService userService;
     private final AddressService addressService;
     private final CartProductService cartProductService;
-    private final NotificationService notificationService;
 
     @Autowired
-    public OrderController(OrderDetailService orderDetailService, OrderService orderService, UserService userService, AddressService addressService, CartProductService cartProductService, NotificationService notificationService) {
+    public OrderController(OrderDetailService orderDetailService, OrderService orderService, UserService userService, AddressService addressService, CartProductService cartProductService) {
         this.orderDetailService = orderDetailService;
         this.orderService = orderService;
         this.userService = userService;
         this.addressService = addressService;
         this.cartProductService = cartProductService;
-        this.notificationService = notificationService;
-    }
-
-    @PostMapping("/sentMessage")
-    public void sentMessage(@RequestBody Map<String, String> message) {
-        // more config
-        notificationService.sendNotification(message.get("message"), message.get("userId"));
     }
 
     @GetMapping("/all/{page}")

@@ -19,24 +19,4 @@ public class FSoftShopeeNhom02Application {
     public static void main(String[] args) {
         SpringApplication.run(FSoftShopeeNhom02Application.class, args);
     }
-
-    @Bean
-    public FilterRegistrationBean customCorsFilter() {
-        List<String> allowedOrigins = new ArrayList<>();
-        allowedOrigins.add("http://localhost:3000/");
-        allowedOrigins.add("https://react02-group06.vercel.app/");
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(allowedOrigins);
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/**", config);
-        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return bean;
-
-    }
 }
