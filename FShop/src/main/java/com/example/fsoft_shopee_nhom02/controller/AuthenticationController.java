@@ -21,8 +21,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 @RestController
@@ -90,16 +92,22 @@ public class AuthenticationController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<?> home(@RequestParam(value = "jwt") String jwtToken, OAuth2AuthenticationToken oAuth2AuthenticationToken) {
+    public ModelAndView home(HttpServletResponse response, @RequestParam(value = "jwt") String jwtToken, OAuth2AuthenticationToken oAuth2AuthenticationToken) {
         String username = jwtTokenUtil.extractUsername(jwtToken);
         final UserDetails userDetails = applicationUserService
                 .loadUserByUsername(username);
         UserEntity user = userService.findFirstByUsername(userDetails.getUsername());
-        return ResponseEntity
-                .ok(new AuthenticationResponse(jwtToken,
-                        user.getId(),
-                        userDetails.getUsername(),
-                        (Set<GrantedAuthority>) userDetails.getAuthorities()));
+
+//        response.setHeader("Location", "http://localhost:3000" + jwtToken);
+//        response.setStatus(200);
+
+        return new ModelAndView("redirect:http://localhost:3000/login?jwt=" + jwtToken + "&userId=" + user.getId() +
+                "&username=" + userDetails.getUsername());
+//        return ResponseEntity
+//                .ok(new AuthenticationResponse(jwtToken,
+//                        user.getId(),
+//                        userDetails.getUsername(),
+//                        (Set<GrantedAuthority>) userDetails.getAuthorities()));
     }
 
 //    //Test api sẽ xóa sau
