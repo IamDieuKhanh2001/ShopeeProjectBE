@@ -93,6 +93,43 @@ public class SubCategoryServiceImpl implements SubCategoryService {
     }
 
     @Override
+    public List<SubCategoryDTO> updateAllSubcategory(long id, List<SubCategoryDTO> subCategoryDTOS) {
+        CategoryEntity category = categoryRepository.findById(id)
+                .orElseThrow(() -> new BadRequest("Not found category with id = "
+                        +id));
+
+        List<SubCategoryEntity> subCategories = subCategoryRepository.findAllByCategoryEntityId(id);
+
+        int currentAmount = subCategories.size();
+        int changeAmount = subCategoryDTOS.size();
+        List<SubCategoryDTO> newSub = subCategoryDTOS.subList(currentAmount,changeAmount);
+
+        if(newSub.size() > 0){
+            SubCategoryEntity subCategory;
+            for(SubCategoryDTO addNew: newSub){
+                subCategory = SubCategoryMapper.toEntity(addNew);
+                subCategory.setCategoryEntity(category);
+                subCategories.add(subCategory);
+            }
+        }
+
+        for (SubCategoryEntity updateSubCategory : subCategories) {
+            SubCategoryDTO subCategoryDTO = subCategoryDTOS.get(subCategories.indexOf(updateSubCategory));
+            updateSubCategory.setStatus(subCategoryDTO.getStatus());
+            updateSubCategory.setName(subCategoryDTO.getName());
+            updateSubCategory.setCategoryEntity(category);
+
+            subCategories = subCategoryRepository.saveAll(subCategories);
+        }
+
+        List<SubCategoryDTO> result = new ArrayList<>();
+        for(SubCategoryEntity subCategory : subCategories){
+            result.add(SubCategoryMapper.toSubCategoryDto(subCategory));
+        }
+        return result;
+    }
+
+    @Override
     public List<SubCategoryDTO> getAllSubCategory(boolean active) {
         List<SubCategoryDTO> subCategoryDTOS = new ArrayList<>();
         List<SubCategoryEntity> subCategories;
@@ -191,40 +228,6 @@ public class SubCategoryServiceImpl implements SubCategoryService {
             return subCategoryRepository.countByCategoryEntityId(categoryId);
         }
     }
-
-//    @Override
-//    public SubCategoryDTO update(SubCategoryDTO subCategoryDTO) {
-//        if(subCategoryDTO.getCategoryId() == null){
-//            throw new BadRequest("Please provide the category id want to add this subcategory.");
-//            //subCategory = subCategoryRepository.save(subCategory);
-//        }
-//
-//        SubCategoryEntity subCategory  = subCategoryRepository.findById(subCategoryDTO.getId())
-//                .orElseThrow(() -> new BadRequest("Not found subcategory with id = "+subCategoryDTO.getId()));
-//
-//        CategoryEntity category = categoryRepository.findById(subCategoryDTO.getCategoryId())
-//                .orElseThrow(() -> new BadRequest("Not found category with id = "
-//                        +subCategoryDTO.getCategoryId()));
-//
-//        //check category is active
-//        if(Objects.equals(category.getStatus(), GlobalVariable.INACTIVE_STATUS)){
-//            throw new BadRequest("This category is inactive!!");
-//        }
-//
-//        //check name subcategory in 1 category is not similar
-//        if(subCategoryRepository.findByNameAndCategoryIdExceptOldName(subCategoryDTO.getId(),
-//                subCategoryDTO.getCategoryId(),subCategoryDTO.getName()) != null){
-//            throw new BadRequest("This name have been used!!");
-//        }
-//
-//        subCategory.setName(subCategoryDTO.getName());
-//        subCategory.setImage(subCategoryDTO.getImage());
-//        subCategory.setStatus(subCategoryDTO.getStatus());
-//        subCategory.setCategoryEntity(category);
-//        subCategory = subCategoryRepository.save(subCategory);
-//
-//        return SubCategoryMapper.toSubCategoryDto(subCategory);
-//    }
 
     @Override
     public void delete(long id) {

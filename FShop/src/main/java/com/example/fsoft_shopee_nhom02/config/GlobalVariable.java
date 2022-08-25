@@ -36,7 +36,7 @@ public class GlobalVariable {
     public static final String Notification_sendPrefix = "/message";
     public static final String Notification_pushPrefix = "/user";
 
-    public static final int OrderPagingLimit = 10;
+    public static final int OrderPagingLimit = 9000;
 
     public static final String DEFAULT_PAGE = "1";
     public static final String DEFAULT_LIMIT = "12";

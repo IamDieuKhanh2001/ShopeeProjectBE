@@ -10,6 +10,7 @@ import java.util.List;
 public interface SubCategoryService {
     SubCategoryDTO save (SubCategoryDTO subCategoryDTO);
     List<SubCategoryDTO> saveListSubcategory (List<SubCategoryDTO> subCategoryDTOS);
+    List<SubCategoryDTO> updateAllSubcategory(long id, List<SubCategoryDTO> subCategoryDTOS);
     List<SubCategoryDTO> getAllSubCategory(boolean active);
     SubCategoryDTO getSubCategoryById(long id);
     List<SubCategoryDTO> getSubCategoryByCategoryId(long categoryId, boolean active);

@@ -89,9 +89,9 @@ public class SubCategoryController {
         return ResponseEntity.ok(subCategoryService.save(model));
     }
 
-    @PutMapping("/admin/subcategory/updateAll")
-    public ResponseEntity<?> updateSubCategories(@RequestBody List<SubCategoryDTO> model){
-        return ResponseEntity.ok(subCategoryService.saveListSubcategory(model));
+    @PutMapping("/admin/category/{categoryId}/subcategory")
+    public ResponseEntity<?> updateSubCategories(@PathVariable long categoryId,@RequestBody List<SubCategoryDTO> model){
+        return ResponseEntity.ok(subCategoryService.updateAllSubcategory(categoryId,model));
     }
 
     @DeleteMapping("/admin/subcategory/{id}")

@@ -282,12 +282,17 @@ public class ProductService {
             type.setProductEntity(productEntity);
             typeRepository.save(type);
         }
-
         // Update min price
         getItemForPrice(productEntity);
         productRepository.save(productEntity);
 
         return new ResponseEntity<>(types, HttpStatus.OK);
+    }
+
+    private void typeSetHandler(TypeEntity updatedType, TypeEntity type) {
+        updatedType.setPrice(type.getPrice());
+        updatedType.setType(type.getType());
+        updatedType.setQuantity(type.getQuantity());
     }
 
     public ResponseEntity<?> updateAllTypes(long id, List<TypeEntity> typesList) {
@@ -299,16 +304,25 @@ public class ProductService {
         }
 
         List<TypeEntity> updatedTypesList = typeRepository.findAllByProductEntityId(id);
+        if(typesList.size() < updatedTypesList.size()) {
+            return new ResponseEntity<>("Wrong types list!", HttpStatus.BAD_REQUEST);
+        }
+
+        List<TypeEntity> newTypes = typesList.subList(updatedTypesList.size(), typesList.size());
+        if(newTypes.size() > 0) {
+            for (TypeEntity type : newTypes) {
+                type.setProductEntity(productEntity);
+                typeRepository.save(type);
+            }
+        }
 
         for (TypeEntity updatedType : updatedTypesList) {
             TypeEntity type = typesList.get(updatedTypesList.indexOf(updatedType));
-            updatedType.setPrice(type.getPrice());
-            updatedType.setType(type.getType());
-            updatedType.setQuantity(type.getQuantity());
+            typeSetHandler(updatedType, type);
             updatedType.setProductEntity(productEntity);
         }
-
         typeRepository.saveAll(updatedTypesList);
+        updatedTypesList.addAll(newTypes);
 
         // Update min price
         getItemForPrice(productEntity);

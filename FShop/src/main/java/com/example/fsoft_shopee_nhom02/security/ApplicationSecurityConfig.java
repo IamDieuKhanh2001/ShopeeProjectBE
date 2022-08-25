@@ -52,7 +52,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/", "/login", "/register","/payment/resultPayment/**",
+                    .antMatchers("/", "/login", "/register","/vnpay/result/**", "/checkEmail/getOtp",
                             "/products/**", "/products","/order/**",
                              "/recoveryPassword/**","/category/**",
                             "/category","/shop/**","/shop","/subcategory/**",

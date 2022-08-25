@@ -22,11 +22,11 @@ public interface OrderService {
 
     void addNewOrder(OrderEntity orderEntity);
 
-    long getTurnOver();
+    String getTurnOver();
 
     String getAllOrderByDay(String Year, String Month, String Day);
 
-    long getTotalOrder();
+    String getTotalOrder();
 
     OrderEntity findById(Long OrderId);
 

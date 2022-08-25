@@ -2,16 +2,18 @@ package com.example.fsoft_shopee_nhom02.controller;
 
 import com.example.fsoft_shopee_nhom02.auth.ApplicationUserService;
 import com.example.fsoft_shopee_nhom02.auth.JwtUtil;
-import com.example.fsoft_shopee_nhom02.dto.AuthenticationRequest;
-import com.example.fsoft_shopee_nhom02.dto.AuthenticationResponse;
-import com.example.fsoft_shopee_nhom02.dto.SuccessResponseDTO;
-import com.example.fsoft_shopee_nhom02.dto.UserDTO;
+import com.example.fsoft_shopee_nhom02.config.EmailTemplate;
+import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
+import com.example.fsoft_shopee_nhom02.dto.*;
+import com.example.fsoft_shopee_nhom02.exception.BadRequest;
 import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
+import com.example.fsoft_shopee_nhom02.service.EmailSenderService;
 import com.example.fsoft_shopee_nhom02.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +22,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import java.util.*;
 
 @RestController
@@ -49,6 +52,20 @@ public class AuthenticationController {
         } else {
             return ResponseEntity.badRequest().body(saveResult.getBody());
         }
+    }
+
+    @GetMapping(path = "/checkEmail/getOtp")
+    public OtpSendMailResponseDTO sendOtpCheckToUserEmail(@RequestParam Map<String, String> requestParams) {
+        if(requestParams.get("email") == null) {
+            throw new BadRequest("Check mail by OTP for user fail! need ?email= param");
+        }
+        if(requestParams.get("username") == null) {
+            throw new BadRequest("Check mail by OTP for user fail! need ?username= param");
+        }
+        String emailRegister = (requestParams.get("email"));
+        String username = (requestParams.get("username"));
+        String checkValidEmailOTP = userService.getCheckValidEmailOTP(username, emailRegister);
+        return new OtpSendMailResponseDTO("Valid", checkValidEmailOTP);
     }
 
     @PostMapping("/login")

@@ -33,7 +33,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
     // Total money
     @Query(value = "select sum(total_price) \n" +
             "from orders where status = 'Done'\n", nativeQuery = true)
-    long getTurnOver();
+    String getTurnOver();
 
     // Statistic by day
     @Query(value = "select sum(total_price) \n" +
@@ -44,7 +44,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
     // Total order with status = done
     @Query(value = "SELECT count(*) \n" +
             "FROM orders where status = 'Done'", nativeQuery = true)
-    long getTotalOrder();
+    String getTotalOrder();
 
     OrderEntity searchById(Long OrderId);
 

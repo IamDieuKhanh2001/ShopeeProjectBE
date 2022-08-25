@@ -1,5 +1,8 @@
 package com.example.fsoft_shopee_nhom02.service.impl;
 
+import com.example.fsoft_shopee_nhom02.config.EmailTemplate;
+import com.example.fsoft_shopee_nhom02.config.GlobalVariable;
+import com.example.fsoft_shopee_nhom02.dto.OtpSendMailResponseDTO;
 import com.example.fsoft_shopee_nhom02.dto.UserDTO;
 import com.example.fsoft_shopee_nhom02.dto.UserProfileDTO;
 import com.example.fsoft_shopee_nhom02.exception.BadRequest;
@@ -11,12 +14,14 @@ import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.RoleRepository;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
 import com.example.fsoft_shopee_nhom02.service.CloudinaryService;
+import com.example.fsoft_shopee_nhom02.service.EmailSenderService;
 import com.example.fsoft_shopee_nhom02.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -33,6 +38,37 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private CloudinaryService cloudinaryService;
+
+    @Autowired
+    private EmailSenderService emailSenderService;
+
+    @Override
+    public String getCheckValidEmailOTP(String username, String emailRegister) {
+        UserEntity userByUsername = userRepository.findFirstByUsername(username);
+        System.out.println(userByUsername);
+        if(userByUsername != null) {
+            throw new BadRequest("Tên người dùng bị trùng, vui lòng nhập lại!");
+        }
+        Optional<UserEntity> userByEmail = userRepository.findByEmail(emailRegister);
+        if(userByEmail.isPresent()) {
+            throw new BadRequest("Email bị trùng, vui lòng nhập lại!");
+        }
+        String otpCode = GlobalVariable.GetOTP();
+        try {
+            sendCheckEmailByOTP(emailRegister, username, otpCode);
+        } catch (MessagingException e) {
+            throw new BadRequest("gmail send fail");
+        }
+        return otpCode;
+    }
+
+    public void sendCheckEmailByOTP(String addressGmail, String username, String otpCode) throws MessagingException {
+        emailSenderService.sendAsHTML(
+                addressGmail,
+                "Xác thực Gmail cho tài khoản " + username,
+                EmailTemplate.TemplateCheckValidEmail(username, otpCode)
+        );
+    }
 
     @Override
     public List<UserProfileDTO> getAllUser() {
