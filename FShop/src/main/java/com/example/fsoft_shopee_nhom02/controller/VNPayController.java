@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -66,14 +65,5 @@ public class VNPayController {
         String paymentUrl = paymentService.returnPaymentUrl(vnp_Params);
         PaymentResultDTO paymentResultDTO = new PaymentResultDTO("00", "Success", paymentUrl);
         return ResponseEntity.status(HttpStatus.OK).body(paymentResultDTO);
-    }
-
-    @GetMapping("result")
-    public ResponseEntity<?> returnResultPayment(HttpServletRequest request){
-        if (request.getParameter("vnp_ResponseCode").equals("24"))
-        {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Payment failed!");
-        }
-        return paymentService.acceptOrder(Long.valueOf(request.getParameter("vnp_TxnRef")));
     }
 }

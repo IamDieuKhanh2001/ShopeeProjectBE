@@ -55,6 +55,4 @@ public class PaymentController {
     public ResponseEntity<?> cancelOrder(@RequestBody OrderIdDTO orderId){
         return paymentService.cancelOrder(orderId.getId());
     }
-
-
 }
