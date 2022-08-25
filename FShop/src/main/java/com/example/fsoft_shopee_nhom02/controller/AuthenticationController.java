@@ -10,6 +10,7 @@ import com.example.fsoft_shopee_nhom02.model.UserEntity;
 import com.example.fsoft_shopee_nhom02.repository.UserRepository;
 import com.example.fsoft_shopee_nhom02.service.EmailSenderService;
 import com.example.fsoft_shopee_nhom02.service.UserService;
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
 
 @RestController
@@ -92,7 +95,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/")
-    public ModelAndView home(HttpServletResponse response, @RequestParam(value = "jwt") String jwtToken, OAuth2AuthenticationToken oAuth2AuthenticationToken) {
+    public ModelAndView home(HttpServletResponse response, @RequestParam(value = "jwt") String jwtToken, OAuth2AuthenticationToken oAuth2AuthenticationToken) throws URISyntaxException {
         String username = jwtTokenUtil.extractUsername(jwtToken);
         final UserDetails userDetails = applicationUserService
                 .loadUserByUsername(username);
@@ -100,9 +103,16 @@ public class AuthenticationController {
 
 //        response.setHeader("Location", "http://localhost:3000" + jwtToken);
 //        response.setStatus(200);
+            URIBuilder url = new URIBuilder("/login");
+            url.addParameter("jwt", jwtToken);
+            url.addParameter("userId", user.getId().toString());
+            url.addParameter("username", userDetails.getUsername());
+        System.out.println(userDetails.getUsername());
+        String urlString = url.build().toString();
 
-        return new ModelAndView("redirect:http://localhost:3000/login?jwt=" + jwtToken + "&userId=" + user.getId() +
-                "&username=" + userDetails.getUsername());
+
+
+        return new ModelAndView("redirect:http://localhost:3000" + urlString);
 //        return ResponseEntity
 //                .ok(new AuthenticationResponse(jwtToken,
 //                        user.getId(),

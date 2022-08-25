@@ -34,7 +34,7 @@ public class GoogleOauth2UserService extends DefaultOAuth2UserService {
 
     public boolean saveUser(GoogleOauth2User googleUser) {
         String[] splitEmail = googleUser.getEmail().split("@"); //create random username for google account
-        String randomUsername = splitEmail[0] + "#" + GlobalVariable.GetRandom4DigitNumber();
+        String randomUsername = splitEmail[0] + "-" + GlobalVariable.GetRandom4DigitNumber();
         UserEntity googleUserRegister =
                 new UserEntity(
                         googleUser.getFullName(),
