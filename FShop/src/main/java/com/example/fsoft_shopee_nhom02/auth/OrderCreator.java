@@ -36,7 +36,7 @@ public class OrderCreator {
             return orderDetailsEntity;
         }).collect(Collectors.toList());
         // map value for orderEntity and check if user want to add new address
-        if (orderInformation.get("address") == null) {
+        if (orderInformation.get("address") != null) {
             orderEntity = new OrderEntity(status, user.getUsername(), user.getAddressEntityList().get(0).getAddress(), user.getPhone(),  orderInformation.get("note") == null ? "" : orderInformation.get("note"), orderInformation.get("payment") == null ? "COD" : orderInformation.get("payment"), Long.parseLong(orderInformation.get("shipping_fee") == null ? "25000" : orderInformation.get("shipping_fee")), totalCost.get(), user, getCurrentDateTime());
         } else {
             orderEntity = new OrderEntity(status, orderInformation.get("user_name"), orderInformation.get("address"), orderInformation.get("phone"), orderInformation.get("note") == null ? "" : orderInformation.get("note"), orderInformation.get("payment") == null ? "COD" : orderInformation.get("payment"), Long.parseLong(orderInformation.get("shipping_fee") == null ? "25000" : orderInformation.get("shipping_fee")), totalCost.get(), user, getCurrentDateTime());
