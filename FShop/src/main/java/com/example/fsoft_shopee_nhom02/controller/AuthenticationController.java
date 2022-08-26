@@ -95,63 +95,17 @@ public class AuthenticationController {
     }
 
     @GetMapping("/")
-    public ModelAndView home(HttpServletResponse response, @RequestParam(value = "jwt") String jwtToken, OAuth2AuthenticationToken oAuth2AuthenticationToken) throws URISyntaxException {
+    public ModelAndView home(@RequestParam(value = "jwt") String jwtToken) throws URISyntaxException {
         String username = jwtTokenUtil.extractUsername(jwtToken);
         final UserDetails userDetails = applicationUserService
                 .loadUserByUsername(username);
         UserEntity user = userService.findFirstByUsername(userDetails.getUsername());
 
-//        response.setHeader("Location", "http://localhost:3000" + jwtToken);
-//        response.setStatus(200);
             URIBuilder url = new URIBuilder("/login");
             url.addParameter("jwt", jwtToken);
             url.addParameter("userId", user.getId().toString());
             url.addParameter("username", userDetails.getUsername());
-        System.out.println(userDetails.getUsername());
         String urlString = url.build().toString();
-
-
-
-        return new ModelAndView("redirect:http://localhost:3000" + urlString);
-//        return ResponseEntity
-//                .ok(new AuthenticationResponse(jwtToken,
-//                        user.getId(),
-//                        userDetails.getUsername(),
-//                        (Set<GrantedAuthority>) userDetails.getAuthorities()));
+        return new ModelAndView("redirect:https://react02-group06.vercel.app" + urlString);
     }
-
-//    //Test api sẽ xóa sau
-//    @GetMapping("/test")
-//    public String test() {
-//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        String username;
-//
-//        if (principal instanceof ApplicationUser) {
-//            username = ((ApplicationUser)principal).getUsername();
-//        } else {
-//            username = principal.toString();
-//        }
-//        String sReturn = "<h1>Login user: " + username + "</h1>";
-//        return sReturn;
-//    }
-//    //Test api sẽ xóa sau
-//    @GetMapping("/user")
-//    public String user() {
-//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        String username;
-//
-//        if (principal instanceof ApplicationUser) {
-//            username = ((ApplicationUser)principal).getUsername();
-//        } else {
-//            username = principal.toString();
-//        }
-//        String sReturn = "<h1>Welcome User</h1> <h1>Login user:  </h1>";
-//        return sReturn;
-//    }
-//    //Test api sẽ xóa sau
-//    @GetMapping("/admin")
-//    public ResponseEntity<?> admin() {
-//        String sReturn = "<h1>Welcome Admin</h1> <h1>Login user: </h1>";
-//        return ResponseEntity.ok(sReturn);
-//    }
 }
