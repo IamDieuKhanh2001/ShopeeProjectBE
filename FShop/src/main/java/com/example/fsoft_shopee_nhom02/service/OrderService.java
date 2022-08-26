@@ -32,7 +32,11 @@ public interface OrderService {
 
     void updateOrder(OrderEntity orderEntity);
 
-    String getAllOrderFromDayToDay(String Year, String Month, String Day, String Year2, String Month2, String Day2);
+    String getAllOrderFromDayToDay(String DateStart, String DateEnd);
 
     void deleteOrder(Long OrderId);
+
+    String getTotalProduct();
+
+    String getTotalUsers();
 }

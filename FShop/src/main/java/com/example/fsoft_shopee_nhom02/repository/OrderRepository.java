@@ -32,7 +32,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
     // Total money
     @Query(value = "select sum(total_price) \n" +
-            "from orders where status = 'Done'\n", nativeQuery = true)
+            "from orders where status = 'Done' and year(modified_date) = YEAR(CURDATE())\n", nativeQuery = true)
     String getTurnOver();
 
     // Statistic by day
@@ -49,10 +49,24 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
     OrderEntity searchById(Long OrderId);
 
     // Statistic from day to day
+    @Query(value = "select sum(total_price)\n" +
+            "from orders\n" +
+            "where status = 'Done'\n" +
+            "  and modified_date BETWEEN :DateStart AND :DateEnd", nativeQuery = true)
+    String getAllOrderFromDayToDay(@Param("DateStart") String DayStart, @Param("DateEnd") String DateEnd);
+
+    // Total order with status = done
+    @Query(value = "SELECT count(*) \n" +
+            "FROM products", nativeQuery = true)
+    String getTotalProduct();
+
+
+    // Total money
     @Query(value = "select sum(total_price) \n" +
-            "from orders \n" +
-            "where year(modified_date) >= :Year and month(modified_date) >=:Month and day(modified_date) >=:Day " +
-            "and year(modified_date) <= :YearEnd and month(modified_date) <=:MonthEnd and day(modified_date) <=:DayEnd " +
-            "and status = 'Done'", nativeQuery = true)
-    String getAllOrderFromDayToDay(@Param("Year") String Year, @Param("Month") String Month, @Param("Day") String Day, @Param("YearEnd") String YearEnd, @Param("MonthEnd") String MonthEnd, @Param("DayEnd") String DayEnd);
+            "from orders where status = 'Done'\n", nativeQuery = true)
+    String getTotalSales();
+
+    // Total user
+    @Query(value = "Select count(*) from users join users_roles where users.id = users_roles.userid and users_roles.role_id = 2", nativeQuery = true)
+    String getTotalUsers();
 }

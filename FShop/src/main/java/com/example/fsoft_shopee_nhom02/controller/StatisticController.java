@@ -31,46 +31,70 @@ public class StatisticController {
 
     @GetMapping("/month")
     public String getStatisticByMonth(@RequestBody String month){
-        if (orderService.getAllOrderByMonth(month) == null)
+        String res = orderService.getAllOrderByMonth(month);
+        if (res == null)
         {
             return "Turnover: 0";
         }
-        return "Turnover: "+ orderService.getAllOrderByMonth(month);
+        return res;
     }
 
     @GetMapping("/reveune")
     public String getRevenue(){
-        if (orderService.getTurnOver() == null)
+        String res = orderService.getTurnOver();
+        if (res == null)
         {
             return "0";
         }
-        return String.valueOf(orderService.getTurnOver());
+        return res;
     }
     @GetMapping("/day")
     public String getStatisticByDay(@RequestBody DayStatisticDTO dayStatisticDTO){
-        if (orderService.getAllOrderByDay(dayStatisticDTO.getYear(), dayStatisticDTO.getMonth(), dayStatisticDTO.getDay()) == null)
+        String res = orderService.getAllOrderByDay(dayStatisticDTO.getYear(), dayStatisticDTO.getMonth(), dayStatisticDTO.getDay());
+        if (res == null)
         {
             return "0";
         }
-        return orderService.getAllOrderByDay(dayStatisticDTO.getYear(), dayStatisticDTO.getMonth(), dayStatisticDTO.getDay());
+        return res;
     }
 
-    @GetMapping("/totalorder")
+    @GetMapping("/total_order")
     public String getTotalOrder(){
-        if (orderService.getTotalOrder() == null)
+        String res = orderService.getTotalOrder();
+        if (res == null)
         {
             return "0";
         }
-        return String.valueOf(orderService.getTotalOrder());
+        return res;
     }
 
-
-    @GetMapping("/fromdaytoday")
-    public String getStatisticFromDayToDay(@RequestBody DayToDayDTO day){
-        if (orderService.getAllOrderFromDayToDay(day.getYear(), day.getMonth(), day.getDay(), day.getYearE(), day.getMonthE(), day.getDayE()) == null)
+    @GetMapping("/total_product")
+    public String getTotalProduct(){
+        String res = orderService.getTotalProduct();
+        if (res == null)
         {
             return "0";
         }
-        return orderService.getAllOrderFromDayToDay(day.getYear(), day.getMonth(), day.getDay(), day.getYearE(), day.getMonthE(), day.getDayE());
+        return res;
+    }
+
+    @GetMapping("/total_user")
+    public String getTotalUser(){
+        String res = orderService.getTotalUsers();
+        if (res == null)
+        {
+            return "0";
+        }
+        return res;
+    }
+
+    @GetMapping("/between")
+    public String getStatisticFromDayToDay(@RequestBody DayToDayDTO day){
+        String res = orderService.getAllOrderFromDayToDay(day.getDaystart(), day.getDayend());
+        if (res == null)
+        {
+            return "0";
+        }
+        return res;
     }
 }

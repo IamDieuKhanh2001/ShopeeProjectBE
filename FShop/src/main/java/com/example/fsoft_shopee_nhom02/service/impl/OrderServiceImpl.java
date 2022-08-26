@@ -92,8 +92,20 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.deleteById(OrderId);
     }
 
-    public String getAllOrderFromDayToDay(String Year, String Month, String Day, String YearEnd, String MonthEnd, String DayEnd) {
-        return orderRepository.getAllOrderFromDayToDay(Year, Month, Day, YearEnd, MonthEnd, DayEnd);
+    public String getAllOrderFromDayToDay(String DateStart, String DateEnd) {
+        return orderRepository.getAllOrderFromDayToDay(DateStart, DateEnd);
     }
+
+
+    @Override
+    public String getTotalProduct() {
+        return orderRepository.getTotalProduct();
+    }
+
+    @Override
+    public String getTotalUsers() {
+        return orderRepository.getTotalUsers();
+    }
+
 
 }
