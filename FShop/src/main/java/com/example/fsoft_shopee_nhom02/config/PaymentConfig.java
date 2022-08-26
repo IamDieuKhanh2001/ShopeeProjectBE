@@ -22,7 +22,7 @@ public class PaymentConfig {
     public static final String BANKCODE = "NCB";
     public static final String LOCALEDEFAULT = "vn";
     public static final String ORDERTYPE = "170000";
-//    public static final String RETURNURL = "https://shopeeeee.herokuapp.com/vnpay/result"; // Url return after payment successed
+//    public static final String RETURNURL = "https://shopeeeee.herokuapp.com/checkout/notification"; // Url return after payment successed
     public static final String RETURNURL = "http://localhost:3000/checkout/notification";
     public static final String VNPAYURL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
     public static String Sha256(String message) {
